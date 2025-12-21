@@ -48,7 +48,7 @@ function App() {
       <header className="app__header">
         <div className="app__header-content">
           <h1 className="app__title">العلم</h1>
-          <p className="app__subtitle">Your Islamic Knowledge Assistant</p>
+         
         </div>
       </header>
 

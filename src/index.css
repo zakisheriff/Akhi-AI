@@ -78,8 +78,12 @@ body {
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-base);
   color: var(--color-off-white);
-  background: linear-gradient(180deg, #0a1f14 0%, #013220 50%, #0a2818 100%);
+  background:
+    linear-gradient(180deg, rgba(10, 31, 20, 0.92) 0%, rgba(1, 50, 32, 0.92) 50%, rgba(10, 40, 24, 0.92) 100%),
+    url('/girih-pattern.png');
+  background-size: cover, 400px 400px;
   background-attachment: fixed;
+  background-repeat: no-repeat, repeat;
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;

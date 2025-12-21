@@ -39,12 +39,12 @@
 }
 
 .app__title {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 700;
   margin: 0;
   font-family: var(--font-arabic);
   letter-spacing: 0;
-  line-height: 1.2;
+  line-height: 2.2;
   background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
   -webkit-background-clip: text;
   background-clip: text;
