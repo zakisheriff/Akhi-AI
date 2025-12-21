@@ -73,8 +73,9 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
               <div className="chat-container__welcome-suggestions">
                 {[
                   "What is the importance of Salah?",
-                  "Explain Surah Al-Fatiha",
-                  "What are the pillars of Islam?"
+                  "Explain Surah Al-Fatiha in detail",
+                  "Do we fast to feel the hunger of the poor?",
+                  "Is celebrating Mawlid an authentic practice?",
                 ].map((suggestion, index) => (
                   <button
                     key={index}

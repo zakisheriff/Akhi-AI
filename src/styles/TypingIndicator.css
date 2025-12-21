@@ -39,8 +39,9 @@
   flex-shrink: 0;
 }
 
-.typing-indicator__book {
-  font-size: 1.25rem;
+.typing-indicator__book-svg {
+  width: 20px;
+  height: 20px;
   animation: bookPulse 2s ease-in-out infinite;
 }
 
@@ -185,7 +186,8 @@
     height: 28px;
   }
 
-  .typing-indicator__book {
-    font-size: 1.125rem;
+  .typing-indicator__book-svg {
+    width: 18px;
+    height: 18px;
   }
 }
