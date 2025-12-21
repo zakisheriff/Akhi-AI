@@ -20,13 +20,22 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
     }
   }, [messages, isLoading]);
 
-  // Auto-scroll to bottom when new messages arrive or typing progresses
+  // Auto-scroll to bottom when new messages arrive or loading state changes
   useEffect(() => {
+    // Immediate scroll
     scrollToBottom();
+
+    // Delayed scroll to ensure loading indicator transition is accounted for
+    const timer = setTimeout(scrollToBottom, 200);
+    const timer2 = setTimeout(scrollToBottom, 500); // Extra backup check
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timer2);
+    };
   }, [messages, isLoading, typingMessageIndex]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
   // Handle when typewriter effect completes

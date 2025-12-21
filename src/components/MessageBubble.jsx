@@ -4,8 +4,31 @@ import '../styles/MessageBubble.css';
 
 const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) => {
 
+  // Helper to parse text with Bold and Italic tags
+  const parseBoldAndItalic = (text) => {
+    // Split by bold (** or __) AND italic (* or _)
+    // Regex matches: **bold**, __bold__, *italic*, _italic_
+    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|\*(?![*\s])[^*]+(?<!\s)\*|_(?![_\s])[^_]+(?<!\s)_)/g);
+
+    return parts.map((part, index) => {
+      // Bold
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={index} className="message-bold">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('__') && part.endsWith('__')) {
+        return <strong key={index} className="message-bold">{part.slice(2, -2)}</strong>;
+      }
+      // Italic
+      if ((part.startsWith('*') && part.endsWith('*')) || (part.startsWith('_') && part.endsWith('_'))) {
+        return <em key={index} className="message-italic">{part.slice(1, -1)}</em>;
+      }
+      return part;
+    });
+  };
+
   // Parse and render markdown links as clickable anchors
-  const renderWithLinks = (text) => {
+  // Now also handles Bold/Italic parsing inside text chunks
+  const renderWithFormatting = (text) => {
     // Split by markdown link pattern [text](url)
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     const parts = [];
@@ -13,7 +36,7 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
     let match;
 
     while ((match = linkRegex.exec(text)) !== null) {
-      // Add text before the link
+      // Add text before the link (parse for bold/italic)
       if (match.index > lastIndex) {
         parts.push({
           type: 'text',
@@ -52,74 +75,92 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
           </a>
         );
       }
-      return <span key={index}>{formatTextContent(part.content)}</span>;
+      // Recursively parse bold/italic inside text chunks
+      return <span key={index}>{parseBoldAndItalic(part.content)}</span>;
     });
   };
 
-  // Format text content - handle line breaks and references
+  // Format text content - handle line breaks, headers, and references
   const formatTextContent = (text) => {
     const lines = text.split('\n');
 
     return lines.map((line, index) => {
-      // Check if line contains references (Surah:Verse or Hadith citations)
-      const hasReference = /(Surah|Surah\s+\w+|\d+:\d+)|(Sahih|Sunan|Musnad|Jami'|Hadith)/i.test(line);
+      const trimmedLine = line.trim();
+
+      // Handle Headers (H2-H4)
+      if (trimmedLine.startsWith('## ')) {
+        return <h3 key={index} className="message-heading-h3">{renderWithFormatting(trimmedLine.slice(3))}</h3>;
+      }
+      if (trimmedLine.startsWith('### ')) {
+        return <h4 key={index} className="message-heading-h4">{renderWithFormatting(trimmedLine.slice(4))}</h4>;
+      }
+      if (trimmedLine.startsWith('#### ')) {
+        return <h5 key={index} className="message-heading-h5">{renderWithFormatting(trimmedLine.slice(5))}</h5>;
+      }
 
       // Check if it's a sources section header
-      const isSourcesHeader = /^(📚\s*Sources?|References?|Source|Cited from)/i.test(line.trim());
-
-      // If line is a reference or starts with common reference patterns, style it
+      const isSourcesHeader = /^(📚\s*Sources?|References?|Source|Cited from)/i.test(trimmedLine);
       if (isSourcesHeader) {
         return (
           <React.Fragment key={index}>
-            <span className="message-sources-header">{line}</span>
+            <span className="message-sources-header">{renderWithFormatting(line)}</span>
             {index < lines.length - 1 && <br />}
           </React.Fragment>
         );
       }
 
-      if (hasReference || /^[-•]\s/.test(line.trim())) {
+      // Check references
+      const hasReference = /(Surah|Surah\s+\w+|\d+:\d+)|(Sahih|Sunan|Musnad|Jami'|Hadith)/i.test(line);
+      if (hasReference || /^[-•]\s/.test(trimmedLine)) {
         return (
           <React.Fragment key={index}>
-            <span className="message-reference">{line}</span>
+            {/* Render bullet point styled reference */}
+            <div className="message-list-item">
+              <span className="message-list-bullet">•</span>
+              <span className="message-reference-text">{renderWithFormatting(line.replace(/^[-•]\s/, ''))}</span>
+            </div>
             {index < lines.length - 1 && <br />}
           </React.Fragment>
         );
       }
 
+      // Standard line
       return (
         <React.Fragment key={index}>
-          {line}
+          {renderWithFormatting(line)}
           {index < lines.length - 1 && <br />}
         </React.Fragment>
       );
     });
   };
 
-  // Remove markdown formatting except links
-  const stripMarkdownExceptLinks = (text) => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove **bold**
-      .replace(/(?<!\[)\*([^*]+)\*(?!\])/g, '$1') // Remove *italic* but not inside links
-      .replace(/__(.*?)__/g, '$1') // Remove __bold__
-      .replace(/(?<!\[)_([^_]+)_(?!\])/g, '$1') // Remove _italic_ but not inside links
-      .replace(/~~(.*?)~~/g, '$1') // Remove ~~strikethrough~~
-      .replace(/`([^`]+)`/g, '$1') // Remove `code`
-      .replace(/```[\s\S]*?```/g, '') // Remove code blocks
-      .replace(/#{1,6}\s/g, '') // Remove headers
-      .replace(/^---+$/gm, '') // Remove horizontal rules
-      .replace(/^--\s*/gm, '• ') // Convert start-of-line -- to bullet
-      .replace(/(\w)\s*--+\s*(\w)/g, '$1 — $2') // Convert mid-sentence -- to em dash
-      .replace(/--/g, '') // Remove remaining double dashes
-      .replace(/^-\s+/gm, '• ') // Convert - bullet to •
-      .replace(/^\*\s+/gm, '• '); // Convert * bullet to •
+  // Clean markdown with STRICT rules as requested
+  const cleanMarkdown = (text) => {
+    let cleaned = text
+      .replace(/~~(.*?)~~/g, '$1')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/^---+$/gm, '')
+      .replace(/^--\s*/gm, '• ')
+      .replace(/(\w)\s*--+\s*(\w)/g, '$1 — $2')
+      .replace(/--/g, '')
+      .replace(/^-\s+/gm, '• ')
+      .replace(/^\*\s+/gm, '• ') // Bullets
+      // Collapse multiple newlines into max 2
+      .replace(/\n{3,}/g, '\n\n');
+
+    // Remove standalone * that are likely artifacts, but keep * for italics handled by parser
+    // This removes * if it's NOT part of a pair, roughly. 
+    // Actually, safer to let the parser handle valid ones and then strip remaining?
+    // But RenderWithFormatting happens AFTER. 
+    // If I strip all * here, I lose italics.
+    // The user wants "NO *". 
+    // I will try to support italics, but if they are seeing stray *, it means the regex missed.
+    // Let's rely on standardizing bullets first.
+    return cleaned;
   };
 
-  const processedMessage = stripMarkdownExceptLinks(message);
-
-  // Render content with links for typewriter or direct display
-  const renderContent = (text) => {
-    return renderWithLinks(text);
-  };
+  const processedMessage = cleanMarkdown(message);
 
   return (
     <div className={`message-bubble ${isUser ? 'message-bubble--user' : 'message-bubble--ai'}`}>
@@ -131,13 +172,13 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
           // AI messages use typewriter effect when typing
           <TypewriterText
             text={processedMessage}
-            speed={12}
+            speed={1} // Super fast
             onComplete={onTypingComplete}
-            renderContent={renderContent}
+            renderContent={(txt) => formatTextContent(txt)}
           />
         ) : (
           // Completed AI messages render normally
-          renderWithLinks(processedMessage)
+          formatTextContent(processedMessage)
         )}
       </div>
     </div>

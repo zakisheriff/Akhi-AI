@@ -24,12 +24,6 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     const genAI = getGeminiClient();
     const systemPrompt = buildSystemPrompt(school);
 
-    // Get the model (using gemini-1.5-flash which is faster and has higher limits)
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      systemInstruction: systemPrompt
-    });
-
     // Build chat history for Gemini
     // Gemini expects alternating user/assistant messages
     const chatHistory = conversationHistory.map((msg, index) => {
@@ -41,29 +35,94 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
       };
     });
 
-    // Start a chat session with history
-    const chat = model.startChat({
-      history: chatHistory,
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.9,
-        topK: 40,
-        maxOutputTokens: 8192,
+    // Retry logic with fallback through available models
+    // Based on user's available quota list: 2.5 Flash, 3 Flash, 2.5 Flash Lite
+    const models = ['gemini-2.5-flash', 'gemini-3-flash', 'gemini-2.5-flash-lite'];
+    let modelIndex = 0;
+    let retries = 0;
+    const maxRetriesPerModel = 2; // Reduced retries per model to fail faster to next model
+
+    // Safety break to prevent infinite loops (3 models * 2 retries + buffer)
+    let totalAttempts = 0;
+    const maxTotalAttempts = 10;
+
+    while (totalAttempts < maxTotalAttempts) {
+      const currentModelName = models[modelIndex];
+      totalAttempts++;
+
+      try {
+        // Get the model instance for the current attempt
+        const model = genAI.getGenerativeModel({
+          model: currentModelName,
+          systemInstruction: systemPrompt
+        });
+
+        // Start chat
+        const chat = model.startChat({
+          history: chatHistory,
+          generationConfig: {
+            temperature: 0.7,
+            topP: 0.9,
+            topK: 40,
+            maxOutputTokens: 8192,
+          }
+        });
+
+        // Send the user message
+        const result = await chat.sendMessage(userMessage);
+        const response = await result.response;
+        const text = response.text();
+
+        if (!text) throw new Error('No response received from Gemini API');
+
+        // Return text. If we used a fallback model, maybe log it or append a tiny note?
+        // User prefers clean output, but knowing which model answered is useful for debugging.
+        // For now, let's keep it clean unless requested.
+        return text;
+
+      } catch (err) {
+        // Check for rate limit / quota issues (429) OR Model Not Found (404)
+        // If a model is not found (like 1.5 earlier), we should also skip it.
+        const isRateLimit = err.message?.includes('429') ||
+          err.status === 429 ||
+          err.message?.includes('quota');
+
+        const isModelNotFound = err.message?.includes('404') ||
+          err.status === 404 ||
+          err.message?.includes('not found');
+
+        // If Rate Limit OR Model Not Found, switch to next model
+        if (isRateLimit || isModelNotFound) {
+
+          // If we have more models to try
+          if (modelIndex < models.length - 1) {
+            console.warn(`Issue with ${currentModelName} (${isRateLimit ? 'Rate Limit' : 'Not Found'}). Switching to ${models[modelIndex + 1]}...`);
+            modelIndex++;
+            retries = 0; // Reset retries for the new model
+            continue; // Immediately try next model
+          } else {
+            // No more models
+            throw new Error(`All available models (${models.join(', ')}) are exhausted or unavailable. Please check your API quota.`);
+          }
+        }
+
+        // Standard Retry for temporary network blips (not rate limits)
+        if (retries < maxRetriesPerModel) {
+          retries++;
+          const delay = Math.pow(2, retries) * 1000;
+          console.log(`Error on ${currentModelName}. Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+        throw err;
       }
-    });
-
-    // Send the user message
-    const result = await chat.sendMessage(userMessage);
-    const response = await result.response;
-    const text = response.text();
-
-    if (!text) {
-      throw new Error('No response received from Gemini API');
     }
-
-    return text;
+    // If the loop finishes without returning, it means all retries failed
+    throw new Error('All attempts to send message failed due to persistent issues.');
 
   } catch (error) {
+    console.error("Gemini API Error details:", error);
+
     // Handle different types of errors
     if (error.message) {
       // Check for specific Gemini API error patterns
@@ -71,7 +130,10 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         throw new Error('Invalid API key. Please check your Gemini API key in .env.local');
       }
       if (error.message.includes('quota') || error.message.includes('rate limit') || error.message.includes('429')) {
-        throw new Error('Rate limit exceeded. Please wait 60 seconds before trying again. If this persists, check your Gemini API quota limits.');
+        throw new Error('Rate limit exceeded. We tried falling back to other models but they are also busy. Please try again later.');
+      }
+      if (error.message.includes('found') || error.message.includes('404')) {
+        throw new Error('Model not found or API endpoint invalid. Please check the model name configuration.');
       }
       if (error.message.includes('network') || error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
         throw new Error('Network error. Please check your internet connection and try again.');
@@ -84,7 +146,9 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         case 401:
           throw new Error('Invalid API key. Please check your Gemini API key in .env.local');
         case 429:
-          throw new Error('Rate limit exceeded. Please wait 60 seconds before trying again. Check your Gemini API quota limits.');
+          throw new Error('Rate limit exceeded (Free Tier). Please wait a moment before trying again.');
+        case 404:
+          throw new Error('Model not found (404). The configured model name might be incorrect for your API key.');
         case 500:
         case 502:
         case 503:
