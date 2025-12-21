@@ -30,8 +30,8 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
 
   // Auto-scroll logic when messages change or loading state changes
   useEffect(() => {
-    // Single smooth scroll with a short delay to ensure content is ready
-    const timer = setTimeout(() => scrollToBottom('smooth'), 100);
+    // Smooth scroll with a short delay to ensure content is ready
+    const timer = setTimeout(() => scrollToBottom('smooth'), 200);
     return () => clearTimeout(timer);
   }, [messages, isLoading]);
 
