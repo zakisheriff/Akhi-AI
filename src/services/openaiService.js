@@ -39,11 +39,10 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     ];
 
     // Retry logic with fallback through available models
-    // Primary: Llama 3.3 70B (State of the Art), Secondary: Llama 3.1 8B (Speed/Fallback)
+    // Using only current Groq production models (as of Dec 2024)
     const models = [
-      'llama-3.3-70b-versatile',
-      'llama-3.1-8b-instant',
-      'llama-3.1-70b-versatile'
+      'llama-3.3-70b-versatile',  // Primary: Llama 3.3 70B
+      'llama-3.1-8b-instant'      // Fallback: Llama 3.1 8B (fast)
     ];
 
     let modelIndex = 0;
@@ -72,7 +71,10 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         if (modelName === models[models.length - 1]) {
           // Enrich error message
           if (err.message.includes('401')) throw new Error('Invalid Groq API Key.');
-          if (err.message.includes('429')) throw new Error('Groq Rate Limit Exceeded. Please wait a moment.');
+          if (err.message.includes('429')) {
+            console.warn('⏳ Rate limit reached. Please try again in a few seconds.');
+            throw new Error('Rate limit reached. Please try again in a few seconds.');
+          }
           throw err;
         }
         // Otherwise continue to next model
