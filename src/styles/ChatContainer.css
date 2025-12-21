@@ -1,0 +1,122 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.chat-container__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  scroll-behavior: smooth;
+}
+
+/* Welcome message */
+.chat-container__welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.chat-container__welcome-title {
+  font-size: 1.5rem;
+  color: var(--color-deep-green);
+  margin-bottom: 0.75rem;
+  font-family: var(--font-arabic);
+  font-weight: 600;
+}
+
+.chat-container__welcome-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-dark);
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+/* Error message */
+.chat-container__error {
+  align-self: flex-start;
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 1rem;
+  border-bottom-left-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.75rem;
+  animation: fadeIn 0.3s ease-in;
+  font-size: 0.875rem;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .chat-container__error {
+    max-width: 85%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .chat-container__messages {
+    padding: 0.875rem 1rem;
+  }
+  
+  .chat-container__welcome {
+    padding: 1.5rem 1rem;
+  }
+  
+  .chat-container__welcome-title {
+    font-size: 1.25rem;
+  }
+  
+  .chat-container__welcome-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .chat-container__messages {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .chat-container__welcome {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .chat-container__messages {
+    padding: 1.5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
