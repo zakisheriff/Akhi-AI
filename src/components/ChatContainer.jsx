@@ -48,7 +48,23 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
       <div className="chat-container__messages" ref={messagesContainerRef}>
         {messages.length === 0 && !isLoading && (
           <div className="chat-container__welcome">
-            <div className="chat-container__welcome-icon">🕌</div>
+            <div className="chat-container__welcome-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="welcome-islam-logo"
+              >
+                <path
+                  d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C13.5658 22 15.0354 21.64 16.3475 21C11.5 20.5 7.5 16.5 7.5 12C7.5 7.5 11.5 3.5 16.3475 3C15.0354 2.36 13.5658 2 12 2Z"
+                  fill="var(--color-gold)"
+                />
+                <path
+                  d="M19 9.5L20 12L22.5 12L20.5 14L21 16.5L19 15L17 16.5L17.5 14L15.5 12L18 12L19 9.5Z"
+                  fill="var(--color-gold)"
+                />
+              </svg>
+            </div>
             <h2 className="chat-container__welcome-title">Assalamu Alaikum</h2>
             <p className="chat-container__welcome-text">
               Welcome to Al-Ilm. Ask me any question about Islam, and I'll provide you with authentic answers and references from the Quran, Hadith, and recognized scholars.

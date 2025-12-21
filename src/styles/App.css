@@ -6,17 +6,20 @@
   background-color: var(--color-off-white);
 }
 
-/* Minimal Glass Header */
+/* Floating Minimal Header */
 .app__header {
-  background: rgba(253, 246, 227, 0.85);
-  /* Translucent off-white */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(201, 169, 97, 0.15);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
   z-index: 10;
-  position: relative;
-  /* Ensure it doesn't crowd */
+  position: sticky;
+  top: 0;
+  height: auto;
+  min-height: 60px;
+  /* Reduced further */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .app__header::before {
@@ -36,21 +39,20 @@
 }
 
 .app__title {
-  font-size: 2.25rem;
-  /* Larger Arabic */
+  font-size: 1.5rem;
+  /* Minimized */
   font-weight: 700;
   margin: 0;
   font-family: var(--font-arabic);
   letter-spacing: 0;
   line-height: 1.2;
 
-  /* Gold Gradient Text */
-  background: linear-gradient(135deg, #B8943F 0%, #D4AF37 50%, #8A6E2F 100%);
+  /* Flat Gold Text */
+  background: linear-gradient(135deg, #B8943F 0%, #D4AF37 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-
-  filter: drop-shadow(0 2px 4px rgba(201, 169, 97, 0.1));
+  filter: none;
 }
 
 .app__subtitle {

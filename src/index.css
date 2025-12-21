@@ -148,8 +148,7 @@ button:disabled {
 }
 
 button:focus {
-  outline: 2px solid var(--color-deep-green);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Input Fields */
@@ -166,8 +165,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  outline: 2px solid var(--color-deep-green);
-  outline-offset: 2px;
+  outline: none;
 }
 
 /* Scrollbar Styling */

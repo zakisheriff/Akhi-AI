@@ -15,9 +15,9 @@
     position: absolute;
     top: 0;
     z-index: 1;
-    /* Symmetrical top and bottom fade */
-    mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+    /* Reduced top fade to allow content to reach the top */
+    mask-image: linear-gradient(to bottom, transparent, black 8%, black 88%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 88%, transparent);
 }
 
 .ambient-column--left {
