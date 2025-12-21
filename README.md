@@ -122,7 +122,7 @@ Al-Ilm AI is designed to be run locally or deployed to a verified environment.
 
 <div align="center">
 
-Made with ❤️ and Du'a by **Zaki Sheriff**
+Made by **Zaki Sheriff**
 
 <em>May this tool be a means of beneficial knowledge (Ilm Nafi) for the Ummah.</em>
 
