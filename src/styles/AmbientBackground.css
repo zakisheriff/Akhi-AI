@@ -131,8 +131,90 @@
     }
 }
 
+/* Hide desktop cards on mobile, show mobile effect instead */
 @media (max-width: 1024px) {
-    .ambient-background {
+    .ambient-column {
         display: none;
+    }
+
+    .ambient-background {
+        display: block;
+    }
+
+    /* Mobile: Subtle floating orbs - BOOSTED VISIBILITY */
+    .ambient-background::before,
+    .ambient-background::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(40px);
+        /* Reduced blur slightly for more definition */
+        z-index: -1;
+        /* Ensure behind content but visible */
+    }
+
+    .ambient-background::before {
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(201, 169, 97, 0.4) 0%, transparent 70%);
+        /* Stronger Gold */
+        top: 15%;
+        right: -40px;
+        animation: floatOrb1 8s ease-in-out infinite;
+        opacity: 0.5;
+        /* Much higher opacity */
+    }
+
+    .ambient-background::after {
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(230, 201, 138, 0.35) 0%, transparent 70%);
+        /* Stronger Gold Light */
+        bottom: 15%;
+        left: -60px;
+        animation: floatOrb2 10s ease-in-out infinite;
+        opacity: 0.4;
+        /* Much higher opacity */
+    }
+}
+
+@keyframes floatOrb1 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(-30px, 40px) scale(1.1);
+    }
+}
+
+@keyframes floatOrb2 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(40px, -30px) scale(1.15);
+    }
+}
+
+/* Add a subtle center glow for mobile */
+@media (max-width: 768px) {
+    .ambient-background::before {
+        width: 150px;
+        height: 150px;
+        top: 15%;
+        right: -30px;
+    }
+
+    .ambient-background::after {
+        width: 180px;
+        height: 180px;
+        bottom: 25%;
+        left: -50px;
     }
 }

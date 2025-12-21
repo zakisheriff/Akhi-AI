@@ -103,6 +103,7 @@
 
 .chat-container__welcome-highlight {
   font-weight: 700;
+  font-family: var(--font-arabic);
   color: var(--color-gold);
 }
 

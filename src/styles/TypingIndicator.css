@@ -86,6 +86,7 @@
 
 .typing-indicator__highlight {
   font-weight: 700;
+  font-family: var(--font-arabic);
   color: var(--color-gold);
 }
 
