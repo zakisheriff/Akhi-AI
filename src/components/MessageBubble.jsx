@@ -147,6 +147,10 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       .replace(/^>\s*/gm, '')
       .replace(/•\s*\n\s*/g, '• ')
       .replace(/\n{2,}/g, '\n')
+      // Fix Prophet salutation - add ﷺ if missing
+      .replace(/Prophet\s*(Muhammad|Mohammad)?\s*(\(\s*\)|said|taught|mentioned)/gi, 'Prophet Muhammad ﷺ $2')
+      .replace(/The\s+Messenger\s+of\s+Allah\s+(\(\s*\)|said|taught)/gi, 'The Messenger of Allah ﷺ $1')
+      .replace(/\(\s*\)/g, '') // Remove empty parentheses
       .trim();
 
     return cleaned;
