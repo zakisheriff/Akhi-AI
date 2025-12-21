@@ -51,7 +51,7 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
             <div className="chat-container__welcome-icon">🕌</div>
             <h2 className="chat-container__welcome-title">Assalamu Alaikum</h2>
             <p className="chat-container__welcome-text">
-              Welcome to Al-Ilm AI. Ask me any question about Islam, and I'll provide you with authentic answers and references from the Quran, Hadith, and recognized scholars.
+              Welcome to Al-Ilm. Ask me any question about Islam, and I'll provide you with authentic answers and references from the Quran, Hadith, and recognized scholars.
             </p>
             <div className="chat-container__welcome-suggestions">
               <span className="chat-container__suggestion">What is the importance of Salah?</span>

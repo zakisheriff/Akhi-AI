@@ -13,9 +13,7 @@ const SchoolSelector = ({ selectedSchool, onSchoolChange }) => {
 
   return (
     <div className="school-selector">
-      <label htmlFor="school-select" className="school-selector__label">
-        School of Thought:
-      </label>
+
       <select
         id="school-select"
         className="school-selector__select"
