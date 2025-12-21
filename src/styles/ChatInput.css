@@ -53,6 +53,17 @@
   border: none;
   align-self: center;
   /* Center text vertically in single line */
+
+  /* Hide scrollbar but keep scrollable */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.chat-input__field::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .chat-input__field::placeholder {

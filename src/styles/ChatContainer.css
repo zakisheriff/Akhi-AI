@@ -105,6 +105,11 @@
   z-index: 1;
 }
 
+.chat-container__welcome-highlight {
+  font-weight: 700;
+  color: var(--color-gold);
+}
+
 /* Suggestion chips - Refined Pills */
 .chat-container__welcome-suggestions {
   display: flex;

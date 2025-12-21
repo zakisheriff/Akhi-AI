@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/TypingIndicator.css";
 
 const defaultMessages = [
-  "Al-Ilm is researching",
+  <><span className="typing-indicator__highlight">Al-Ilm</span> is researching</>,
   "Consulting authentic sources",
   "Searching the Quran & Hadith",
   "Finding scholarly wisdom",
@@ -22,7 +22,7 @@ const TypingIndicator = ({ context }) => {
     return clean.length < 20 && /^(hi|hello|hey|salam|slm|as-salamu|assalamu|peace)/.test(clean);
   }, [context]);
 
-  const activeMessages = isGreeting ? ["Al-Ilm is replying"] : defaultMessages;
+  const activeMessages = isGreeting ? [<><span className="typing-indicator__highlight">Al-Ilm</span> is replying</>] : defaultMessages;
 
   // Force scroll into view on mount - critical fix for visibility
   useEffect(() => {
