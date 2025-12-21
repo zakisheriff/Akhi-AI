@@ -30,9 +30,11 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
 
   // Auto-scroll logic when messages change or loading state changes
   useEffect(() => {
-    // Smooth scroll with a short delay to ensure content is ready
-    const timer = setTimeout(() => scrollToBottom('smooth'), 200);
-    return () => clearTimeout(timer);
+    // Only scroll if there are messages to scroll to
+    if (messages.length > 0) {
+      const timer = setTimeout(() => scrollToBottom('smooth'), 200);
+      return () => clearTimeout(timer);
+    }
   }, [messages, isLoading]);
 
   // Handle when typewriter effect completes
