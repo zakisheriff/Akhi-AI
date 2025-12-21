@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://al-ilm.theoneatom.com/sitemap.xml
