@@ -40,8 +40,11 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
     setTypingMessageIndex(-1);
   }, []);
 
+  // Determine if we are in "Hero" mode (no messages yet)
+  const isHero = messages.length === 0 && !isLoading;
+
   return (
-    <div className="chat-container" ref={containerRef}>
+    <div className={`chat-container ${isHero ? 'chat-container--hero' : ''}`} ref={containerRef}>
       <div className="chat-container__messages" ref={messagesContainerRef}>
         {messages.length === 0 && !isLoading && (
           <div className="chat-container__welcome">
@@ -70,7 +73,7 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
 
         {isLoading && (
           <div style={{ minHeight: '80px', width: '100%', display: 'flex', flexDirection: 'column' }}>
-            <TypingIndicator />
+            <TypingIndicator context={messages[messages.length - 1]?.text} />
           </div>
         )}
 

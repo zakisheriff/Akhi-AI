@@ -219,3 +219,56 @@
     font-size: 2rem;
   }
 }
+
+/* Hero Mode (Centered Input) */
+.chat-container--hero {
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.chat-container--hero .chat-container__messages {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 800px;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 2rem;
+}
+
+/* Hide scrollbar in hero mode */
+.chat-container--hero .chat-container__messages::-webkit-scrollbar {
+  display: none;
+}
+
+/* Adjust Welcome in Hero Mode */
+.chat-container--hero .chat-container__welcome {
+  padding: 0;
+  margin: 0 auto;
+  animation: none;
+  /* Let the container handle transitions */
+}
+
+/* Center Input in Hero Mode */
+.chat-container--hero .chat-input {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  flex: 0 0 auto;
+  background-color: transparent;
+  padding: 0 1rem;
+}
+
+.chat-container--hero .chat-input__container {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Reduced shadow */
+  padding: 0.5rem 0.75rem;
+  /* Reduced padding matches ChatInput.css */
+  border-radius: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chat-container--hero .chat-input__field {
+  font-size: 1rem;
+  /* Standard readable size, not giant */
+}

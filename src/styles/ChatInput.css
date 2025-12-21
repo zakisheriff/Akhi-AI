@@ -1,40 +1,54 @@
 .chat-input {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
+  /* Minimal padding around container */
   background-color: var(--color-off-white);
 }
 
 .chat-input__container {
   display: flex;
   align-items: flex-end;
+  /* Align bottom for multi-line */
   gap: 0.5rem;
-  max-width: 900px;
+  max-width: 650px;
+  /* Reduced width */
   margin: 0 auto;
   background-color: var(--color-white);
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  /* Subtle border like ChatGPT */
   border-radius: 1.5rem;
-  padding: 0.5rem 0.75rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Pill shape */
+  padding: 0.35rem 0.5rem;
+  /* Very compact inner padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* Lighter shadow */
   transition: box-shadow 0.2s ease;
+  min-height: 44px;
+  /* Fixed robust height */
 }
 
 .chat-input__container:focus-within {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .chat-input__field {
   flex: 1;
-  min-height: 36px;
-  max-height: 120px;
-  padding: 0.5rem 0.75rem;
+  min-height: 24px;
+  /* Tiny minimum */
+  max-height: 200px;
+  padding: 0.25rem 0.5rem;
+  /* Minimal padding text */
   font-family: inherit;
   font-size: 0.9375rem;
-  line-height: 1.5;
+  line-height: 1.4;
   color: var(--color-text-dark);
   background-color: transparent;
   resize: none;
   overflow-y: auto;
   border: none;
+  align-self: center;
+  /* Center text vertically in single line */
 }
 
 .chat-input__field::placeholder {
@@ -100,25 +114,25 @@
   .chat-input {
     padding: 0.625rem 0.75rem;
   }
-  
+
   .chat-input__container {
     padding: 0.5rem;
     border-radius: 1.25rem;
   }
-  
+
   .chat-input__field {
     font-size: 0.9375rem;
     padding: 0.5rem;
     min-height: 32px;
   }
-  
+
   .chat-input__button {
     width: 32px;
     height: 32px;
     min-width: 32px;
     min-height: 32px;
   }
-  
+
   .chat-input__icon {
     width: 14px;
     height: 14px;

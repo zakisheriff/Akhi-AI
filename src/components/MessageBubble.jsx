@@ -137,6 +137,7 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
   // Clean markdown with STRICT rules as requested
   const cleanMarkdown = (text) => {
     let cleaned = text
+      .replace(/\\n/g, '\n') // Fix literal \n strings
       .replace(/~~(.*?)~~/g, '$1')
       .replace(/`([^`]+)`/g, '$1')
       .replace(/```[\s\S]*?```/g, '')
@@ -148,13 +149,11 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       .replace(/^\*\s+/gm, '• ')
       // Remove blockquotes >
       .replace(/^>\s*/gm, '')
-      // Remove newline between bullet and text if it exists (e.g. "• \n text" -> "• text")
+      // Remove newline between bullet and text if it exists (Fix "• \n Text")
       .replace(/•\s*\n\s*/g, '• ')
-      // Remove < and > if used as brackets
-      .replace(/</g, '')
-      .replace(/>/g, '')
-      // Collapse multiple newlines into max 2
-      .replace(/\n{3,}/g, '\n\n');
+      // Collapse multiple newlines into single newline (Compact Mode)
+      .replace(/\n{2,}/g, '\n')
+      .trim(); // Trim start/end whitespace
 
     return cleaned;
   };
