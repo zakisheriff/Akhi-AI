@@ -207,7 +207,7 @@ textarea:focus {
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-deep-green);
+    background: #B8943F;
   }
 }
 
