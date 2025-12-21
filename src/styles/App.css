@@ -6,11 +6,11 @@
   background-color: var(--color-off-white);
 }
 
-/* Floating Minimal Header */
+/* Solid Minimal Header */
 .app__header {
-  background: transparent;
-  border-bottom: none;
-  box-shadow: none;
+  background-color: var(--color-off-white);
+  border-bottom: 1px solid rgba(201, 169, 97, 0.1);
+  /* Subtle hairline border */
   z-index: 10;
   position: sticky;
   top: 0;
