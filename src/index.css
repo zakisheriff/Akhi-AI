@@ -77,8 +77,9 @@ body {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-base);
-  color: var(--color-text-dark);
-  background-color: var(--color-off-white);
+  color: var(--color-off-white);
+  background: linear-gradient(180deg, #0a1f14 0%, #013220 50%, #0a2818 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;

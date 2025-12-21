@@ -3,50 +3,48 @@
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
-  /* Dynamic viewport height fix for mobile browsers */
   max-height: 100vh;
   max-height: 100dvh;
   width: 100%;
   overflow: hidden;
   background: transparent;
   position: relative;
-  /* Added for absolute input */
 }
 
 .chat-container__messages {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 1.5rem 100px;
-  /* Added 100px bottom padding for floating input */
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
   scroll-behavior: smooth;
-
-  /* Removed all Masks/Shading for maximum visibility */
   mask-image: none;
   -webkit-mask-image: none;
 }
 
-/* Welcome message - Glassmorphism Card */
+/* Welcome message - Premium Glassmorphism Card */
 .chat-container__welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.5rem 1.25rem;
-  /* Compact padding */
-  max-width: 480px;
-  /* Small/Medium size */
+  padding: 2rem 2rem;
+  max-width: 500px;
   margin: auto;
   animation: welcomeFadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  /* Minimal Flat Design */
-  background: var(--color-off-white);
-  border: 1px solid rgba(201, 169, 97, 0.15);
-  border-radius: 2rem;
-  box-shadow: none;
+  /* Premium Glassmorphism */
+  background: rgba(1, 50, 32, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 169, 97, 0.25);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
   position: relative;
   overflow: hidden;
 }
@@ -81,25 +79,23 @@
 
 .chat-container__welcome-title {
   font-size: 2.25rem;
-  /* Medium size */
   font-family: var(--font-arabic);
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.25;
-  background: linear-gradient(135deg, var(--color-deep-green) 0%, #2e7d32 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   z-index: 1;
 }
 
 .chat-container__welcome-text {
   font-size: 0.9375rem;
-  /* Slightly smaller text */
-  color: #4a5568;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
   margin-bottom: 1.25rem;
-  /* Tightened margin */
   font-weight: 400;
   max-width: 95%;
   z-index: 1;
@@ -116,25 +112,24 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.875rem;
-  /* Slightly more space between buttons */
   margin-top: 1rem;
-  /* More space from text above */
   perspective: 1000px;
 }
 
 .chat-container__suggestion {
   padding: 0.6rem 1.25rem;
-  background: #FFFFFF;
-  border: 1px solid rgba(201, 169, 97, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(201, 169, 97, 0.3);
   border-radius: 3rem;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--color-deep-green);
+  color: var(--color-gold-light);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
-  /* Staggered Entrance */
   opacity: 0;
   animation: slideUpFade 0.5s ease-out forwards;
 }
@@ -164,11 +159,11 @@
 }
 
 .chat-container__suggestion:hover {
-  background: var(--color-deep-green);
-  color: #FFFFFF;
-  border-color: var(--color-deep-green);
+  background: rgba(201, 169, 97, 0.2);
+  color: var(--color-gold);
+  border-color: var(--color-gold);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(1, 50, 32, 0.2);
+  box-shadow: 0 4px 16px rgba(201, 169, 97, 0.25);
 }
 
 /* Error message */

@@ -3,28 +3,28 @@
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  background-color: var(--color-off-white);
+  background: transparent;
 }
 
-/* Solid Minimal Header */
+/* Glassmorphism Header */
 .app__header {
-  background-color: var(--color-off-white);
-  border-bottom: 1px solid rgba(201, 169, 97, 0.1);
-  /* Subtle hairline border */
+  background: rgba(10, 40, 28, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201, 169, 97, 0.2);
   z-index: 10;
   position: sticky;
   top: 0;
   height: auto;
   min-height: 60px;
-  /* Reduced further */
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
 
 .app__header::before {
   display: none;
-  /* Remove old overlay */
 }
 
 .app__header-content {
@@ -40,29 +40,25 @@
 
 .app__title {
   font-size: 1.5rem;
-  /* Minimized */
   font-weight: 700;
   margin: 0;
   font-family: var(--font-arabic);
   letter-spacing: 0;
   line-height: 1.2;
-
-  /* Flat Gold Text */
-  background: linear-gradient(135deg, #B8943F 0%, #D4AF37 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .app__subtitle {
   display: block;
-  /* Show subtitle now */
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--color-deep-green);
-  opacity: 0.8;
-  letter-spacing: 0.05em;
+  color: var(--color-gold-light);
+  opacity: 0.9;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-top: 0.25rem;
   font-family: 'Outfit', sans-serif;

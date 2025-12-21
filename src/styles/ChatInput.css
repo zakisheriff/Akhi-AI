@@ -4,45 +4,41 @@
   left: 0;
   width: 100%;
   padding: 1.5rem 1rem 1.75rem;
-  background: transparent;
+  background: linear-gradient(to top, rgba(10, 31, 20, 0.95) 0%, rgba(10, 31, 20, 0.8) 70%, transparent 100%);
   z-index: 10;
   border-top: none;
   pointer-events: none;
-  /* Allow scrolling through transparent areas */
+  border-radius: 30px;
 }
 
 .chat-input__container {
   pointer-events: auto;
-  /* Reactivate for the actual pill */
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
   max-width: 700px;
-  /* Matched to bubble width */
   margin: 0 auto;
-  background-color: var(--color-white);
-  border: 1px solid rgba(201, 169, 97, 0.2);
-  /* Defined border instead of shadow */
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(201, 169, 97, 0.3);
   border-radius: 1.5rem;
   padding: 0.35rem 0.5rem;
-  box-shadow: none;
-  /* Removed shading */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
   min-height: 44px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .chat-input__container:focus-within {
   border-color: var(--color-gold);
-  /* Simple border focus */
+  box-shadow: 0 4px 24px rgba(201, 169, 97, 0.25);
 }
 
 .chat-input__field {
   flex: 1;
   min-height: 24px;
-  /* Tiny minimum */
   max-height: 200px;
   padding: 0.25rem 0.5rem;
-  /* Minimal padding text */
   font-family: inherit;
   font-size: 0.9375rem;
   line-height: 1.4;
@@ -52,11 +48,8 @@
   overflow-y: auto;
   border: none;
   align-self: center;
-  /* Center text vertically in single line */
 
-  /* Hide scrollbar but keep scrollable */
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
   /* IE/Edge */
 }
