@@ -44,9 +44,8 @@
 
 /* Dark theme glassmorphism cards */
 .ambient-card {
-    background: rgba(1, 50, 32, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(1, 50, 32, 0.9);
+    /* backdrop-filter: blur(8px); - Removed for Performance */
     border: 1px solid rgba(201, 169, 97, 0.2);
     padding: 1.5rem;
     border-radius: 1rem;
@@ -147,8 +146,7 @@
         content: '';
         position: absolute;
         border-radius: 50%;
-        filter: blur(40px);
-        /* Reduced blur slightly for more definition */
+        /* filter: blur(40px); - Removed for Performance */
         z-index: -1;
         /* Ensure behind content but visible */
     }
