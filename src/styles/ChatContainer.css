@@ -14,7 +14,7 @@
 .chat-container__messages {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem 1.5rem 100px;
+  padding: 1rem 1.5rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
