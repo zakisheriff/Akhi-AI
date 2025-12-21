@@ -294,14 +294,7 @@
 }
 
 /* Hero Mode Adjustments */
-.chat-container--hero .chat-container__messages {
-  flex: 0 0 auto;
-  width: 100%;
-  max-width: none;
-  overflow: visible;
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
+/* Hero Mode Adjustments Removed to allow flex resize */
 
 .chat-container--hero .chat-container__messages-inner {
   max-width: 700px;
