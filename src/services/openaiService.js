@@ -140,9 +140,70 @@ const callMistral = async (messages, systemPrompt) => {
   return null;
 };
 
+// ============ OPENROUTER PROVIDER (PRIMARY) ============
+const callOpenRouter = async (messages, systemPrompt) => {
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (!apiKey) return null;
+
+  // OpenRouter free models - many fallback options!
+  const models = [
+    'mistralai/mistral-7b-instruct:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'google/gemma-2-9b-it:free',
+    'qwen/qwen-2.5-72b-instruct:free',
+    'microsoft/phi-3-mini-128k-instruct:free',
+    'nousresearch/hermes-3-llama-3.1-405b:free',
+    'openchat/openchat-7b:free',
+    'huggingfaceh4/zephyr-7b-beta:free'
+  ];
+
+  for (const model of models) {
+    try {
+      console.log(`🔄 Trying OpenRouter (${model.split('/')[1].split(':')[0]})...`);
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Al-Ilm'
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'system', content: systemPrompt }, ...messages],
+          temperature: 0.6,
+          max_tokens: 8192
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`${response.status} ${errorData.error?.message || response.statusText}`);
+      }
+
+      const data = await response.json();
+      const text = data.choices[0]?.message?.content;
+
+      if (text) {
+        console.log(`✅ Success with OpenRouter (${model.split('/')[1].split(':')[0]})`);
+        return text;
+      }
+    } catch (err) {
+      console.warn(`⚠️ OpenRouter (${model.split('/')[1].split(':')[0]}) failed:`, err.message);
+      if (err.message?.includes('429') || err.message?.includes('404')) {
+        continue;
+      }
+      // For other errors, try next model
+      continue;
+    }
+  }
+  return null;
+};
+
 /**
  * Sends a message using multi-provider fallback
- * Order: Groq → Gemini → Mistral
+ * Order: OpenRouter (many free models) → Groq → Gemini → Mistral
  */
 export const sendMessage = async (userMessage, school = 'general', conversationHistory = []) => {
   const systemPrompt = buildSystemPrompt(school);
@@ -158,7 +219,23 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
   const maxRetries = 2;
   let lastError = null;
 
-  // Try Groq first (fastest)
+  // Try OpenRouter first (many free models)
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const result = await callOpenRouter(messages, systemPrompt);
+      if (result) return result;
+      break;
+    } catch (err) {
+      lastError = err;
+      if (err.status === 429 || err.message?.includes('429')) {
+        console.log(`⏳ OpenRouter rate limited, trying Groq...`);
+        break;
+      }
+      if (i < maxRetries - 1) await sleep(1000);
+    }
+  }
+
+  // Try Groq second (fastest)
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await callGroq(messages, systemPrompt);
@@ -190,10 +267,26 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     }
   }
 
-  // Try Mistral as final fallback (highest free tier limits)
+  // Try Mistral third
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await callMistral(messages, systemPrompt);
+      if (result) return result;
+      break;
+    } catch (err) {
+      lastError = err;
+      if (err.message?.includes('429')) {
+        console.log(`⏳ Mistral rate limited, trying OpenRouter...`);
+        break;
+      }
+      if (i < maxRetries - 1) await sleep(1000);
+    }
+  }
+
+  // Try OpenRouter as final fallback (free models)
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const result = await callOpenRouter(messages, systemPrompt);
       if (result) return result;
       break;
     } catch (err) {
