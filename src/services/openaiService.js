@@ -43,7 +43,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     const models = [
       'llama-3.3-70b-versatile',
       'llama-3.1-8b-instant',
-      'llama3-70b-8192'
+      'llama-3.1-70b-versatile'
     ];
 
     let modelIndex = 0;
