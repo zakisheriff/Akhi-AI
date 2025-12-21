@@ -219,23 +219,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
   const maxRetries = 2;
   let lastError = null;
 
-  // Try OpenRouter first (many free models)
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const result = await callOpenRouter(messages, systemPrompt);
-      if (result) return result;
-      break;
-    } catch (err) {
-      lastError = err;
-      if (err.status === 429 || err.message?.includes('429')) {
-        console.log(`⏳ OpenRouter rate limited, trying Groq...`);
-        break;
-      }
-      if (i < maxRetries - 1) await sleep(1000);
-    }
-  }
-
-  // Try Groq second (fastest)
+  // Try Groq first (FASTEST)
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await callGroq(messages, systemPrompt);
@@ -251,7 +235,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     }
   }
 
-  // Try Gemini second
+  // Try Gemini second (RELIABLE & FAST)
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await callGemini(messages, systemPrompt);
@@ -283,7 +267,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
     }
   }
 
-  // Try OpenRouter as final fallback (free models)
+  // Try OpenRouter as final fallback (SLOWEST BUT FREE)
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await callOpenRouter(messages, systemPrompt);
@@ -291,9 +275,17 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
       break;
     } catch (err) {
       lastError = err;
+      if (err.status === 429 || err.message?.includes('429')) {
+        console.log(`⏳ OpenRouter rate limited...`);
+        break;
+      }
       if (i < maxRetries - 1) await sleep(1000);
     }
   }
+
+
+
+
 
   // All providers failed
   console.error('❌ All providers failed');
