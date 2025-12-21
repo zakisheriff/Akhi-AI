@@ -3,7 +3,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 1rem 1rem;
+  padding: 1.5rem 1rem 1.75rem;
   background: transparent;
   z-index: 10;
   border-top: none;
@@ -118,7 +118,7 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .chat-input {
-    padding: 1rem 0.75rem 1.5rem;
+    padding: 1rem 0.75rem 2.25rem;
     background: transparent;
   }
 
