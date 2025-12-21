@@ -1,4 +1,17 @@
+# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /assets/
 
+# Block aggressive AI scrapers if desired (Optional, currently allowing)
+# User-agent: GPTBot
+# Disallow: /
+
+# Host
+Host: https://al-ilm.theoneatom.com
+
+# Sitemap
 Sitemap: https://al-ilm.theoneatom.com/sitemap.xml
