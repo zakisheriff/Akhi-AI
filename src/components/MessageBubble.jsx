@@ -145,18 +145,17 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       .replace(/(\w)\s*--+\s*(\w)/g, '$1 — $2')
       .replace(/--/g, '')
       .replace(/^-\s+/gm, '• ')
-      .replace(/^\*\s+/gm, '• ') // Bullets
+      .replace(/^\*\s+/gm, '• ')
+      // Remove blockquotes >
+      .replace(/^>\s*/gm, '')
+      // Remove newline between bullet and text if it exists (e.g. "• \n text" -> "• text")
+      .replace(/•\s*\n\s*/g, '• ')
+      // Remove < and > if used as brackets
+      .replace(/</g, '')
+      .replace(/>/g, '')
       // Collapse multiple newlines into max 2
       .replace(/\n{3,}/g, '\n\n');
 
-    // Remove standalone * that are likely artifacts, but keep * for italics handled by parser
-    // This removes * if it's NOT part of a pair, roughly. 
-    // Actually, safer to let the parser handle valid ones and then strip remaining?
-    // But RenderWithFormatting happens AFTER. 
-    // If I strip all * here, I lose italics.
-    // The user wants "NO *". 
-    // I will try to support italics, but if they are seeing stray *, it means the regex missed.
-    // Let's rely on standardizing bullets first.
     return cleaned;
   };
 

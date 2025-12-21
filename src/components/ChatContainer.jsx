@@ -6,6 +6,7 @@ import '../styles/ChatContainer.css';
 
 const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const containerRef = useRef(null);
   const [typingMessageIndex, setTypingMessageIndex] = useState(-1);
 
@@ -20,23 +21,19 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
     }
   }, [messages, isLoading]);
 
-  // Auto-scroll to bottom when new messages arrive or loading state changes
-  useEffect(() => {
-    // Immediate scroll
-    scrollToBottom();
-
-    // Delayed scroll to ensure loading indicator transition is accounted for
-    const timer = setTimeout(scrollToBottom, 200);
-    const timer2 = setTimeout(scrollToBottom, 500); // Extra backup check
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(timer2);
-    };
-  }, [messages, isLoading, typingMessageIndex]);
-
+  // Handle scroll behavior robustly - ScrollTop is king
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
+
+  // Auto-scroll logic
+  useEffect(() => {
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [messages, isLoading]);
 
   // Handle when typewriter effect completes
   const handleTypingComplete = useCallback(() => {
@@ -45,7 +42,7 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
 
   return (
     <div className="chat-container" ref={containerRef}>
-      <div className="chat-container__messages">
+      <div className="chat-container__messages" ref={messagesContainerRef}>
         {messages.length === 0 && !isLoading && (
           <div className="chat-container__welcome">
             <div className="chat-container__welcome-icon">🕌</div>
@@ -71,7 +68,11 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
           />
         ))}
 
-        {isLoading && <TypingIndicator />}
+        {isLoading && (
+          <div style={{ minHeight: '80px', width: '100%', display: 'flex', flexDirection: 'column' }}>
+            <TypingIndicator />
+          </div>
+        )}
 
         {error && (
           <div className="chat-container__error">

@@ -12,6 +12,18 @@ const loadingMessages = [
 const TypingIndicator = () => {
   const [messageIndex, setMessageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const indicatorRef = React.useRef(null);
+
+  // Force scroll into view on mount - critical fix for visibility
+  useEffect(() => {
+    if (indicatorRef.current) {
+      indicatorRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      // Force confirm
+      setTimeout(() => {
+        if (indicatorRef.current) indicatorRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+      }, 100);
+    }
+  }, []);
 
   // Rotate through loading messages
   useEffect(() => {
@@ -27,7 +39,7 @@ const TypingIndicator = () => {
   }, []);
 
   return (
-    <div className="typing-indicator">
+    <div className="typing-indicator" ref={indicatorRef}>
       <div className="typing-indicator__content">
         <div className="typing-indicator__icon">
           <div className="typing-indicator__book">📖</div>
