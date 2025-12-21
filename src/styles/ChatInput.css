@@ -1,16 +1,24 @@
 .chat-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  padding: 0.375rem 1rem 1.5rem;
-  /* Increased bottom padding */
-  background-color: transparent;
+  padding: 1.5rem 1rem 1rem;
+  background: transparent;
+  z-index: 10;
   border-top: none;
+  pointer-events: none;
+  /* Allow scrolling through transparent areas */
 }
 
 .chat-input__container {
+  pointer-events: auto;
+  /* Reactivate for the actual pill */
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
-  max-width: 500px;
+  max-width: 700px;
+  /* Matched to bubble width */
   margin: 0 auto;
   background-color: var(--color-white);
   border: 1px solid rgba(201, 169, 97, 0.2);
@@ -110,8 +118,8 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .chat-input {
-    padding: 0.625rem 0.75rem 1.25rem;
-    /* Increased bottom padding for mobile */
+    padding: 1rem 0.75rem 1.5rem;
+    background: transparent;
   }
 
   .chat-input__container {
