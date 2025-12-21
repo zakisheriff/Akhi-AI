@@ -20,9 +20,10 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
     if (trimmedValue && !disabled) {
       onSendMessage(trimmedValue);
       setInputValue('');
-      // Reset textarea height
+      // Reset textarea height and blur to dismiss keyboard on mobile
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
+        textareaRef.current.blur();
       }
     }
   };
