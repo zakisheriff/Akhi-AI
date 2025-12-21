@@ -1,49 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TypewriterText from './TypewriterText';
 import '../styles/MessageBubble.css';
 
 const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   // Helper to parse text with Bold and Italic tags
   const parseBoldAndItalic = (text) => {
-    // Split by bold (** or __) AND italic (* or _)
-    // Regex matches: **bold**, __bold__, *italic*, _italic_
-    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|\*(?![*\s])[^*]+(?<!\s)\*|_(?![_\s])[^_]+(?<!\s)_)/g);
+    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__)/g);
 
     return parts.map((part, index) => {
-      // Bold
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={index} className="message-bold">{part.slice(2, -2)}</strong>;
       }
       if (part.startsWith('__') && part.endsWith('__')) {
         return <strong key={index} className="message-bold">{part.slice(2, -2)}</strong>;
       }
-      // Italic
-      if ((part.startsWith('*') && part.endsWith('*')) || (part.startsWith('_') && part.endsWith('_'))) {
-        return <em key={index} className="message-italic">{part.slice(1, -1)}</em>;
-      }
       return part;
     });
   };
 
   // Parse and render markdown links as clickable anchors
-  // Now also handles Bold/Italic parsing inside text chunks
   const renderWithFormatting = (text) => {
-    // Split by markdown link pattern [text](url)
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     const parts = [];
     let lastIndex = 0;
     let match;
 
     while ((match = linkRegex.exec(text)) !== null) {
-      // Add text before the link (parse for bold/italic)
       if (match.index > lastIndex) {
         parts.push({
           type: 'text',
           content: text.slice(lastIndex, match.index)
         });
       }
-      // Add the link
       parts.push({
         type: 'link',
         text: match[1],
@@ -52,7 +52,6 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       lastIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
     if (lastIndex < text.length) {
       parts.push({
         type: 'text',
@@ -75,7 +74,6 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
           </a>
         );
       }
-      // Recursively parse bold/italic inside text chunks
       return <span key={index}>{parseBoldAndItalic(part.content)}</span>;
     });
   };
@@ -87,7 +85,7 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
     return lines.map((line, index) => {
       const trimmedLine = line.trim();
 
-      // Handle Headers (H2-H4)
+      // Handle Headers
       if (trimmedLine.startsWith('## ')) {
         return <h3 key={index} className="message-heading-h3">{renderWithFormatting(trimmedLine.slice(3))}</h3>;
       }
@@ -114,7 +112,6 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       if (hasReference || /^[-•]\s/.test(trimmedLine)) {
         return (
           <React.Fragment key={index}>
-            {/* Render bullet point styled reference */}
             <div className="message-list-item">
               <span className="message-list-bullet">•</span>
               <span className="message-reference-text">{renderWithFormatting(line.replace(/^[-•]\s/, ''))}</span>
@@ -134,10 +131,10 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
     });
   };
 
-  // Clean markdown with STRICT rules as requested
+  // Clean markdown
   const cleanMarkdown = (text) => {
     let cleaned = text
-      .replace(/\\n/g, '\n') // Fix literal \n strings
+      .replace(/\\n/g, '\n')
       .replace(/~~(.*?)~~/g, '$1')
       .replace(/`([^`]+)`/g, '$1')
       .replace(/```[\s\S]*?```/g, '')
@@ -147,13 +144,10 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
       .replace(/--/g, '')
       .replace(/^-\s+/gm, '• ')
       .replace(/^\*\s+/gm, '• ')
-      // Remove blockquotes >
       .replace(/^>\s*/gm, '')
-      // Remove newline between bullet and text if it exists (Fix "• \n Text")
       .replace(/•\s*\n\s*/g, '• ')
-      // Collapse multiple newlines into single newline (Compact Mode)
       .replace(/\n{2,}/g, '\n')
-      .trim(); // Trim start/end whitespace
+      .trim();
 
     return cleaned;
   };
@@ -164,21 +158,44 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
     <div className={`message-bubble ${isUser ? 'message-bubble--user' : 'message-bubble--ai'}`}>
       <div className="message-bubble__content">
         {isUser ? (
-          // User messages don't need typewriter effect
           formatTextContent(processedMessage)
         ) : isTyping ? (
-          // AI messages use typewriter effect when typing
           <TypewriterText
             text={processedMessage}
-            speed={1} // Super fast
+            speed={1}
             onComplete={onTypingComplete}
             renderContent={(txt) => formatTextContent(txt)}
           />
         ) : (
-          // Completed AI messages render normally
           formatTextContent(processedMessage)
         )}
       </div>
+      {!isTyping && (
+        <div className="message-bubble__actions">
+          <button
+            className="message-bubble__copy-btn"
+            onClick={handleCopy}
+            title={copied ? 'Copied!' : 'Copy message'}
+          >
+            {copied ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Copied</span>
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
