@@ -8,28 +8,26 @@
 .chat-input__container {
   display: flex;
   align-items: flex-end;
-  /* Align bottom for multi-line */
   gap: 0.5rem;
   max-width: 650px;
-  /* Reduced width */
   margin: 0 auto;
   background-color: var(--color-white);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  /* Subtle border like ChatGPT */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  /* Softer border */
   border-radius: 1.5rem;
-  /* Pill shape */
   padding: 0.35rem 0.5rem;
-  /* Very compact inner padding */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  /* Lighter shadow */
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  /* Elevated */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   min-height: 44px;
-  /* Fixed robust height */
 }
 
 .chat-input__container:focus-within {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  /* Lift on focus */
+  border-color: rgba(201, 169, 97, 0.4);
+  /* Gold tint */
+  transform: translateY(-1px);
 }
 
 .chat-input__field {

@@ -54,9 +54,20 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
               Welcome to Al-Ilm. Ask me any question about Islam, and I'll provide you with authentic answers and references from the Quran, Hadith, and recognized scholars.
             </p>
             <div className="chat-container__welcome-suggestions">
-              <span className="chat-container__suggestion">What is the importance of Salah?</span>
-              <span className="chat-container__suggestion">Explain Surah Al-Fatiha</span>
-              <span className="chat-container__suggestion">What are the pillars of Islam?</span>
+              {[
+                "What is the importance of Salah?",
+                "Explain Surah Al-Fatiha",
+                "What are the pillars of Islam?"
+              ].map((suggestion, index) => (
+                <button
+                  key={index}
+                  className="chat-container__suggestion"
+                  onClick={() => onSendMessage(suggestion)}
+                  type="button"
+                >
+                  {suggestion}
+                </button>
+              ))}
             </div>
           </div>
         )}

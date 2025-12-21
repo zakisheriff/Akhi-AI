@@ -5,7 +5,9 @@
   max-height: 100vh;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--color-off-white) 0%, rgba(253, 246, 227, 0.95) 100%);
+  /* Subtle light background with golden glow at top */
+  background: radial-gradient(circle at 50% 0%, rgba(201, 169, 97, 0.15) 0%, rgba(253, 246, 227, 0) 60%),
+    var(--color-off-white);
 }
 
 .chat-container__messages {
@@ -18,78 +20,151 @@
   scroll-behavior: smooth;
 }
 
-/* Welcome message */
+/* Welcome message - Glassmorphism Card */
 .chat-container__welcome {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2.5rem 1.5rem;
-  max-width: 550px;
+  padding: 1.5rem 1.25rem;
+  /* Compact padding */
+  max-width: 480px;
+  /* Small/Medium size */
   margin: auto;
-  animation: welcomeFadeIn 0.6s ease-out;
+  animation: welcomeFadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Premium Glass Effect */
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 2rem;
+  box-shadow:
+    0 15px 40px rgba(193, 168, 96, 0.1),
+    0 4px 15px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle glow overlay */
+.chat-container__welcome::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(201, 169, 97, 0.04) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .chat-container__welcome-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  animation: iconFloat 3s ease-in-out infinite;
+  font-size: 3.25rem;
+  /* Slightly smaller */
+  margin-bottom: 1.25rem;
+  animation: iconFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 12px rgba(201, 169, 97, 0.25));
+  z-index: 1;
 }
 
 @keyframes iconFloat {
 
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-12px) scale(1.05);
   }
 }
 
 .chat-container__welcome-title {
-  font-size: 1.75rem;
-  color: var(--color-deep-green);
-  margin-bottom: 0.875rem;
+  font-size: 2.25rem;
+  /* Medium size */
   font-family: var(--font-arabic);
   font-weight: 700;
-  letter-spacing: 0.01em;
+  margin-bottom: 1rem;
+  line-height: 1.25;
+  background: linear-gradient(135deg, var(--color-deep-green) 0%, #2e7d32 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: 1;
 }
 
 .chat-container__welcome-text {
-  font-size: 1rem;
-  color: var(--color-text-dark);
-  line-height: 1.7;
-  opacity: 0.8;
-  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+  /* Slightly smaller text */
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  /* Tightened margin */
+  font-weight: 400;
+  max-width: 95%;
+  z-index: 1;
 }
 
-/* Suggestion chips */
+/* Suggestion chips - Refined Pills */
 .chat-container__welcome-suggestions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.625rem;
-  margin-top: 0.5rem;
+  gap: 0.875rem;
+  /* Slightly more space between buttons */
+  margin-top: 1rem;
+  /* More space from text above */
+  perspective: 1000px;
 }
 
 .chat-container__suggestion {
-  padding: 0.5rem 1rem;
-  background: rgba(1, 50, 32, 0.08);
-  border: 1px solid rgba(1, 50, 32, 0.15);
-  border-radius: 2rem;
-  font-size: 0.8125rem;
+  padding: 0.6rem 1.25rem;
+  background: #FFFFFF;
+  border: 1px solid rgba(201, 169, 97, 0.2);
+  border-radius: 3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--color-deep-green);
-  cursor: default;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+  /* Staggered Entrance */
+  opacity: 0;
+  animation: slideUpFade 0.5s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-container__suggestion:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.chat-container__suggestion:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-container__suggestion:nth-child(3) {
+  animation-delay: 0.3s;
 }
 
 .chat-container__suggestion:hover {
-  background: rgba(1, 50, 32, 0.12);
-  border-color: rgba(1, 50, 32, 0.25);
+  background: var(--color-deep-green);
+  color: #FFFFFF;
+  border-color: var(--color-deep-green);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(1, 50, 32, 0.2);
 }
 
 /* Error message */
@@ -233,7 +308,8 @@
   max-width: 800px;
   overflow: visible;
   padding-bottom: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  /* More space before input */
 }
 
 /* Hide scrollbar in hero mode */
@@ -243,7 +319,8 @@
 
 /* Adjust Welcome in Hero Mode */
 .chat-container--hero .chat-container__welcome {
-  padding: 0;
+  padding: 1.5rem;
+  /* Ensure padding inside card */
   margin: 0 auto;
   animation: none;
   /* Let the container handle transitions */

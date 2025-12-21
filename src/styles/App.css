@@ -6,43 +6,64 @@
   background-color: var(--color-off-white);
 }
 
+/* Minimal Glass Header */
 .app__header {
-  background: linear-gradient(135deg, #D4AF37 0%, #C9A961 50%, #B8943F 100%);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: rgba(253, 246, 227, 0.85);
+  /* Translucent off-white */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   z-index: 10;
   position: relative;
+  /* Ensure it doesn't crowd */
 }
 
 .app__header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
+  display: none;
+  /* Remove old overlay */
 }
 
 .app__header-content {
-  padding: 0.75rem 1.25rem;
+  padding: 1rem 1.5rem;
   text-align: center;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .app__title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #FFFFFF;
+  font-size: 2.25rem;
+  /* Larger Arabic */
+  font-weight: 700;
   margin: 0;
   font-family: var(--font-arabic);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  letter-spacing: 0.3px;
+  letter-spacing: 0;
+  line-height: 1.2;
+
+  /* Gold Gradient Text */
+  background: linear-gradient(135deg, #B8943F 0%, #D4AF37 50%, #8A6E2F 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  filter: drop-shadow(0 2px 4px rgba(201, 169, 97, 0.1));
 }
 
 .app__subtitle {
-  display: none;
+  display: block;
+  /* Show subtitle now */
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-deep-green);
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  font-family: 'Outfit', sans-serif;
 }
 
 /* Mobile optimizations */
@@ -50,11 +71,11 @@
   .app__header {
     flex-direction: column;
   }
-  
+
   .app__header-content {
     padding: 0.625rem 1rem;
   }
-  
+
   .app__title {
     font-size: 1.125rem;
   }
@@ -68,13 +89,13 @@
     align-items: center;
     padding: 0;
   }
-  
+
   .app__header-content {
     flex: 1;
     text-align: left;
     padding: 0.875rem 1.5rem;
   }
-  
+
   .app__title {
     font-size: 1.375rem;
   }

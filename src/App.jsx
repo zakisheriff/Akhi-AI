@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import ChatContainer from './components/ChatContainer';
+import AmbientBackground from './components/AmbientBackground';
 import { sendMessage } from './services/openaiService';
 import { SCHOOLS } from './utils/systemPrompt';
 import './styles/App.css';
@@ -8,6 +9,8 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const isHero = messages.length === 0 && !isLoading;
 
   const handleSendMessage = useCallback(async (userMessage) => {
     // Add user message to chat
@@ -41,6 +44,7 @@ function App() {
 
   return (
     <div className="app">
+      {isHero && <AmbientBackground />}
       <header className="app__header">
         <div className="app__header-content">
           <h1 className="app__title">العلم</h1>
