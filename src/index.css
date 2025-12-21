@@ -71,7 +71,6 @@ html {
   height: 100%;
   overflow: hidden;
   /* Prevent body scroll / address bar resizing */
-  position: fixed;
   /* Lock viewport */
   width: 100%;
 }
