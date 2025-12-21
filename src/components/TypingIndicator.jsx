@@ -1,18 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/TypingIndicator.css";
 
+const loadingMessages = [
+  "Al-Ilm AI is researching",
+  "Consulting authentic sources",
+  "Searching the Quran & Hadith",
+  "Finding scholarly wisdom",
+  "Gathering Islamic knowledge"
+];
+
 const TypingIndicator = () => {
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Rotate through loading messages
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="typing-indicator">
       <div className="typing-indicator__content">
-        <span className="typing-indicator__text">Al-Ilm AI is thinking</span>
-        <span className="typing-indicator__dots">
-          <span className="typing-indicator__dot">.</span>
-          <span className="typing-indicator__dot">.</span>
-          <span className="typing-indicator__dot">.</span>
-        </span>
-        <span className="typing-indicator__cursor">|</span>
+        <div className="typing-indicator__icon">
+          <div className="typing-indicator__book">📖</div>
+        </div>
+        <div className="typing-indicator__text-container">
+          <span className={`typing-indicator__text ${isTransitioning ? 'fade-out' : 'fade-in'}`}>
+            {loadingMessages[messageIndex]}
+          </span>
+          <span className="typing-indicator__dots">
+            <span className="typing-indicator__dot"></span>
+            <span className="typing-indicator__dot"></span>
+            <span className="typing-indicator__dot"></span>
+          </span>
+        </div>
       </div>
+      <div className="typing-indicator__shimmer"></div>
     </div>
   );
 };

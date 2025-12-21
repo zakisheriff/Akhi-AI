@@ -1,0 +1,46 @@
+.typewriter-container {
+  display: inline;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.typewriter-text {
+  white-space: pre-wrap;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--color-gold);
+  animation: cursorBlink 0.8s infinite;
+  margin-left: 1px;
+  font-size: 1em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+@keyframes cursorBlink {
+  0%, 45% {
+    opacity: 1;
+  }
+  50%, 95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Smooth fade-in for each character */
+.typewriter-container {
+  animation: contentFadeIn 0.2s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}

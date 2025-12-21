@@ -4,11 +4,11 @@ import { buildSystemPrompt } from '../utils/systemPrompt';
 // Initialize Gemini client
 const getGeminiClient = () => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your .env.local file.');
   }
-  
+
   return new GoogleGenerativeAI(apiKey);
 };
 
@@ -23,13 +23,13 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
   try {
     const genAI = getGeminiClient();
     const systemPrompt = buildSystemPrompt(school);
-    
-    // Get the model (using gemini-2.5-flash which is available with your API key)
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-2.5-flash',
+
+    // Get the model (using gemini-1.5-flash which is faster and has higher limits)
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
       systemInstruction: systemPrompt
     });
-    
+
     // Build chat history for Gemini
     // Gemini expects alternating user/assistant messages
     const chatHistory = conversationHistory.map((msg, index) => {
@@ -40,7 +40,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         parts: [{ text: msg.content }]
       };
     });
-    
+
     // Start a chat session with history
     const chat = model.startChat({
       history: chatHistory,
@@ -48,21 +48,21 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         temperature: 0.7,
         topP: 0.9,
         topK: 40,
-        maxOutputTokens: 2000,
+        maxOutputTokens: 8192,
       }
     });
-    
+
     // Send the user message
     const result = await chat.sendMessage(userMessage);
     const response = await result.response;
     const text = response.text();
-    
+
     if (!text) {
       throw new Error('No response received from Gemini API');
     }
-    
+
     return text;
-    
+
   } catch (error) {
     // Handle different types of errors
     if (error.message) {
@@ -77,7 +77,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
         throw new Error('Network error. Please check your internet connection and try again.');
       }
     }
-    
+
     // Check if it's a Google API error with status codes
     if (error.status) {
       switch (error.status) {
@@ -93,7 +93,7 @@ export const sendMessage = async (userMessage, school = 'general', conversationH
           throw new Error(`API error: ${error.message || 'An unknown error occurred'}`);
       }
     }
-    
+
     // Generic error fallback
     throw new Error(error.message || 'An unexpected error occurred. Please try again.');
   }
