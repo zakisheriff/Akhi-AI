@@ -254,9 +254,11 @@
     padding: 0.5rem 0 90px;
     scroll-padding-bottom: 100px;
     /* Ensures scroll hits above the mobile input bar */
+    /* Messages should start from top, not centered */
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
   }
 
   .chat-container__messages-inner {
@@ -265,6 +267,14 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    /* Ensure messages start from top */
+    flex: 0 0 auto;
+  }
+
+  /* Only center the welcome screen in hero mode */
+  .chat-container--hero .chat-container__messages {
+    align-items: center;
+    justify-content: center;
   }
 
   .chat-container__welcome {
