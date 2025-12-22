@@ -8,11 +8,53 @@ const QiblaFinder = ({ isOpen, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [qiblaDirection, setQiblaDirection] = useState(null);
-    const [deviceHeading, setDeviceHeading] = useState(0);
+    // State for smoothed heading
+    const [smoothedHeading, setSmoothedHeading] = useState(0);
+    const headingRef = useRef(0); // Current raw heading
+    const smoothedHeadingRef = useRef(0); // Current smoothed heading
+    const requestRef = useRef(null); // Animation frame reference
+
+    const [deviceHeading, setDeviceHeading] = useState(0); // Kept for debug
     const [location, setLocation] = useState(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
     const videoRef = useRef(null);
-    const streamRef = useRef(null);
+    const streamRef = useRef(null); // Camera stream reference
+    const requestPermissionRef = useRef(false); // Track permission state
+
+    // Low-pass filter for smoothing sensor data
+    const smoothHeading = useCallback(() => {
+        const alpha = 0.15; // Smoothing factor (lower = smoother but slower)
+
+        let raw = headingRef.current;
+        let smoothed = smoothedHeadingRef.current;
+
+        // Handle 360/0 degree wraparound (shortest path rotation)
+        // If difference is greater than 180, we need to wrap around
+        const diff = raw - smoothed;
+        if (Math.abs(diff) > 180) {
+            if (raw > smoothed) {
+                smoothed += 360;
+            } else {
+                raw += 360;
+            }
+        }
+
+        // Apply low-pass filter
+        let newSmoothed = smoothed + alpha * (raw - smoothed);
+
+        // Normalize back to 0-360
+        if (newSmoothed >= 360) newSmoothed -= 360;
+        if (newSmoothed < 0) newSmoothed += 360;
+
+        smoothedHeadingRef.current = newSmoothed;
+
+        // Only update state if difference is significant enough to avoid micro-jitters
+        if (Math.abs(newSmoothed - smoothedHeading) > 0.5) {
+            setSmoothedHeading(Math.round(newSmoothed));
+        }
+
+        requestRef.current = requestAnimationFrame(smoothHeading);
+    }, [smoothedHeading]);
 
     // Calculate Qibla direction based on location
     const calculateQibla = useCallback(async () => {
@@ -71,19 +113,33 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                 // iOS Safari
                 heading = event.webkitCompassHeading;
             } else if (event.alpha !== null) {
-                // Android/Chrome - alpha is the compass heading
-                heading = 360 - event.alpha;
+                // Android/Chrome
+                if (event.absolute) {
+                    heading = 360 - event.alpha;
+                } else {
+                    // Try to generate compass heading from alpha, beta, gamma if absolute not available
+                    // This is a complex calculation, simplified fallback:
+                    heading = 360 - event.alpha;
+                }
             }
 
-            setDeviceHeading(Math.round(heading));
+            // Ensure heading is valid 0-360
+            heading = (heading + 360) % 360;
+            headingRef.current = heading;
         };
 
         window.addEventListener('deviceorientation', handleOrientation, true);
 
+        // Start smoothing loop
+        requestRef.current = requestAnimationFrame(smoothHeading);
+
         return () => {
             window.removeEventListener('deviceorientation', handleOrientation, true);
+            if (requestRef.current) {
+                cancelAnimationFrame(requestRef.current);
+            }
         };
-    }, [isOpen, permissionGranted]);
+    }, [isOpen, permissionGranted, smoothHeading]);
 
     // Initialize on open
     useEffect(() => {
@@ -95,6 +151,9 @@ const QiblaFinder = ({ isOpen, onClose }) => {
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop());
                 streamRef.current = null;
+            }
+            if (requestRef.current) {
+                cancelAnimationFrame(requestRef.current);
             }
         }
     }, [isOpen, calculateQibla]);
@@ -132,10 +191,16 @@ const QiblaFinder = ({ isOpen, onClose }) => {
     }, [mode]);
 
     // Calculate rotation angle for compass needle
+    // Using filtered smoothedHeading instead of raw deviceHeading
     const getCompassRotation = () => {
         if (qiblaDirection === null) return 0;
-        // Rotate the qibla marker based on device heading
-        return qiblaDirection - deviceHeading;
+        let rotation = qiblaDirection - smoothedHeading;
+
+        // Normalize to -180 to 180 for shortest rotation path in CSS
+        while (rotation < -180) rotation += 360;
+        while (rotation > 180) rotation -= 360;
+
+        return rotation;
     };
 
     if (!isOpen) return null;
@@ -222,7 +287,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                         <div className="qibla-compass">
                             <div
                                 className="qibla-compass-dial"
-                                style={{ transform: `rotate(${-deviceHeading}deg)` }}
+                                style={{ transform: `rotate(${-smoothedHeading}deg)` }}
                             >
                                 {/* Compass markings */}
                                 <span className="qibla-compass-n">N</span>
@@ -268,7 +333,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                                 {qiblaDirection}° from North
                             </p>
                             <p className="qibla-heading">
-                                Your heading: {deviceHeading}°
+                                Your heading: {smoothedHeading}°
                             </p>
                         </div>
 
@@ -332,7 +397,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                             {/* Info overlay */}
                             <div className="qibla-camera-info">
                                 <p>Qibla: {qiblaDirection}°</p>
-                                <p>Heading: {deviceHeading}°</p>
+                                <p>Heading: {smoothedHeading}°</p>
                             </div>
 
                             {Math.abs(getCompassRotation()) < 15 && (
