@@ -285,10 +285,11 @@
     flex: 0 0 auto;
   }
 
-  /* Only center the welcome screen in hero mode */
+  /* Welcome screen on mobile - start from top with padding */
   .chat-container--hero .chat-container__messages {
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 1rem;
   }
 
   .chat-container__welcome {

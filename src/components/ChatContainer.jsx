@@ -19,6 +19,13 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
   const containerRef = useRef(null);
   const [typingMessageIndex, setTypingMessageIndex] = useState(-1);
 
+  // Reset scroll to top on initial mount (for welcome screen)
+  useEffect(() => {
+    if (messagesContainerRef.current && messages.length === 0) {
+      messagesContainerRef.current.scrollTop = 0;
+    }
+  }, []);
+
   // Track which AI message is currently being typed
   useEffect(() => {
     if (!isLoading && messages.length > 0) {

@@ -1,14 +1,26 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ChatContainer from './components/ChatContainer';
 import AmbientBackground from './components/AmbientBackground';
 import { sendMessage } from './services/openaiService';
 import { SCHOOLS } from './utils/systemPrompt';
 import './styles/App.css';
 
+// Reset scroll to top on initial load
+const useScrollReset = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+};
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Reset scroll to top on initial load
+  useScrollReset();
 
   const isHero = messages.length === 0 && !isLoading;
 

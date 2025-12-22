@@ -101,6 +101,15 @@
 </head>
 
 <body>
+  <!-- Disable browser scroll restoration and reset to top -->
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+  </script>
+
   <!-- Initial content for Google crawler (replaced by React on hydration) -->
   <div id="root">
     <div style="text-align: center; padding: 2rem; color: #FDF6E3; font-family: system-ui, sans-serif;">
