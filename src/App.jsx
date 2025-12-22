@@ -47,8 +47,11 @@ function App() {
       {isHero && <AmbientBackground />}
       <header className="app__header">
         <div className="app__header-content">
-          <h1 className="app__title">العلم</h1>
-         
+          <h1 className="app__title">
+            <span className="app__title-arabic">العلم</span>
+            <span className="app__title-english">Al-Ilm AI</span>
+          </h1>
+          <p className="app__subtitle">Islamic Knowledge Assistant</p>
         </div>
       </header>
 

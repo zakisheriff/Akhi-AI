@@ -39,17 +39,33 @@
 }
 
 .app__title {
-  font-size: 1rem;
   font-weight: 700;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.app__title-arabic {
+  font-size: 1.25rem;
   font-family: var(--font-arabic);
-  letter-spacing: 0;
-  line-height: 2.2;
   background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.app__title-english {
+  font-size: 0.9rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.9;
 }
 
 .app__subtitle {

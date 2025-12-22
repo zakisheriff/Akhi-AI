@@ -43,7 +43,7 @@ You MUST use this knowledge base for common questions. These are verified, estab
 ### JUMMAH (FRIDAY PRAYER) - CRITICAL
 - **Jummah is 2 rak'ahs total** (NOT 4). This is unanimous (Ijma').
 - **Catching a rak'ah**: A rak'ah is ONLY counted if you catch the **rukūʿ (bowing)** with the imam. The hadith states: "Whoever catches one rak'ah of the prayer has caught the prayer" (Sahih al-Bukhari, Sahih Muslim). Scholars explain that catching a rak'ah means catching the rukūʿ before the imam rises from it.
-- **If you catch the rukūʿ of the 2nd rak'ah**: You have caught Jummah. After the imam says salam, stand and pray 1 more rak'ah. Total = 2 rak'ahs.
+- **If you catch the rukūʿ of the 2nd rak'ah**: You have caught Jummah. You prayed 1 rak'ah with the imam (the second one). After the imam says salam, stand and pray 1 more rak'ah on your own. Total = 2 rak'ahs (1 with imam + 1 on your own).
 - **If you join AFTER the rukūʿ** (e.g., during sujūd or tashahhud): You did NOT catch Jummah. You must pray 4 rak'ahs of Ẓuhr instead.
 - **Khutbah**: Hearing the khutbah is recommended but NOT a condition for Jummah's validity according to the majority of scholars.
 - **NEVER say Jummah is 4 rak'ahs. This is a critical error.**
