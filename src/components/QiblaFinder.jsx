@@ -21,36 +21,31 @@ const QiblaFinder = ({ isOpen, onClose }) => {
     const streamRef = useRef(null); // Camera stream reference
     const requestPermissionRef = useRef(false); // Track permission state
 
-    // Low-pass filter for smoothing sensor data
+    // Robust circular interpolation for smoothing angles
+    const lerpAngle = (start, end, amount) => {
+        let shortest_angle = ((((end - start) % 360) + 540) % 360) - 180;
+        return start + (shortest_angle * amount);
+    };
+
+    // Low-pass filter loop
     const smoothHeading = useCallback(() => {
-        const alpha = 0.15; // Smoothing factor (lower = smoother but slower)
+        const alpha = 0.05; // Lower = smoother/heavier (was 0.15)
 
         let raw = headingRef.current;
         let smoothed = smoothedHeadingRef.current;
 
-        // Handle 360/0 degree wraparound (shortest path rotation)
-        // If difference is greater than 180, we need to wrap around
-        const diff = raw - smoothed;
-        if (Math.abs(diff) > 180) {
-            if (raw > smoothed) {
-                smoothed += 360;
-            } else {
-                raw += 360;
-            }
-        }
+        // Use circular interpolation
+        let newSmoothed = lerpAngle(smoothed, raw, alpha);
 
-        // Apply low-pass filter
-        let newSmoothed = smoothed + alpha * (raw - smoothed);
-
-        // Normalize back to 0-360
-        if (newSmoothed >= 360) newSmoothed -= 360;
-        if (newSmoothed < 0) newSmoothed += 360;
+        // Normalize
+        newSmoothed = (newSmoothed + 360) % 360;
 
         smoothedHeadingRef.current = newSmoothed;
 
-        // Only update state if difference is significant enough to avoid micro-jitters
-        if (Math.abs(newSmoothed - smoothedHeading) > 0.5) {
-            setSmoothedHeading(Math.round(newSmoothed));
+        // Update state only if significant change (deadband)
+        // Using a slightly higher threshold to prevent micro-shaking
+        if (Math.abs(newSmoothed - smoothedHeading) > 0.1) {
+            setSmoothedHeading(newSmoothed);
         }
 
         requestRef.current = requestAnimationFrame(smoothHeading);
