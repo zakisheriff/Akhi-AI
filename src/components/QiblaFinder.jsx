@@ -8,18 +8,21 @@ const QiblaFinder = ({ isOpen, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [qiblaDirection, setQiblaDirection] = useState(null);
-    // State for smoothed heading
-    const [smoothedHeading, setSmoothedHeading] = useState(0);
-    const headingRef = useRef(0); // Current raw heading
-    const smoothedHeadingRef = useRef(0); // Current smoothed heading
-    const requestRef = useRef(null); // Animation frame reference
 
-    const [deviceHeading, setDeviceHeading] = useState(0); // Kept for debug
+    // State for smoothed heading (for UI)
+    const [smoothedHeading, setSmoothedHeading] = useState(0);
+
+    // Refs for stable mutable state (avoids re-render loops)
+    const headingRef = useRef(0); // Current raw target heading
+    const smoothedHeadingRef = useRef(0); // Internal smoothed value
+    const lastDisplayedHeadingRef = useRef(0); // Last value pushed to state
+    const requestRef = useRef(null); // Animation frame reference
+    const mountedRef = useRef(true); // Track mount state
+
     const [location, setLocation] = useState(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
     const videoRef = useRef(null);
     const streamRef = useRef(null); // Camera stream reference
-    const requestPermissionRef = useRef(false); // Track permission state
 
     // Robust circular interpolation for smoothing angles
     const lerpAngle = (start, end, amount) => {
@@ -27,29 +30,34 @@ const QiblaFinder = ({ isOpen, onClose }) => {
         return start + (shortest_angle * amount);
     };
 
-    // Low-pass filter loop
-    const smoothHeading = useCallback(() => {
-        const alpha = 0.05; // Lower = smoother/heavier (was 0.15)
+    // Low-pass filter loop - defined as a REF to be stable across renders
+    const loopRef = useRef();
 
+    loopRef.current = () => {
+        if (!mountedRef.current) return;
+
+        const alpha = 0.05; // Smoothing factor
         let raw = headingRef.current;
         let smoothed = smoothedHeadingRef.current;
 
-        // Use circular interpolation
+        // Circular interpolation
         let newSmoothed = lerpAngle(smoothed, raw, alpha);
 
-        // Normalize
-        newSmoothed = (newSmoothed + 360) % 360;
+        // DO NOT Normalize to 0-360 here. 
+        // Allowing values to go < 0 or > 360 prevents "spinning" 
+        // when crossing North (0/360 boundary) with CSS transitions.
 
         smoothedHeadingRef.current = newSmoothed;
 
-        // Update state only if significant change (deadband)
-        // Using a slightly higher threshold to prevent micro-shaking
-        if (Math.abs(newSmoothed - smoothedHeading) > 0.1) {
+        // Update UI only if significant change (Deadband)
+        // Check against last DISPLAYED value, not internal smoothed value
+        if (Math.abs(newSmoothed - lastDisplayedHeadingRef.current) > 0.5) {
             setSmoothedHeading(newSmoothed);
+            lastDisplayedHeadingRef.current = newSmoothed;
         }
 
-        requestRef.current = requestAnimationFrame(smoothHeading);
-    }, [smoothedHeading]);
+        requestRef.current = requestAnimationFrame(loopRef.current);
+    };
 
     // Calculate Qibla direction based on location
     const calculateQibla = useCallback(async () => {
@@ -58,17 +66,21 @@ const QiblaFinder = ({ isOpen, onClose }) => {
 
         try {
             const loc = await getUserLocation();
-            setLocation(loc);
-
-            const coordinates = new Coordinates(loc.latitude, loc.longitude);
-            const qibla = Qibla(coordinates);
-            setQiblaDirection(Math.round(qibla * 10) / 10);
-            console.log('🧭 Qibla direction:', qibla, '° from North');
+            if (mountedRef.current) {
+                setLocation(loc);
+                const coordinates = new Coordinates(loc.latitude, loc.longitude);
+                const qibla = Qibla(coordinates);
+                setQiblaDirection(Math.round(qibla * 10) / 10);
+            }
         } catch (err) {
             console.error('Error getting location:', err);
-            setError('Unable to get location. Please enable location access.');
+            if (mountedRef.current) {
+                setError('Unable to get location. Please enable location access.');
+            }
         } finally {
-            setLoading(false);
+            if (mountedRef.current) {
+                setLoading(false);
+            }
         }
     }, []);
 
@@ -82,7 +94,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                     setPermissionGranted(true);
                     return true;
                 } else {
-                    setError('Compass permission denied. Please allow access to use the Qibla finder.');
+                    setError('Compass permission denied.');
                     return false;
                 }
             } catch (err) {
@@ -91,66 +103,75 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                 return false;
             }
         } else {
-            // Not iOS or permission not required
+            // Android/Non-iOS
             setPermissionGranted(true);
             return true;
         }
     };
 
-    // Handle device orientation
+    // Handle device orientation events
     useEffect(() => {
         if (!isOpen || !permissionGranted) return;
 
         const handleOrientation = (event) => {
             let heading = 0;
 
-            if (event.webkitCompassHeading !== undefined) {
-                // iOS Safari
+            // iOS
+            if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
                 heading = event.webkitCompassHeading;
-            } else if (event.alpha !== null) {
-                // Android/Chrome
-                if (event.absolute) {
-                    heading = 360 - event.alpha;
-                } else {
-                    // Try to generate compass heading from alpha, beta, gamma if absolute not available
-                    // This is a complex calculation, simplified fallback:
-                    heading = 360 - event.alpha;
-                }
+            }
+            // Android (absolute)
+            else if (event.alpha !== null) {
+                // If it's not absolute, it might drift, but better than nothing
+                heading = 360 - event.alpha;
             }
 
-            // Ensure heading is valid 0-360
+            // Normalize
             heading = (heading + 360) % 360;
             headingRef.current = heading;
         };
 
-        window.addEventListener('deviceorientation', handleOrientation, true);
+        // Prefer absolute orientation on Android if available
+        if ('ondeviceorientationabsolute' in window) {
+            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+        } else {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+        }
 
         // Start smoothing loop
-        requestRef.current = requestAnimationFrame(smoothHeading);
+        if (!requestRef.current) {
+            requestRef.current = requestAnimationFrame(loopRef.current);
+        }
 
         return () => {
-            window.removeEventListener('deviceorientation', handleOrientation, true);
+            if ('ondeviceorientationabsolute' in window) {
+                window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+            } else {
+                window.removeEventListener('deviceorientation', handleOrientation, true);
+            }
             if (requestRef.current) {
                 cancelAnimationFrame(requestRef.current);
+                requestRef.current = null;
             }
         };
-    }, [isOpen, permissionGranted, smoothHeading]);
+    }, [isOpen, permissionGranted]); // Dependency array NO LONGER includes the loop function
 
     // Initialize on open
     useEffect(() => {
+        mountedRef.current = true;
         if (isOpen) {
             calculateQibla();
             requestOrientationPermission();
         } else {
-            // Cleanup camera when closing
+            // Cleanup
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop());
                 streamRef.current = null;
             }
-            if (requestRef.current) {
-                cancelAnimationFrame(requestRef.current);
-            }
         }
+        return () => {
+            mountedRef.current = false;
+        };
     }, [isOpen, calculateQibla]);
 
     // Camera mode
@@ -165,7 +186,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
             }
         } catch (err) {
             console.error('Error accessing camera:', err);
-            setError('Unable to access camera. Please enable camera permission.');
+            setError('Unable to access camera.');
         }
     };
 
@@ -178,23 +199,16 @@ const QiblaFinder = ({ isOpen, onClose }) => {
 
     // Handle mode switch
     useEffect(() => {
-        if (mode === 'camera') {
+        if (mode === 'camera' && isOpen) {
             startCamera();
         } else {
             stopCamera();
         }
-    }, [mode]);
+    }, [mode, isOpen]);
 
-    // Calculate rotation angle for compass needle
-    // Using filtered smoothedHeading instead of raw deviceHeading
     const getCompassRotation = () => {
         if (qiblaDirection === null) return 0;
         let rotation = qiblaDirection - smoothedHeading;
-
-        // Normalize to -180 to 180 for shortest rotation path in CSS
-        while (rotation < -180) rotation += 360;
-        while (rotation > 180) rotation -= 360;
-
         return rotation;
     };
 
@@ -300,7 +314,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                                 ))}
                             </div>
 
-                            {/* Qibla direction indicator (fixed) */}
+                            {/* Qibla direction indicator (fixed relative to dial) */}
                             <div
                                 className="qibla-arrow"
                                 style={{ transform: `rotate(${getCompassRotation()}deg)` }}
@@ -328,7 +342,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                                 {qiblaDirection}° from North
                             </p>
                             <p className="qibla-heading">
-                                Your heading: {smoothedHeading}°
+                                Your heading: {Math.round(smoothedHeading)}°
                             </p>
                         </div>
 
@@ -392,7 +406,7 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                             {/* Info overlay */}
                             <div className="qibla-camera-info">
                                 <p>Qibla: {qiblaDirection}°</p>
-                                <p>Heading: {smoothedHeading}°</p>
+                                <p>Heading: {Math.round(smoothedHeading)}°</p>
                             </div>
 
                             {Math.abs(getCompassRotation()) < 15 && (

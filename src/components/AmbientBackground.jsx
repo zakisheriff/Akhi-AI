@@ -2,24 +2,67 @@ import React from 'react';
 import '../styles/AmbientBackground.css';
 
 const QNA_POOL_1 = [
-    { q: "Is investing in stocks halal?", a: "It depends on the company's business model and debt ratios." },
-    { q: "How to perform Ghusl?", a: "Begin with intention, then wash the entire body including roots of hair." },
-    { q: "Ruling on missing Jumu'ah?", a: "It is a major sin for men unless there is a valid excuse." },
-    { q: "Can I pray in a car?", a: "For voluntary prayers, yes. For obligatory, only if impossible to stop." },
-    { q: "What is the Nisaab for Zakat?", a: "Equivalent to 85g of gold or 595g of silver." },
-    { q: "When does Fajr time end?", a: "At the beginning of sunrise." },
-    { q: "Is dropshipping halal?", a: "If you own the product or have a valid agency contract." },
+    {
+        q: "Is investing in stocks halal?",
+        a: "Investing is halal if the company's business is permissible in Islam and it avoids excessive interest (riba) and haram activities. Some scholars advise using Sharia-compliant stocks or Islamic index funds."
+    },
+    {
+        q: "How to perform Ghusl?",
+        a: "Make the intention (niyyah) for purification, wash hands, private parts, perform wudu, then pour water over the entire body including hair roots, ensuring no part is left dry."
+    },
+    {
+        q: "Ruling on missing Jumu'ah?",
+        a: "Missing Jumu'ah without a valid excuse is considered sinful for adult men. Valid excuses include illness, travel, or other genuine incapacity."
+    },
+    {
+        q: "Can I pray in a car?",
+        a: "Obligatory prayers should be performed in a proper place if possible. If traveling or unable to stop, you may pray in the car while facing the Qibla."
+    },
+    {
+        q: "What is the Nisaab for Zakat?",
+        a: "Nisaab is the minimum amount of wealth a Muslim must possess before being liable for Zakat: 85g of gold or 595g of silver."
+    },
+    {
+        q: "When does Fajr time end?",
+        a: "Fajr time ends at the beginning of sunrise."
+    },
+    {
+        q: "Is dropshipping halal?",
+        a: "Dropshipping is halal if you have ownership of the goods or a valid agency contract. Selling items you don't own or can't deliver is not permissible."
+    },
 ];
 
 const QNA_POOL_2 = [
-    { q: "Significance of Laylatul Qadr?", a: "A night better than a thousand months in reward." },
-    { q: "Is gelatine halal?", a: "Halal if from vegetable or zabiha animal sources." },
-    { q: "Can I fast without Suhoor?", a: "Yes, but Suhoor is a highly recommended Sunnah." },
-    { q: "Ruling on digital drawings?", a: "Permissible if they don't depict souls or promote haraam." },
-    { q: "What is Tahajjud?", a: "A voluntary night prayer performed after waking from sleep." },
-    { q: "Is mortgage allowed?", a: "Most scholars prohibit it due to Riba; some allow it under dire necessity." },
-    { q: "Benefit of Ayatul Kursi?", a: "Protection from Shaitan when recited before sleep." },
+    {
+        q: "Significance of Laylatul Qadr?",
+        a: "Laylatul Qadr is the Night of Decree, better than a thousand months in reward. It occurs in the last ten nights of Ramadan, most likely on odd nights."
+    },
+    {
+        q: "Is gelatine halal?",
+        a: "Gelatine is halal if derived from permissible sources, such as plants or properly slaughtered (zabiha) animals. Gelatine from non-halal sources is not allowed."
+    },
+    {
+        q: "Can I fast without Suhoor?",
+        a: "Yes, fasting without Suhoor is valid, but eating Suhoor is a Sunnah and brings barakah and strength for the day."
+    },
+    {
+        q: "Ruling on digital drawings?",
+        a: "Digital drawings of inanimate objects or permissible art are allowed. Depicting animate beings (humans/animals) in ways that imitate souls is discouraged by many scholars."
+    },
+    {
+        q: "What is Tahajjud?",
+        a: "Tahajjud is a voluntary night prayer performed after sleeping, preferably in the last third of the night, seeking closeness to Allah."
+    },
+    {
+        q: "Is mortgage allowed?",
+        a: "Most scholars consider conventional mortgages involving interest (riba) prohibited. Alternatives include Islamic home finance or delayed payment plans without interest."
+    },
+    {
+        q: "Benefit of Ayatul Kursi?",
+        a: "Reciting Ayatul Kursi offers protection from Shaitan, blessings, and mercy. It is recommended after each obligatory prayer and before sleeping."
+    },
 ];
+
 
 const Card = ({ item }) => (
     <div className="ambient-card">
