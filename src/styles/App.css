@@ -149,14 +149,18 @@
   }
 
   .app__action-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1.125rem;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    /* Explicit smaller size for emoji */
+    padding: 0;
+    line-height: 1;
+    /* Ensure emoji doesnt push layout */
   }
 
   .app__action-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 }
 
