@@ -103,7 +103,10 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
               </div>
               <h2 className="chat-container__welcome-title">Assalamu Alaikum</h2>
               <p className="chat-container__welcome-text">
-                Welcome to <span className="chat-container__welcome-highlight">Akhi</span>. Ask me any question about Islam, and I'll provide you with authentic answers and references from the Quran, Hadith, and recognized scholars.
+                Welcome to <span className="chat-container__welcome-highlight">Akhi AI</span> – your Islamic AI assistant, providing authentic answers based on the Quran, Hadith, and trusted Islamic scholarship.
+              </p>
+              <p className="chat-container__welcome-text-secondary">
+                Ask Akhi AI questions about Islam, Fiqh, Salah, Aqeedah, and daily life guidance. Akhi AI (also called Ask Akhi) is your brother in faith and knowledge.
               </p>
               <div className="chat-container__welcome-suggestions">
                 {[

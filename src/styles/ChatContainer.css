@@ -100,9 +100,19 @@
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-weight: 400;
   max-width: 95%;
+  z-index: 1;
+}
+
+.chat-container__welcome-text-secondary {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+  max-width: 90%;
   z-index: 1;
 }
 

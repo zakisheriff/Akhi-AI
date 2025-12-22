@@ -50,8 +50,8 @@ function App() {
           <h1 className="app__title">
             <span className="app__title-arabic">أخي</span>
             <span className="app__title-english">Akhi AI</span>
+            <span className="app__title-seo">– Your Brother in Faith & Knowledge</span>
           </h1>
-          <p className="app__subtitle">Your Brother in Faith & Knowledge</p>
         </div>
       </header>
 
@@ -61,6 +61,15 @@ function App() {
         onSendMessage={handleSendMessage}
         error={error}
       />
+
+      {/* Footer */}
+      <footer className="app__footer">
+        <p className="app__footer-copyright">
+          © Akhi AI – Your Brother in Faith & Knowledge
+          <span className="app__footer-divider">·</span>
+          <a href="/about.html" className="app__about-link">About Akhi AI</a>
+        </p>
+      </footer>
     </div>
   );
 }
