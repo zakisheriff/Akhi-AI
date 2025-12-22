@@ -1,57 +1,93 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Qibla, Coordinates } from 'adhan';
+import geomagnetism from 'geomagnetism';
 import { getUserLocation } from '../services/prayerTimesService';
 import './QiblaFinder.css';
 
+const KAABA_COORDS = { lat: 21.422487, lng: 39.826206 };
+
 const QiblaFinder = ({ isOpen, onClose }) => {
-    const [mode, setMode] = useState('compass'); // 'compass' or 'camera'
-    const [loading, setLoading] = useState(true);
+    // Modes: 'landing', 'compass', 'camera'
+    const [mode, setMode] = useState('landing');
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [qiblaDirection, setQiblaDirection] = useState(null);
+    const [distanceKm, setDistanceKm] = useState(null);
+    const [declination, setDeclination] = useState(0);
+    const [isAligned, setIsAligned] = useState(false);
 
-    // State for smoothed heading (for UI)
+    // UI State
     const [smoothedHeading, setSmoothedHeading] = useState(0);
 
-    // Refs for stable mutable state (avoids re-render loops)
-    const headingRef = useRef(0); // Current raw target heading
-    const smoothedHeadingRef = useRef(0); // Internal smoothed value
-    const lastDisplayedHeadingRef = useRef(0); // Last value pushed to state
-    const requestRef = useRef(null); // Animation frame reference
-    const mountedRef = useRef(true); // Track mount state
+    // Refs for stable logic
+    const headingRef = useRef(0);
+    const smoothedHeadingRef = useRef(0);
+    const lastDisplayedHeadingRef = useRef(0);
+    const requestRef = useRef(null);
+    const mountedRef = useRef(true);
 
     const [location, setLocation] = useState(null);
     const [permissionGranted, setPermissionGranted] = useState(false);
     const videoRef = useRef(null);
-    const streamRef = useRef(null); // Camera stream reference
+    const streamRef = useRef(null);
 
-    // Robust circular interpolation for smoothing angles
+    // Haptic feedback limiter
+    const lastVibrateRef = useRef(0);
+
+    // Haversine Distance Calculation
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Earth radius km
+        const dLat = (lat2 - lat1) * (Math.PI / 180);
+        const dLon = (lon2 - lon1) * (Math.PI / 180);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+    };
+
+    // Circular interpolation
     const lerpAngle = (start, end, amount) => {
         let shortest_angle = ((((end - start) % 360) + 540) % 360) - 180;
         return start + (shortest_angle * amount);
     };
 
-    // Low-pass filter loop - defined as a REF to be stable across renders
+    // Smoothing Loop
     const loopRef = useRef();
-
     loopRef.current = () => {
         if (!mountedRef.current) return;
 
-        const alpha = 0.05; // Smoothing factor
+        const alpha = 0.05;
         let raw = headingRef.current;
         let smoothed = smoothedHeadingRef.current;
 
-        // Circular interpolation
+        // Smooth
         let newSmoothed = lerpAngle(smoothed, raw, alpha);
-
-        // DO NOT Normalize to 0-360 here. 
-        // Allowing values to go < 0 or > 360 prevents "spinning" 
-        // when crossing North (0/360 boundary) with CSS transitions.
-
         smoothedHeadingRef.current = newSmoothed;
 
-        // Update UI only if significant change (Deadband)
-        // Check against last DISPLAYED value, not internal smoothed value
-        if (Math.abs(newSmoothed - lastDisplayedHeadingRef.current) > 0.5) {
+        // Check alignment (within 3 degrees)
+        // Note: qiblaDirection includes True North correction if any
+        if (qiblaDirection !== null) {
+            // angle to qibla
+            let diff = Math.abs(lerpAngle(newSmoothed, qiblaDirection, 1.0)); // shortest diff
+            // 0 is perfectly aligned
+            // lerpAngle(0, 10, 1) -> 10. lerpAngle(350, 10, 1) -> 20.
+            // Wait, standard difference:
+            let absDiff = Math.abs((((qiblaDirection - newSmoothed) % 360) + 540) % 360 - 180);
+
+            const aligned = absDiff < 3;
+            if (aligned !== isAligned) setIsAligned(aligned);
+
+            // Haptic Feedback
+            if (aligned && Date.now() - lastVibrateRef.current > 1000) {
+                if (navigator.vibrate) navigator.vibrate(50);
+                lastVibrateRef.current = Date.now();
+            }
+        }
+
+        // Update UI 
+        if (Math.abs(newSmoothed - lastDisplayedHeadingRef.current) > 0.3) {
             setSmoothedHeading(newSmoothed);
             lastDisplayedHeadingRef.current = newSmoothed;
         }
@@ -59,33 +95,40 @@ const QiblaFinder = ({ isOpen, onClose }) => {
         requestRef.current = requestAnimationFrame(loopRef.current);
     };
 
-    // Calculate Qibla direction based on location
-    const calculateQibla = useCallback(async () => {
+    // Initialize: Get Location & Calculate Data
+    const initData = useCallback(async () => {
         setLoading(true);
         setError(null);
-
         try {
             const loc = await getUserLocation();
-            if (mountedRef.current) {
-                setLocation(loc);
-                const coordinates = new Coordinates(loc.latitude, loc.longitude);
-                const qibla = Qibla(coordinates);
-                setQiblaDirection(Math.round(qibla * 10) / 10);
-            }
+            if (!mountedRef.current) return;
+
+            setLocation(loc);
+
+            // 1. Calculate Declination
+            const magneticModel = geomagnetism.model();
+            const geoInfo = magneticModel.point([loc.latitude, loc.longitude]);
+            const decl = geoInfo.declination || 0;
+            setDeclination(decl);
+
+            // 2. Calculate Qibla
+            const coordinates = new Coordinates(loc.latitude, loc.longitude);
+            const qibla = Qibla(coordinates);
+            setQiblaDirection(qibla); // This is True Heading to Qibla
+
+            // 3. Calculate Distance
+            const dist = calculateDistance(loc.latitude, loc.longitude, KAABA_COORDS.lat, KAABA_COORDS.lng);
+            setDistanceKm(dist);
+
         } catch (err) {
-            console.error('Error getting location:', err);
-            if (mountedRef.current) {
-                setError('Unable to get location. Please enable location access.');
-            }
+            console.error('Data error:', err);
+            if (mountedRef.current) setError('Unable to get location.');
         } finally {
-            if (mountedRef.current) {
-                setLoading(false);
-            }
+            if (mountedRef.current) setLoading(false);
         }
     }, []);
 
-    // Request device orientation permission (required on iOS)
-    const requestOrientationPermission = async () => {
+    const requestPermission = async () => {
         if (typeof DeviceOrientationEvent !== 'undefined' &&
             typeof DeviceOrientationEvent.requestPermission === 'function') {
             try {
@@ -98,47 +141,53 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                     return false;
                 }
             } catch (err) {
-                console.error('Error requesting orientation permission:', err);
                 setError('Could not request compass permission.');
                 return false;
             }
         } else {
-            // Android/Non-iOS
             setPermissionGranted(true);
             return true;
         }
     };
 
-    // Handle device orientation events
+    // Activate Mode
+    const enterMode = async (targetMode) => {
+        const permitted = await requestPermission();
+        if (permitted) {
+            setMode(targetMode);
+        }
+    };
+
+    // Orientation Logic
     useEffect(() => {
-        if (!isOpen || !permissionGranted) return;
+        if (!isOpen || !permissionGranted || mode === 'landing') return;
 
         const handleOrientation = (event) => {
-            let heading = 0;
+            let magneticHeading = 0;
 
             // iOS
             if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
-                heading = event.webkitCompassHeading;
+                magneticHeading = event.webkitCompassHeading;
             }
             // Android (absolute)
             else if (event.alpha !== null) {
-                // If it's not absolute, it might drift, but better than nothing
-                heading = 360 - event.alpha;
+                magneticHeading = 360 - event.alpha;
             }
 
-            // Normalize
-            heading = (heading + 360) % 360;
-            headingRef.current = heading;
+            // Correct to True North using declination
+            // True = Magnetic + Declination
+            let trueHeading = magneticHeading + declination;
+            trueHeading = (trueHeading + 360) % 360;
+
+            headingRef.current = trueHeading;
         };
 
-        // Prefer absolute orientation on Android if available
         if ('ondeviceorientationabsolute' in window) {
             window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         } else {
             window.addEventListener('deviceorientation', handleOrientation, true);
         }
 
-        // Start smoothing loop
         if (!requestRef.current) {
             requestRef.current = requestAnimationFrame(loopRef.current);
         }
@@ -154,266 +203,180 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                 requestRef.current = null;
             }
         };
-    }, [isOpen, permissionGranted]); // Dependency array NO LONGER includes the loop function
+    }, [isOpen, permissionGranted, mode, declination]);
 
-    // Initialize on open
+    // Lifecycle
     useEffect(() => {
         mountedRef.current = true;
         if (isOpen) {
-            calculateQibla();
-            requestOrientationPermission();
+            initData();
         } else {
-            // Cleanup
+            setMode('landing'); // Reset to landing
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop());
                 streamRef.current = null;
             }
         }
-        return () => {
-            mountedRef.current = false;
-        };
-    }, [isOpen, calculateQibla]);
+        return () => { mountedRef.current = false; };
+    }, [isOpen, initData]);
 
-    // Camera mode
-    const startCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'environment' }
-            });
-            streamRef.current = stream;
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-            }
-        } catch (err) {
-            console.error('Error accessing camera:', err);
-            setError('Unable to access camera.');
-        }
-    };
-
-    const stopCamera = () => {
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
-            streamRef.current = null;
-        }
-    };
-
-    // Handle mode switch
+    // Camera
     useEffect(() => {
         if (mode === 'camera' && isOpen) {
-            startCamera();
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    streamRef.current = stream;
+                    if (videoRef.current) videoRef.current.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error('Cam Error', err);
+                    setError('Camera access denied');
+                });
         } else {
-            stopCamera();
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+                streamRef.current = null;
+            }
         }
     }, [mode, isOpen]);
 
+
     const getCompassRotation = () => {
         if (qiblaDirection === null) return 0;
-        let rotation = qiblaDirection - smoothedHeading;
-        return rotation;
+        return qiblaDirection - smoothedHeading;
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="qibla-overlay" onClick={onClose}>
-            <div className="qibla-modal" onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
-                <div className="qibla-header">
-                    <div className="qibla-header-content">
-                        <h2 className="qibla-title">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <polygon points="12,2 15,10 12,8 9,10" fill="currentColor" />
-                                <line x1="12" y1="12" x2="12" y2="16" />
-                            </svg>
-                            Qibla Finder
-                        </h2>
-                        {location && (
-                            <p className="qibla-location">
-                                📍 {location.city}, {location.country}
-                            </p>
+            <div className={`qibla-modal ${mode}`} onClick={(e) => e.stopPropagation()}>
+
+                <button className="qibla-close-btn" onClick={onClose}>✕</button>
+
+                {/* LANDING SCREEN */}
+                {mode === 'landing' && (
+                    <div className="qibla-landing">
+                        <div className="qibla-landing-icon">🕋</div>
+                        <h2>Qibla Finder</h2>
+                        <p>Locate the Qibla with high precision using Augmented Reality or Compass.</p>
+
+                        {loading && <div className="qibla-spinner"></div>}
+
+                        {!loading && location && (
+                            <div className="qibla-landing-stats">
+                                <div className="stat">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    {location.city}
+                                </div>
+                                <div className="stat">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                        <path d="M7 17l9.2-9.2M17 17V7H7" />
+                                    </svg>
+                                    {distanceKm} km
+                                </div>
+                            </div>
+                        )}
+
+                        {!loading && error && <div className="qibla-error-msg">{error}</div>}
+
+                        {!loading && !error && (
+                            <div className="qibla-mode-select">
+                                <button className="mode-card" onClick={() => enterMode('camera')}>
+                                    <div className="icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <div className="mode-info">
+                                        <span className="label">AR Mode</span>
+                                        <span className="desc">See Qibla in real world</span>
+                                    </div>
+                                </button>
+                                <button className="mode-card" onClick={() => enterMode('compass')}>
+                                    <div className="icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
+                                        </svg>
+                                    </div>
+                                    <div className="mode-info">
+                                        <span className="label">Compass</span>
+                                        <span className="desc">Classic 2D pointer</span>
+                                    </div>
+                                </button>
+                            </div>
                         )}
                     </div>
-                    <button className="qibla-close" onClick={onClose}>✕</button>
-                </div>
-
-                {/* Mode Toggle */}
-                <div className="qibla-mode-toggle">
-                    <button
-                        className={`qibla-mode-btn ${mode === 'compass' ? 'active' : ''}`}
-                        onClick={() => setMode('compass')}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor" />
-                        </svg>
-                        Compass
-                    </button>
-                    <button
-                        className={`qibla-mode-btn ${mode === 'camera' ? 'active' : ''}`}
-                        onClick={() => setMode('camera')}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                        </svg>
-                        Camera AR
-                    </button>
-                </div>
-
-                {/* Loading */}
-                {loading && (
-                    <div className="qibla-loading">
-                        <div className="qibla-spinner"></div>
-                        <p>Finding your location...</p>
-                    </div>
                 )}
 
-                {/* Error */}
-                {error && (
-                    <div className="qibla-error">
-                        <span>⚠️</span>
-                        <p>{error}</p>
-                        <button onClick={() => { setError(null); calculateQibla(); }}>Try Again</button>
-                    </div>
-                )}
-
-                {/* Permission Request */}
-                {!loading && !error && !permissionGranted && (
-                    <div className="qibla-permission">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <circle cx="12" cy="12" r="10" />
-                            <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor" />
-                        </svg>
-                        <p>Enable compass access to find the Qibla direction</p>
-                        <button onClick={requestOrientationPermission}>Enable Compass</button>
-                    </div>
-                )}
-
-                {/* Compass Mode */}
-                {!loading && !error && permissionGranted && mode === 'compass' && qiblaDirection !== null && (
-                    <div className="qibla-compass-container">
-                        <div className="qibla-compass">
-                            <div
-                                className="qibla-compass-dial"
-                                style={{ transform: `rotate(${-smoothedHeading}deg)` }}
-                            >
-                                {/* Compass markings */}
-                                <span className="qibla-compass-n">N</span>
-                                <span className="qibla-compass-e">E</span>
-                                <span className="qibla-compass-s">S</span>
-                                <span className="qibla-compass-w">W</span>
-
-                                {/* Degree markings */}
-                                {[...Array(36)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className={`qibla-compass-tick ${i % 3 === 0 ? 'major' : ''}`}
-                                        style={{ transform: `rotate(${i * 10}deg)` }}
-                                    />
-                                ))}
+                {/* COMPASS / CAMERA MODES */}
+                {mode !== 'landing' && (
+                    <div className={`qibla-active-view ${isAligned ? 'aligned' : ''}`}>
+                        {/* Mode Switcher */}
+                        <div className="qibla-top-bar">
+                            <div className="mode-pill">
+                                <button className={mode === 'camera' ? 'active' : ''} onClick={() => setMode('camera')}>AR</button>
+                                <button className={mode === 'compass' ? 'active' : ''} onClick={() => setMode('compass')}>Compass</button>
                             </div>
-
-                            {/* Qibla direction indicator (fixed relative to dial) */}
-                            <div
-                                className="qibla-arrow"
-                                style={{ transform: `rotate(${getCompassRotation()}deg)` }}
-                            >
-                                <svg viewBox="0 0 24 50" fill="none">
-                                    <path
-                                        d="M12 0L20 18H4L12 0Z"
-                                        fill="url(#qiblaGradient)"
-                                    />
-                                    <defs>
-                                        <linearGradient id="qiblaGradient" x1="12" y1="0" x2="12" y2="18">
-                                            <stop offset="0%" stopColor="#c9a961" />
-                                            <stop offset="100%" stopColor="#b8943f" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                            </div>
-
-                            {/* Center Kaaba icon */}
-                            <div className="qibla-kaaba">🕋</div>
                         </div>
 
-                        <div className="qibla-info">
-                            <p className="qibla-degrees">
-                                {qiblaDirection}° from North
-                            </p>
-                            <p className="qibla-heading">
-                                Your heading: {Math.round(smoothedHeading)}°
-                            </p>
+                        {/* AR Video Layer */}
+                        {mode === 'camera' && (
+                            <video ref={videoRef} autoPlay playsInline className="qibla-camera-bg" />
+                        )}
+
+                        {/* Main Direction Indicator */}
+                        <div className="qibla-visuals">
+                            {/* The Arrow/Dial */}
+                            <div className="qibla-pointer-container" style={{ transform: `rotate(${getCompassRotation()}deg)` }}>
+                                {mode === 'compass' ? (
+                                    <div className="compass-dial-face">
+                                        <div className="compass-markings"></div>
+                                        <div className="compass-needle"></div>
+                                    </div>
+                                ) : (
+                                    <div className="ar-arrow-3d">
+                                        <div className="arrow-head"></div>
+                                        <div className="arrow-shaft"></div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Static Crosshair for AR */}
+                            {mode === 'camera' && <div className="ar-crosshair"></div>}
                         </div>
 
-                        <div className="qibla-instruction">
-                            {Math.abs(getCompassRotation()) < 10 ? (
-                                <p className="qibla-aligned">✓ You are facing the Qibla!</p>
-                            ) : (
-                                <p>Rotate your device until the arrow points up</p>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Camera AR Mode */}
-                {!loading && !error && permissionGranted && mode === 'camera' && qiblaDirection !== null && (
-                    <div className="qibla-camera-container">
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            className="qibla-camera-video"
-                        />
-                        <div className="qibla-camera-overlay">
-                            {/* Directional arrow overlay */}
-                            <div
-                                className="qibla-camera-arrow"
-                                style={{ transform: `rotate(${getCompassRotation()}deg)` }}
-                            >
-                                <svg viewBox="0 0 100 100" fill="none">
-                                    <defs>
-                                        <filter id="glow">
-                                            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                                            <feMerge>
-                                                <feMergeNode in="coloredBlur" />
-                                                <feMergeNode in="SourceGraphic" />
-                                            </feMerge>
-                                        </filter>
-                                    </defs>
-                                    <polygon
-                                        points="50,5 60,40 50,35 40,40"
-                                        fill="#c9a961"
-                                        filter="url(#glow)"
-                                    />
-                                    <text x="50" y="70" textAnchor="middle" fill="#c9a961" fontSize="12" fontWeight="bold">
-                                        QIBLA
-                                    </text>
-                                </svg>
+                        {/* Bottom Info Status */}
+                        <div className="qibla-status-panel">
+                            <div className="status-main">
+                                {isAligned ? (
+                                    <div className="lock-indicator">
+                                        <span className="lock-icon">✓</span>
+                                        <span>Aligned with Qibla</span>
+                                    </div>
+                                ) : (
+                                    <span>Rotate to find Qibla</span>
+                                )}
                             </div>
-
-                            {/* Crosshair */}
-                            <div className="qibla-crosshair">
-                                <svg viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
-                                    <line x1="50" y1="25" x2="50" y2="35" stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
-                                    <line x1="50" y1="65" x2="50" y2="75" stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
-                                    <line x1="25" y1="50" x2="35" y2="50" stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
-                                    <line x1="65" y1="50" x2="75" y2="50" stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
-                                </svg>
-                            </div>
-
-                            {/* Info overlay */}
-                            <div className="qibla-camera-info">
-                                <p>Qibla: {qiblaDirection}°</p>
-                                <p>Heading: {Math.round(smoothedHeading)}°</p>
-                            </div>
-
-                            {Math.abs(getCompassRotation()) < 15 && (
-                                <div className="qibla-camera-aligned">
-                                    ✓ Pointing to Qibla
+                            <div className="status-grid">
+                                <div className="stat-item">
+                                    <label>Distance</label>
+                                    <span>{distanceKm} km</span>
                                 </div>
-                            )}
+                                <div className="stat-item">
+                                    <label>Qibla Angle</label>
+                                    <span>{Math.round(qiblaDirection)}°</span>
+                                </div>
+                                <div className="stat-item">
+                                    <label>Accuracy</label>
+                                    <span>{declination ? 'True N' : 'Mag N'}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
