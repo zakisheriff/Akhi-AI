@@ -3,34 +3,43 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/logo-512.png" />
+  <link rel="icon" type="image/png" href="/akhi_logo.png" />
+  <link rel="apple-touch-icon" href="/akhi_logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0A281C" />
 
   <!-- Primary Title (SEO Optimized) -->
-  <title>Akhi AI | Your Islamic Knowledge Assistant</title>
+  <title>Akhi AI | Your Brother in Faith & Knowledge</title>
 
   <!-- Meta Description -->
   <meta name="description"
     content="Akhi AI is your Islamic knowledge assistant powered by artificial intelligence, providing authentic answers based on the Quran and Hadith." />
   <meta name="keywords"
-    content="Akhi AI, Akhi, Ask Akhi, Islam AI, Islamic AI, Quran, Hadith, Fiqh, Islamic Knowledge, AI Assistant, Muslim AI, Ask Islam" />
+    content="Akhi AI, Akhi, Ask Akhi, Islam AI, Islamic AI, Quran, Hadith, Fiqh, Islamic Knowledge, AI Assistant, Muslim AI, Ask Islam, Islamic Questions" />
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="author" content="Akhi AI" />
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="application-name" content="Akhi AI" />
 
   <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="Akhi AI | Your Islamic Knowledge Assistant" />
+  <meta property="og:title" content="Akhi AI | Your Brother in Faith & Knowledge" />
   <meta property="og:description"
     content="Akhi AI is your Islamic knowledge assistant powered by artificial intelligence, providing authentic answers based on the Quran and Hadith." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://akhi.theoneatom.com/" />
-  <meta property="og:image" content="https://akhi.theoneatom.com/logo-512.png" />
+  <meta property="og:image" content="https://akhi.theoneatom.com/akhi_logo.png" />
+  <meta property="og:image:alt" content="Akhi AI Logo" />
   <meta property="og:site_name" content="Akhi AI" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Akhi AI | Your Islamic Knowledge Assistant" />
+  <meta name="twitter:title" content="Akhi AI | Your Brother in Faith & Knowledge" />
   <meta name="twitter:description"
     content="Islamic knowledge assistant powered by AI, providing authentic answers from Quran and Hadith." />
-  <meta name="twitter:image" content="https://akhi.theoneatom.com/logo-512.png" />
+  <meta name="twitter:image" content="https://akhi.theoneatom.com/akhi_logo.png" />
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://akhi.theoneatom.com/" />
@@ -41,8 +50,13 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Akhi AI",
-    "alternateName": ["Akhi", "Ask Akhi", "AkhiAI", "Islam AI", "Islamic AI"],
-    "url": "https://akhi.theoneatom.com/"
+    "alternateName": ["Akhi", "Ask Akhi", "AkhiAI", "Islam AI", "Islamic AI", "Akhi Islamic AI", "Ask Islam AI"],
+    "url": "https://akhi.theoneatom.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://akhi.theoneatom.com/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
   }
   </script>
 
@@ -52,9 +66,14 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Akhi AI",
-    "alternateName": "Akhi",
+    "alternateName": ["Akhi", "Ask Akhi", "AkhiAI"],
     "url": "https://akhi.theoneatom.com/",
-    "logo": "https://akhi.theoneatom.com/logo-512.png",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://akhi.theoneatom.com/akhi_logo.png",
+      "width": "512",
+      "height": "512"
+    },
     "description": "Akhi AI is your Islamic knowledge assistant powered by artificial intelligence, providing authentic answers based on the Quran and Hadith.",
     "sameAs": []
   }
@@ -66,6 +85,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Akhi AI",
+    "alternateName": ["Akhi", "Ask Akhi"],
     "url": "https://akhi.theoneatom.com/",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Web",
@@ -74,7 +94,8 @@
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
-    }
+    },
+    "screenshot": "https://akhi.theoneatom.com/akhi_logo.png"
   }
   </script>
 </head>

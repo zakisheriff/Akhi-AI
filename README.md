@@ -24,7 +24,7 @@
 
 > **"Seek knowledge from the cradle to the grave."**
 
-> **Akhi AI** (Arabic: الأخي, meaning "My Brother") is your dedicated companion for authentic Islamic knowledge. Built with precision and reverence, it provides accurate, sourced answers from the Quran, Sunnah, and recognized scholarly traditions, presented in a serene and distraction-free interface.
+> **Akhi AI** (Arabic: أخي, meaning "My Brother") is your dedicated companion for authentic Islamic knowledge. Built with precision and reverence, it provides accurate, sourced answers from the Quran, Sunnah, and recognized scholarly traditions, presented in a serene and distraction-free interface.
 
 ---
 

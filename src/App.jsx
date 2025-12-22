@@ -48,10 +48,10 @@ function App() {
       <header className="app__header">
         <div className="app__header-content">
           <h1 className="app__title">
-            <span className="app__title-arabic">الأخي</span>
+            <span className="app__title-arabic">أخي</span>
             <span className="app__title-english">Akhi AI</span>
           </h1>
-          <p className="app__subtitle">Your Islamic Knowledge Assistant</p>
+          <p className="app__subtitle">Your Brother in Faith & Knowledge</p>
         </div>
       </header>
 
