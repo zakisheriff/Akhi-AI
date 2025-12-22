@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ChatContainer from './components/ChatContainer';
 import AmbientBackground from './components/AmbientBackground';
+import PrayerTimes from './components/PrayerTimes';
 import { sendMessage } from './services/openaiService';
 import { SCHOOLS } from './utils/systemPrompt';
 import './styles/App.css';
@@ -19,6 +20,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [genZMode, setGenZMode] = useState(false);
+  const [showPrayerTimes, setShowPrayerTimes] = useState(false);
 
   // Reset scroll to top on initial load
   useScrollReset();
@@ -70,6 +72,13 @@ function App() {
             <span className="app__title-seo">– Your Brother in Faith & Knowledge</span>
           </h1>
         </div>
+        <button
+          className="app__prayer-btn"
+          onClick={() => setShowPrayerTimes(true)}
+          title="Prayer Times"
+        >
+          🕌
+        </button>
       </header>
 
       <ChatContainer
@@ -79,6 +88,12 @@ function App() {
         error={error}
         genZMode={genZMode}
         onToggleGenZMode={handleToggleGenZMode}
+      />
+
+      {/* Prayer Times Modal */}
+      <PrayerTimes
+        isOpen={showPrayerTimes}
+        onClose={() => setShowPrayerTimes(false)}
       />
 
       {/* Footer */}
@@ -94,4 +109,3 @@ function App() {
 }
 
 export default App;
-

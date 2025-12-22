@@ -19,8 +19,37 @@
   min-height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 1rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Prayer Times Button */
+.app__prayer-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 97, 0.4);
+  background: linear-gradient(135deg, rgba(201, 169, 97, 0.2) 0%, rgba(201, 169, 97, 0.1) 100%);
+  color: var(--color-gold, #c9a961);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.app__prayer-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, rgba(201, 169, 97, 0.3) 0%, rgba(201, 169, 97, 0.2) 100%);
+  border-color: var(--color-gold, #c9a961);
+  box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+}
+
+.app__prayer-btn:active {
+  transform: scale(0.95);
 }
 
 .app__header::before {
@@ -82,15 +111,23 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .app__header {
-    flex-direction: column;
+    flex-direction: row;
+    padding: 0.5rem 1rem;
   }
 
   .app__header-content {
-    padding: 0.625rem 1rem;
+    padding: 0.5rem 0;
+    flex: 1;
   }
 
   .app__title {
-    font-size: 1.125rem;
+    font-size: 1rem;
+  }
+
+  .app__prayer-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.25rem;
   }
 }
 
@@ -100,17 +137,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0;
+    padding: 0 1.5rem;
   }
 
   .app__header-content {
     flex: 1;
     text-align: left;
-    padding: 0.875rem 1.5rem;
+    padding: 0.875rem 0;
   }
 
   .app__title {
     font-size: 1.375rem;
+  }
+
+  .app__prayer-btn {
+    margin-left: 1rem;
   }
 }
 
