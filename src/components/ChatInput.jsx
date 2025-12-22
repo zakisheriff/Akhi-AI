@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/ChatInput.css';
 
-const ChatInput = ({ onSendMessage, disabled = false }) => {
+const ChatInput = ({ onSendMessage, disabled = false, genZMode = false, onToggleGenZMode }) => {
   const [inputValue, setInputValue] = useState('');
   const textareaRef = useRef(null);
 
@@ -42,11 +42,28 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
 
   return (
     <form className="chat-input" onSubmit={handleSubmit}>
+      {/* Gen Z Mode Toggle */}
+      <div className="chat-input__mode-toggle">
+        <button
+          type="button"
+          className={`chat-input__genz-toggle ${genZMode ? 'chat-input__genz-toggle--active' : ''}`}
+          onClick={onToggleGenZMode}
+          aria-label="Toggle Gen Z Mode"
+          title={genZMode ? 'Gen Z Mode: ON 🔥' : 'Gen Z Mode: OFF'}
+        >
+          <span className="chat-input__genz-icon">🔥</span>
+          <span className="chat-input__genz-label">Gen Z</span>
+          <span className={`chat-input__genz-status ${genZMode ? 'chat-input__genz-status--on' : ''}`}>
+            {genZMode ? 'ON' : 'OFF'}
+          </span>
+        </button>
+      </div>
+
       <div className="chat-input__container">
         <textarea
           ref={textareaRef}
           className="chat-input__field"
-          placeholder="Ask a question about Islam…"
+          placeholder={genZMode ? "Yo, what's on your mind? 💭" : "Ask a question about Islam…"}
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -87,4 +104,3 @@ const ChatInput = ({ onSendMessage, disabled = false }) => {
 };
 
 export default ChatInput;
-

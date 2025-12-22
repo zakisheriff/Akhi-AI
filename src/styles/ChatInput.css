@@ -184,3 +184,113 @@
     height: 16px;
   }
 }
+
+/* ============================================
+   GEN Z MODE TOGGLE BUTTON STYLES
+   ============================================ */
+
+.chat-input__mode-toggle {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 700px;
+  margin: 0 auto 0.5rem;
+  padding: 0 0.5rem;
+  pointer-events: auto;
+}
+
+.chat-input__genz-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(50, 50, 50, 0.8) 100%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-input__genz-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 140, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+}
+
+.chat-input__genz-toggle--active {
+  background: linear-gradient(135deg, rgba(255, 100, 0, 0.9) 0%, rgba(255, 60, 0, 0.85) 100%);
+  border-color: rgba(255, 200, 100, 0.5);
+  color: white;
+  box-shadow:
+    0 4px 16px rgba(255, 100, 0, 0.4),
+    0 0 20px rgba(255, 100, 0, 0.2);
+}
+
+.chat-input__genz-toggle--active:hover {
+  background: linear-gradient(135deg, rgba(255, 120, 20, 0.95) 0%, rgba(255, 80, 20, 0.9) 100%);
+  box-shadow:
+    0 6px 20px rgba(255, 100, 0, 0.5),
+    0 0 30px rgba(255, 100, 0, 0.3);
+}
+
+.chat-input__genz-icon {
+  font-size: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.chat-input__genz-toggle--active .chat-input__genz-icon {
+  animation: fire-pulse 1s ease-in-out infinite;
+}
+
+@keyframes fire-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.chat-input__genz-label {
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
+.chat-input__genz-status {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.chat-input__genz-status--on {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
+}
+
+/* Mobile Gen Z Toggle */
+@media (max-width: 768px) {
+  .chat-input__mode-toggle {
+    margin-bottom: 0.375rem;
+    padding: 0 0.25rem;
+  }
+
+  .chat-input__genz-toggle {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
+  }
+
+  .chat-input__genz-icon {
+    font-size: 0.75rem;
+  }
+}

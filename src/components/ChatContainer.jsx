@@ -13,7 +13,7 @@ const MOBILE_QNA = [
   { q: "Zakat Nisaab?", a: "85g gold or 595g silver" },
   { q: "Tahajjud timing?", a: "After sleep, before Fajr" },
 ];
-const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
+const ChatContainer = ({ messages, isLoading, onSendMessage, error, genZMode, onToggleGenZMode }) => {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const containerRef = useRef(null);
@@ -181,7 +181,12 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
         </div>
       </div>
 
-      <ChatInput onSendMessage={onSendMessage} disabled={isLoading} />
+      <ChatInput
+        onSendMessage={onSendMessage}
+        disabled={isLoading}
+        genZMode={genZMode}
+        onToggleGenZMode={onToggleGenZMode}
+      />
     </div>
   );
 };

@@ -18,6 +18,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [genZMode, setGenZMode] = useState(false);
 
   // Reset scroll to top on initial load
   useScrollReset();
@@ -38,8 +39,8 @@ function App() {
         content: msg.text
       }));
 
-      // Send message to OpenAI
-      const aiResponse = await sendMessage(userMessage, SCHOOLS.GENERAL, conversationHistory);
+      // Send message to OpenAI with genZMode flag
+      const aiResponse = await sendMessage(userMessage, SCHOOLS.GENERAL, conversationHistory, genZMode);
 
       // Add AI response to chat
       const aiMessageObj = { role: 'assistant', text: aiResponse };
@@ -52,7 +53,11 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [messages, genZMode]);
+
+  const handleToggleGenZMode = useCallback(() => {
+    setGenZMode(prev => !prev);
+  }, []);
 
   return (
     <div className="app">
@@ -72,6 +77,8 @@ function App() {
         isLoading={isLoading}
         onSendMessage={handleSendMessage}
         error={error}
+        genZMode={genZMode}
+        onToggleGenZMode={handleToggleGenZMode}
       />
 
       {/* Footer */}
@@ -87,3 +94,4 @@ function App() {
 }
 
 export default App;
+
