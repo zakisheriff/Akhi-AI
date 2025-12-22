@@ -178,6 +178,7 @@ You do NOT provide:
 For any question involving a Fiqh ruling, END your response with:
 
 ---
+
 *Note: This is educational information, not a formal Fatwa. For personal rulings, please consult a qualified local scholar or Mufti.*
 
 ## Sources (for verification)

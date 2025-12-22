@@ -4,6 +4,15 @@ import TypingIndicator from './TypingIndicator';
 import ChatInput from './ChatInput';
 import '../styles/ChatContainer.css';
 
+// Mobile ambient Q&A for horizontal scroll
+const MOBILE_QNA = [
+  { q: "Is fasting without Suhoor valid?", a: "Yes, Suhoor is Sunnah" },
+  { q: "Jummah rak'ahs?", a: "2 rak'ahs total" },
+  { q: "What breaks Wudu?", a: "Wind, urine, sleep" },
+  { q: "Laylatul Qadr?", a: "Night better than 1000 months" },
+  { q: "Zakat Nisaab?", a: "85g gold or 595g silver" },
+  { q: "Tahajjud timing?", a: "After sleep, before Fajr" },
+];
 const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -116,6 +125,25 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
               <p className="chat-container__disclaimer">
                 ⚠️ This is an educational AI tool, not a replacement for qualified scholars. Please verify important rulings with a local Mufti or Imam.
               </p>
+
+              {/* Mobile Ambient Q&A - Horizontal Scroll */}
+              <div className="chat-container__mobile-ambient">
+                <div className="chat-container__mobile-ambient-track">
+                  {MOBILE_QNA.map((item, i) => (
+                    <div key={i} className="chat-container__mobile-qna-card">
+                      <span className="chat-container__mobile-qna-q">{item.q}</span>
+                      <span className="chat-container__mobile-qna-a">{item.a}</span>
+                    </div>
+                  ))}
+                  {/* Duplicate for seamless loop */}
+                  {MOBILE_QNA.map((item, i) => (
+                    <div key={`dup-${i}`} className="chat-container__mobile-qna-card">
+                      <span className="chat-container__mobile-qna-q">{item.q}</span>
+                      <span className="chat-container__mobile-qna-a">{item.a}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

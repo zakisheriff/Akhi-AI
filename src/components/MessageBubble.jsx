@@ -93,7 +93,20 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
         return <h4 key={index} className="message-heading-h4">{renderWithFormatting(trimmedLine.slice(4))}</h4>;
       }
       if (trimmedLine.startsWith('#### ')) {
-        return <h5 key={index} className="message-heading-h5">{renderWithFormatting(trimmedLine.slice(5))}</h5>;
+        return <h5 key={index} className="message-heading-h5">{renderWithFormatting(trimmedLine.slice(4))}</h5>;
+      }
+
+      // Check if it's the educational disclaimer note (fatwa warning)
+      const isDisclaimerNote = /^(\*)?Note:\s*This is educational information/i.test(trimmedLine) ||
+        /This is educational information, not a formal Fatwa/i.test(trimmedLine);
+      if (isDisclaimerNote) {
+        // Remove asterisks and format as golden disclaimer
+        const cleanedText = trimmedLine.replace(/^\*|\*$/g, '').trim();
+        return (
+          <p key={index} className="message-fatwa-disclaimer">
+            {cleanedText}
+          </p>
+        );
       }
 
       // Check if it's a sources section header

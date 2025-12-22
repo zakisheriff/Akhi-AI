@@ -330,6 +330,82 @@
     padding: 0.5rem 0.75rem;
     margin-top: 0.75rem;
   }
+
+  /* Mobile Ambient Q&A - Horizontal Scroll */
+  .chat-container__mobile-ambient {
+    width: 100vw;
+    margin-left: -1rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Smooth fade on edges using mask */
+  .chat-container__mobile-ambient {
+    -webkit-mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 15%,
+        black 85%,
+        transparent 100%);
+    mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 15%,
+        black 85%,
+        transparent 100%);
+  }
+
+  .chat-container__mobile-ambient-track {
+    display: flex;
+    gap: 0.75rem;
+    animation: mobileAmbientScroll 25s linear infinite;
+    width: max-content;
+  }
+
+  .chat-container__mobile-qna-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(1, 50, 32, 0.4);
+    border: 1px solid rgba(201, 169, 97, 0.15);
+    border-radius: 0.5rem;
+    min-width: 140px;
+    max-width: 160px;
+  }
+
+  .chat-container__mobile-qna-q {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+  }
+
+  .chat-container__mobile-qna-a {
+    font-size: 0.65rem;
+    color: var(--color-gold);
+    font-weight: 600;
+  }
+
+  /* Scroll from left to right (reverse direction) */
+  @keyframes mobileAmbientScroll {
+    0% {
+      transform: translateX(-50%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Hide mobile ambient on desktop */
+.chat-container__mobile-ambient {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .chat-container__mobile-ambient {
+    display: block;
+  }
 }
 
 /* Unified Desktop & Tablet Width */
