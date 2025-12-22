@@ -11,7 +11,7 @@ Disallow: /assets/
 # Disallow: /
 
 # Host
-Host: https://al-ilm.theoneatom.com
+Host: https://akhi.theoneatom.com
 
 # Sitemap
-Sitemap: https://al-ilm.theoneatom.com/sitemap.xml
+Sitemap: https://akhi.theoneatom.com/sitemap.xml

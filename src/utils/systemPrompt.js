@@ -1,5 +1,5 @@
 /**
- * System prompt builder for Al-Ilm AI
+ * System prompt builder for Akhi AI
  * Creates a comprehensive system prompt that ensures authentic Islamic responses
  * with strong anti-hallucination protocols and verified Fiqh knowledge
  */

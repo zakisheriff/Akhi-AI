@@ -1,8 +1,8 @@
-# <div align="center">Al-Ilm</div>
+# <div align="center">Akhi AI</div>
 
 <div align="center">
 
-<strong>The Authentic Islamic Knowledge Companion</strong>
+<strong>Your Islamic Knowledge Companion</strong>
 
 </div>
 
@@ -11,12 +11,12 @@
 <div align="center">
 
 ![React](https://img.shields.io/badge/React-18.2-61dafb?style=for-the-badge&logo=react&logoColor=white)
-![Al-Ilm](https://img.shields.io/badge/Al--Ilm-AI-C9A961?style=for-the-badge&logo=book&logoColor=white)
+![Akhi AI](https://img.shields.io/badge/Akhi-AI-C9A961?style=for-the-badge&logo=book&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 <br />
 
-**[🚀 Launch Application](https://al-ilm-ai.vercel.app)** | **[📖 Features](#-features)**
+**[🚀 Launch Application](https://akhi.theoneatom.com)** | **[📖 Features](#-features)**
 
 </div>
 
@@ -24,13 +24,13 @@
 
 > **"Seek knowledge from the cradle to the grave."**
 
-> **Al-Ilm AI** is your dedicated companion for authentic Islamic knowledge. Built with precision and reverence, it provides accurate, sourced answers from the Quran, Sunnah, and recognized scholarly traditions, presented in a serene and distraction-free interface.
+> **Akhi AI** (Arabic: الأخي, meaning "My Brother") is your dedicated companion for authentic Islamic knowledge. Built with precision and reverence, it provides accurate, sourced answers from the Quran, Sunnah, and recognized scholarly traditions, presented in a serene and distraction-free interface.
 
 ---
 
 ## 🌟 Mission
 
-In an age of information overload, finding verified Islamic answers can be difficult. **Al-Ilm AI** serves as a bridge to authentic knowledge, prioritizing:
+In an age of information overload, finding verified Islamic answers can be difficult. **Akhi AI** serves as a bridge to authentic knowledge, prioritizing:
 
 -   **Authenticity**: Zero tolerance for unverified information.
 -   **Transparency**: Every answer is backed by clear references to primary sources.
@@ -45,7 +45,7 @@ In an age of information overload, finding verified Islamic answers can be diffi
 Powered by advanced artificial intelligence tuned for Islamic sciences, providing answers deeply rooted in:
 -   **The Holy Quran** (with Tafsir context)
 -   **Hadith Collections** (Al-Kutub Al-Sittah)
--   **Fiqh Encyolopedias**
+-   **Fiqh Encyclopedias**
 
 ### 🕌 Madhhab-Aware Fiqh
 Tailor your learning experience by verifying rulings across the four major schools of thought:
@@ -56,7 +56,7 @@ Tailor your learning experience by verifying rulings across the four major schoo
 *Or select "General" for a comparative overview.*
 
 ### 🔗 Verified Citation System
-Unlike standard AI, Al-Ilm AI enforces a strict citation policy. Every major claim is linked to its source, allowing you to verify verses and hadiths directly.
+Unlike standard AI, Akhi AI enforces a strict citation policy. Every major claim is linked to its source, allowing you to verify verses and hadiths directly.
 
 ### 🎨 Premium Islamic Design
 -   **Distraction-Free UI**: Engaging typewriter effects and smooth animations.
@@ -67,7 +67,7 @@ Unlike standard AI, Al-Ilm AI enforces a strict citation policy. Every major cla
 
 ## 🚀 Getting Started
 
-Al-Ilm AI is designed to be run locally or deployed to a verified environment.
+Akhi AI is designed to be run locally or deployed to a verified environment.
 
 ### Prerequisites
 
@@ -101,7 +101,7 @@ Al-Ilm AI is designed to be run locally or deployed to a verified environment.
 ## 🔒 Privacy & Sovereignty
 
 -   **Private**: All processing occurs secure and private.
--   **Ephemeral**: No conservation history is stored on any server. Your questions remain yours.
+-   **Ephemeral**: No conversation history is stored on any server. Your questions remain yours.
 -   **Transparent**: Open-source frontend code ensures full visibility into the application logic.
 
 ---
@@ -109,14 +109,14 @@ Al-Ilm AI is designed to be run locally or deployed to a verified environment.
 ## 🛠 Tech Stack
 
 -   **Core**: React 18, Vite
--   **Intelligence**: Al-Ilm Neural Engine (Advanced LLM Integration)
+-   **Intelligence**: Akhi Neural Engine (Advanced LLM Integration)
 -   **Styling**: Pure CSS3, Glassmorphism Design System
 
 ---
 
 ## ⚠️ Disclaimer
 
-**Al-Ilm AI** is an educational tool. While rigorous measures are taken to ensure accuracy, Islamic knowledge is vast and nuanced. For specific personal rulings (Fatwa), please consult a qualified local scholar/Mufti.
+**Akhi AI** is an educational tool. While rigorous measures are taken to ensure accuracy, Islamic knowledge is vast and nuanced. For specific personal rulings (Fatwa), please consult a qualified local scholar/Mufti.
 
 ---
 
@@ -124,6 +124,6 @@ Al-Ilm AI is designed to be run locally or deployed to a verified environment.
 
 Made by **Zaki Sheriff**
 
-<em>May this tool be a means of beneficial knowledge (Ilm Nafi) for the Ummah.</em>
+*May this tool be a means of beneficial knowledge (Ilm Nafi) for the Ummah.*
 
 </div>

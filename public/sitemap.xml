@@ -6,40 +6,40 @@
   
   <!-- Main Home Page -->
   <url>
-    <loc>https://al-ilm.theoneatom.com/</loc>
-    <lastmod>2025-12-22T06:00:00+00:00</lastmod>
+    <loc>https://akhi.theoneatom.com/</loc>
+    <lastmod>2024-12-22T06:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <!-- About Page -->
   <url>
-    <loc>https://al-ilm.theoneatom.com/about.html</loc>
-    <lastmod>2025-12-22T06:00:00+00:00</lastmod>
+    <loc>https://akhi.theoneatom.com/about.html</loc>
+    <lastmod>2024-12-22T06:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <!-- Features Page -->
   <url>
-    <loc>https://al-ilm.theoneatom.com/features.html</loc>
-    <lastmod>2025-12-22T06:00:00+00:00</lastmod>
+    <loc>https://akhi.theoneatom.com/features.html</loc>
+    <lastmod>2024-12-22T06:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <!-- Privacy Policy -->
   <url>
-    <loc>https://al-ilm.theoneatom.com/privacy.html</loc>
-    <lastmod>2025-12-22T06:00:00+00:00</lastmod>
+    <loc>https://akhi.theoneatom.com/privacy.html</loc>
+    <lastmod>2024-12-22T06:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <!-- Terms of Service -->
   <url>
-    <loc>https://al-ilm.theoneatom.com/terms.html</loc>
-    <lastmod>2025-12-22T06:00:00+00:00</lastmod>
+    <loc>https://akhi.theoneatom.com/terms.html</loc>
+    <lastmod>2024-12-22T06:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
