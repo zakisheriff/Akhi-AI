@@ -112,9 +112,6 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
               <p className="chat-container__welcome-text">
                 Welcome to <span className="chat-container__welcome-highlight">Akhi AI</span> – your Islamic AI assistant, providing authentic answers based on the Quran, Hadith, and trusted Islamic scholarship.
               </p>
-              <p className="chat-container__welcome-text-secondary">
-                Ask Akhi AI questions about Islam, Fiqh, Salah, Aqeedah, and daily life guidance. Akhi AI (also called Ask Akhi) is your brother in faith and knowledge.
-              </p>
               <div className="chat-container__welcome-suggestions">
                 {[
                   "What is the importance of Salah?",
