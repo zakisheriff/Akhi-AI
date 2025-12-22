@@ -42,6 +42,30 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
     setTypingMessageIndex(-1);
   }, []);
 
+  // iOS: Scroll to top when tapping near status bar area
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      // Check if tap is in the top 50px (status bar area) on mobile
+      if (e.touches && e.touches[0] && e.touches[0].clientY < 50) {
+        // Only trigger if there's something to scroll
+        if (messagesContainerRef.current && messagesContainerRef.current.scrollTop > 0) {
+          e.preventDefault();
+          messagesContainerRef.current.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      }
+    };
+
+    // Add listener to the whole document for status bar taps
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, []);
+
   // Determine if we are in "Hero" mode (no messages yet)
   const isHero = messages.length === 0 && !isLoading;
 

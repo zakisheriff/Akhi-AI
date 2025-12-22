@@ -18,6 +18,10 @@
   scroll-behavior: smooth;
   mask-image: none;
   -webkit-mask-image: none;
+
+  /* iOS: Enable momentum scrolling and status bar tap-to-scroll */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 /* Welcome message - Premium Glassmorphism Card */
@@ -281,6 +285,14 @@
     padding: 1.25rem 1rem;
     margin: 0 auto;
     max-width: 95%;
+
+    /* Remove heavy effects on mobile to prevent flickering */
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    animation: none;
   }
 
   .chat-container__welcome-icon {
