@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import TypewriterText from './TypewriterText';
+import QuranVerse from './QuranVerse';
+import HadithCard from './HadithCard';
 import '../styles/MessageBubble.css';
 
 const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) => {
@@ -78,8 +80,106 @@ const MessageBubble = ({ message, isUser, isTyping = false, onTypingComplete }) 
     });
   };
 
-  // Format text content - handle line breaks, headers, and references
+  // Format text content - handle line breaks, headers, references, Quran verses, and Hadiths
   const formatTextContent = (text) => {
+    // Check for Quran citation markers [QURAN:X:Y] 
+    // NOTE: Only single verses are supported (e.g., 5:3). Ranges like 5:3-9 are NOT supported
+    // because the Quran API only returns one verse at a time.
+    const quranCitationRegex = /\[QURAN:(\d+):(\d+)\]/gi;
+    const quranCitations = [];
+    let match;
+
+    // Extract all Quran citations (single verses only)
+    while ((match = quranCitationRegex.exec(text)) !== null) {
+      quranCitations.push({
+        type: 'quran',
+        fullMatch: match[0],
+        verseKey: `${match[1]}:${match[2]}`, // e.g., "5:3"
+        index: match.index
+      });
+    }
+
+    // Check for Hadith citation markers [HADITH:collection:id]
+    const hadithCitationRegex = /\[HADITH:(bukhari|muslim|abudawud|ibnmajah|tirmidhi):(\d+)\]/gi;
+    const hadithCitations = [];
+
+    // Extract all Hadith citations
+    while ((match = hadithCitationRegex.exec(text)) !== null) {
+      hadithCitations.push({
+        type: 'hadith',
+        fullMatch: match[0],
+        collection: match[1].toLowerCase(),
+        id: parseInt(match[2]),
+        index: match.index
+      });
+    }
+
+    // Combine all citations and sort by position
+    const allCitations = [...quranCitations, ...hadithCitations].sort((a, b) => a.index - b.index);
+
+    // If we have citations, render them with their components
+    if (allCitations.length > 0) {
+      const parts = [];
+      let remainingText = text;
+      let partIndex = 0;
+
+      for (const citation of allCitations) {
+        const splitIndex = remainingText.indexOf(citation.fullMatch);
+
+        if (splitIndex > 0) {
+          // Add text before citation
+          const beforeText = remainingText.substring(0, splitIndex);
+          parts.push(
+            <React.Fragment key={`text-${partIndex}`}>
+              {formatTextLines(beforeText)}
+            </React.Fragment>
+          );
+          partIndex++;
+        }
+
+        // Add appropriate component based on citation type
+        if (citation.type === 'quran') {
+          parts.push(
+            <QuranVerse
+              key={`quran-${citation.verseKey}-${partIndex}`}
+              verseKey={citation.verseKey}
+              compact={true}
+            />
+          );
+        } else if (citation.type === 'hadith') {
+          parts.push(
+            <HadithCard
+              key={`hadith-${citation.collection}-${citation.id}-${partIndex}`}
+              collection={citation.collection}
+              hadithId={citation.id}
+              compact={true}
+            />
+          );
+        }
+        partIndex++;
+
+        // Update remaining text
+        remainingText = remainingText.substring(splitIndex + citation.fullMatch.length);
+      }
+
+      // Add any remaining text after the last citation
+      if (remainingText.trim()) {
+        parts.push(
+          <React.Fragment key={`text-${partIndex}`}>
+            {formatTextLines(remainingText)}
+          </React.Fragment>
+        );
+      }
+
+      return parts;
+    }
+
+    // No citations, use standard formatting
+    return formatTextLines(text);
+  };
+
+  // Format individual text lines (extracted for reuse)
+  const formatTextLines = (text) => {
     const lines = text.split('\n');
 
     return lines.map((line, index) => {
