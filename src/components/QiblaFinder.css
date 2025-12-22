@@ -1,0 +1,488 @@
+/* ============================================
+   QIBLA FINDER STYLES
+   ============================================ */
+
+.qibla-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: qiblaFadeIn 0.2s ease-out;
+}
+
+@keyframes qiblaFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.qibla-modal {
+    background: linear-gradient(145deg, #0a1f14 0%, #0d2818 50%, #0a1f14 100%);
+    border-radius: 1.5rem;
+    max-width: 400px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    animation: qiblaSlideUp 0.3s ease-out;
+}
+
+@keyframes qiblaSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.qibla-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+}
+
+.qibla-header-content {
+    flex: 1;
+}
+
+.qibla-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-gold, #c9a961);
+    margin: 0 0 0.25rem;
+}
+
+.qibla-title svg {
+    width: 24px;
+    height: 24px;
+}
+
+.qibla-location {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.qibla-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qibla-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* Mode Toggle */
+.qibla-mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    justify-content: center;
+}
+
+.qibla-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 2rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qibla-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.qibla-mode-btn.active {
+    background: rgba(201, 169, 97, 0.2);
+    border-color: var(--color-gold, #c9a961);
+    color: var(--color-gold, #c9a961);
+}
+
+.qibla-mode-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Loading */
+.qibla-loading {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.qibla-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(201, 169, 97, 0.2);
+    border-top-color: var(--color-gold, #c9a961);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: qiblaSpin 1s linear infinite;
+}
+
+@keyframes qiblaSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error */
+.qibla-error {
+    padding: 2rem;
+    text-align: center;
+    color: #ff8888;
+}
+
+.qibla-error span {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.qibla-error button {
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem;
+    background: var(--color-gold, #c9a961);
+    color: #0a1f14;
+    border: none;
+    border-radius: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Permission Request */
+.qibla-permission {
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.qibla-permission svg {
+    color: var(--color-gold, #c9a961);
+    margin-bottom: 1rem;
+}
+
+.qibla-permission p {
+    margin-bottom: 1.5rem;
+}
+
+.qibla-permission button {
+    padding: 0.75rem 2rem;
+    background: var(--color-gold, #c9a961);
+    color: #0a1f14;
+    border: none;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.qibla-permission button:hover {
+    transform: scale(1.05);
+}
+
+/* Compass Container */
+.qibla-compass-container {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qibla-compass {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Compass Dial */
+.qibla-compass-dial {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(20, 50, 35, 0.9), rgba(10, 31, 20, 0.9));
+    border: 2px solid rgba(201, 169, 97, 0.3);
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease-out;
+}
+
+.qibla-compass-n,
+.qibla-compass-e,
+.qibla-compass-s,
+.qibla-compass-w {
+    position: absolute;
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.qibla-compass-n {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ff6b6b;
+}
+
+.qibla-compass-e {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.qibla-compass-s {
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.qibla-compass-w {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Compass Ticks */
+.qibla-compass-tick {
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    top: 8px;
+    left: 50%;
+    transform-origin: 0 112px;
+}
+
+.qibla-compass-tick.major {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Qibla Arrow */
+.qibla-arrow {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    z-index: 10;
+    transition: transform 0.1s ease-out;
+    filter: drop-shadow(0 0 10px rgba(201, 169, 97, 0.5));
+}
+
+.qibla-arrow svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Kaaba Icon */
+.qibla-kaaba {
+    position: absolute;
+    font-size: 2rem;
+    z-index: 5;
+}
+
+/* Info Section */
+.qibla-info {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.qibla-degrees {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-gold, #c9a961);
+    margin: 0 0 0.25rem;
+}
+
+.qibla-heading {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* Instruction */
+.qibla-instruction {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.qibla-instruction p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.qibla-aligned {
+    color: #4ade80 !important;
+    font-weight: 600;
+    animation: qiblaPulse 1s ease-in-out infinite;
+}
+
+@keyframes qiblaPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Camera Container */
+.qibla-camera-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    max-height: 400px;
+    overflow: hidden;
+    background: #000;
+}
+
+.qibla-camera-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.qibla-camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qibla-camera-arrow {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transition: transform 0.1s ease-out;
+}
+
+.qibla-camera-arrow svg {
+    width: 100%;
+    height: 100%;
+}
+
+.qibla-crosshair {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+}
+
+.qibla-crosshair svg {
+    width: 100%;
+    height: 100%;
+}
+
+.qibla-camera-info {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    color: white;
+}
+
+.qibla-camera-info p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.qibla-camera-aligned {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(74, 222, 128, 0.9);
+    color: #0a1f14;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    animation: qiblaPulse 1s ease-in-out infinite;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .qibla-modal {
+        max-height: 85vh;
+        border-radius: 1.25rem 1.25rem 0 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: 100%;
+    }
+
+    .qibla-compass {
+        width: 220px;
+        height: 220px;
+    }
+
+    .qibla-compass-dial {
+        width: 200px;
+        height: 200px;
+    }
+
+    .qibla-compass-tick {
+        transform-origin: 0 92px;
+    }
+
+    .qibla-camera-container {
+        max-height: 350px;
+    }
+}

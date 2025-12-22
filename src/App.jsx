@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import ChatContainer from './components/ChatContainer';
 import AmbientBackground from './components/AmbientBackground';
 import PrayerTimes from './components/PrayerTimes';
+import QiblaFinder from './components/QiblaFinder';
 import { sendMessage } from './services/openaiService';
 import { SCHOOLS } from './utils/systemPrompt';
 import './styles/App.css';
@@ -21,6 +22,7 @@ function App() {
   const [error, setError] = useState(null);
   const [genZMode, setGenZMode] = useState(false);
   const [showPrayerTimes, setShowPrayerTimes] = useState(false);
+  const [showQibla, setShowQibla] = useState(false);
 
   // Reset scroll to top on initial load
   useScrollReset();
@@ -72,13 +74,25 @@ function App() {
             <span className="app__title-seo">– Your Brother in Faith & Knowledge</span>
           </h1>
         </div>
-        <button
-          className="app__prayer-btn"
-          onClick={() => setShowPrayerTimes(true)}
-          title="Prayer Times"
-        >
-          🕌
-        </button>
+        <div className="app__header-actions">
+          <button
+            className="app__action-btn"
+            onClick={() => setShowQibla(true)}
+            title="Qibla Finder"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor" />
+            </svg>
+          </button>
+          <button
+            className="app__action-btn"
+            onClick={() => setShowPrayerTimes(true)}
+            title="Prayer Times"
+          >
+            🕌
+          </button>
+        </div>
       </header>
 
       <ChatContainer
@@ -94,6 +108,12 @@ function App() {
       <PrayerTimes
         isOpen={showPrayerTimes}
         onClose={() => setShowPrayerTimes(false)}
+      />
+
+      {/* Qibla Finder Modal */}
+      <QiblaFinder
+        isOpen={showQibla}
+        onClose={() => setShowQibla(false)}
       />
 
       {/* Footer */}

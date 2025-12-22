@@ -14,12 +14,12 @@ const getSriLankaMethod = () => {
     params.ishaAngle = 17.5;
     // Minute adjustments to match Muslim Pro exactly
     params.adjustments = {
-        fajr: 0,      // base is 4:56 (correct)
+        fajr: -1,      // base is 4:56 (correct)
         sunrise: 0,
         dhuhr: 0,
-        asr: 1,       // 3:32 (correct)
-        maghrib: 1,   // 6:02 (correct)
-        isha: 3       // 7:16 -> 7:17
+        asr: 0,       // 3:32 (correct)
+        maghrib: 0,   // 6:02 (correct)
+        isha: 2       // 7:16 -> 7:17
     };
     return params;
 };
