@@ -47,49 +47,75 @@ const QiblaFinder = ({ isOpen, onClose }) => {
         return Math.round(R * c);
     };
 
-    // Circular interpolation
-    const lerpAngle = (start, end, amount) => {
-        let shortest_angle = ((((end - start) % 360) + 540) % 360) - 180;
-        return start + (shortest_angle * amount);
+    // Physics State (Spring Model)
+    // We use refs for physics state to avoid React render loop overhead
+    const physicsState = useRef({
+        position: 0,
+        velocity: 0,
+        target: 0
+    });
+
+    // Spring Config
+    const SPRING_CONFIG = {
+        stiffness: 0.08, // Higher = snaps faster
+        damping: 0.82,   // Lower = more oscillation, Higher = less oscillation (0-1)
+        mass: 1.0
     };
 
-    // Smoothing Loop
+    // Calculate shortest distance between two angles (for spring target)
+    const getShortestAngleDiff = (from, to) => {
+        const diff = (to - from + 180) % 360 - 180;
+        return (diff + 360) % 360 - 180;
+    };
+
+    // Physics Loop
     const loopRef = useRef();
     loopRef.current = () => {
         if (!mountedRef.current) return;
 
-        const alpha = 0.05;
-        let raw = headingRef.current;
-        let smoothed = smoothedHeadingRef.current;
+        const { stiffness, damping, mass } = SPRING_CONFIG;
+        let { position, velocity, target } = physicsState.current;
 
-        // Smooth
-        let newSmoothed = lerpAngle(smoothed, raw, alpha);
-        smoothedHeadingRef.current = newSmoothed;
+        // 1. Calculate Force (Spring)
+        // Find shortest path to target
+        const error = getShortestAngleDiff(position, target);
 
-        // Check alignment (within 3 degrees)
-        // Note: qiblaDirection includes True North correction if any
+        // 2. Apply Spring Force
+        const force = error * stiffness;
+
+        // 3. Apply Damping (Friction)
+        const acceleration = (force / mass);
+        velocity = (velocity + acceleration) * damping;
+
+        // 4. Update Position
+        position += velocity;
+
+        // Save state
+        physicsState.current = { position, velocity, target };
+
+        // Normalize position for display (0-360) 
+        // We keep physics continuous, but normalized for alignment checks
+        const normalizedPos = ((position % 360) + 360) % 360;
+
+        // Check Alignment (Tolerance 3 degrees)
         if (qiblaDirection !== null) {
-            // angle to qibla
-            let diff = Math.abs(lerpAngle(newSmoothed, qiblaDirection, 1.0)); // shortest diff
-            // 0 is perfectly aligned
-            // lerpAngle(0, 10, 1) -> 10. lerpAngle(350, 10, 1) -> 20.
-            // Wait, standard difference:
-            let absDiff = Math.abs((((qiblaDirection - newSmoothed) % 360) + 540) % 360 - 180);
+            const angleToQibla = Math.abs(getShortestAngleDiff(normalizedPos, qiblaDirection));
+            const aligned = angleToQibla < 3;
 
-            const aligned = absDiff < 3;
             if (aligned !== isAligned) setIsAligned(aligned);
 
-            // Haptic Feedback
+            // Haptic
             if (aligned && Date.now() - lastVibrateRef.current > 1000) {
                 if (navigator.vibrate) navigator.vibrate(50);
                 lastVibrateRef.current = Date.now();
             }
         }
 
-        // Update UI 
-        if (Math.abs(newSmoothed - lastDisplayedHeadingRef.current) > 0.3) {
-            setSmoothedHeading(newSmoothed);
-            lastDisplayedHeadingRef.current = newSmoothed;
+        // 5. Update UI
+        // We check if change is significant to trigger React Render
+        if (Math.abs(position - lastDisplayedHeadingRef.current) > 0.1) {
+            setSmoothedHeading(position); // Keep simulated position
+            lastDisplayedHeadingRef.current = position;
         }
 
         requestRef.current = requestAnimationFrame(loopRef.current);
@@ -179,7 +205,8 @@ const QiblaFinder = ({ isOpen, onClose }) => {
             let trueHeading = magneticHeading + declination;
             trueHeading = (trueHeading + 360) % 360;
 
-            headingRef.current = trueHeading;
+            // Update Physics Target directly
+            physicsState.current.target = trueHeading;
         };
 
         if ('ondeviceorientationabsolute' in window) {
