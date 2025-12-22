@@ -9,6 +9,12 @@
   border-radius: 30px;
   flex-shrink: 0;
   /* Prevent input from shrinking */
+
+  /* Hardware acceleration to prevent flickering */
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .chat-input__container {
