@@ -29,7 +29,9 @@ const callGroq = async (messages, systemPrompt) => {
         messages: [{ role: 'system', content: systemPrompt }, ...messages],
         model: model,
         temperature: 0.6,
-        max_tokens: 8192,
+        max_tokens: 4096,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.3,
         stream: false
       });
       const text = completion.choices[0]?.message?.content;
@@ -113,7 +115,9 @@ const callMistral = async (messages, systemPrompt) => {
           model: model,
           messages: [{ role: 'system', content: systemPrompt }, ...messages],
           temperature: 0.6,
-          max_tokens: 8192
+          max_tokens: 4096,
+          frequency_penalty: 0.5,
+          presence_penalty: 0.3
         })
       });
 
@@ -173,7 +177,9 @@ const callOpenRouter = async (messages, systemPrompt) => {
           model: model,
           messages: [{ role: 'system', content: systemPrompt }, ...messages],
           temperature: 0.6,
-          max_tokens: 8192
+          max_tokens: 4096,
+          frequency_penalty: 0.5,
+          presence_penalty: 0.3
         })
       });
 
