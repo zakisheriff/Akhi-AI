@@ -270,7 +270,8 @@ const QiblaFinder = ({ isOpen, onClose }) => {
 
     const getCompassRotation = () => {
         if (qiblaDirection === null) return 0;
-        return qiblaDirection - smoothedHeading;
+        // Flip 180 degrees to fix inverted visual
+        return qiblaDirection - smoothedHeading + 180;
     };
 
     if (!isOpen) return null;
