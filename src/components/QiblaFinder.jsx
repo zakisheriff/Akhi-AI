@@ -123,6 +123,8 @@ const QiblaFinder = ({ isOpen, onClose }) => {
 
     // Initialize: Get Location & Calculate Data
     const initData = useCallback(async () => {
+        // Don't block UI with loading state completely
+        // Just show inline loader
         setLoading(true);
         setError(null);
         try {
@@ -289,55 +291,58 @@ const QiblaFinder = ({ isOpen, onClose }) => {
                         <h2>Qibla Finder</h2>
                         <p>Locate the Qibla with high precision using Augmented Reality or Compass.</p>
 
-                        {loading && <div className="qibla-spinner"></div>}
+                        {/* Loading / Error / Stats */}
+                        {loading && !location ? (
+                            <div className="qibla-spinner"></div>
+                        ) : (
+                            <>
+                                {location && (
+                                    <div className="qibla-landing-stats">
+                                        <div className="stat">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            {location.city}
+                                        </div>
+                                        <div className="stat">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                                <path d="M7 17l9.2-9.2M17 17V7H7" />
+                                            </svg>
+                                            {distanceKm} km
+                                        </div>
+                                    </div>
+                                )}
 
-                        {!loading && location && (
-                            <div className="qibla-landing-stats">
-                                <div className="stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
-                                    {location.city}
+                                {error && <div className="qibla-error-msg">{error}</div>}
+
+                                <div className="qibla-mode-select">
+                                    <button className="mode-card" onClick={() => enterMode('camera')} disabled={loading}>
+                                        <div className="icon">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                                <circle cx="12" cy="13" r="4"></circle>
+                                            </svg>
+                                        </div>
+                                        <div className="mode-info">
+                                            <span className="label">AR Mode</span>
+                                            <span className="desc">See Qibla in real world</span>
+                                        </div>
+                                    </button>
+                                    <button className="mode-card" onClick={() => enterMode('compass')} disabled={loading}>
+                                        <div className="icon">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
+                                            </svg>
+                                        </div>
+                                        <div className="mode-info">
+                                            <span className="label">Compass</span>
+                                            <span className="desc">Classic 2D pointer</span>
+                                        </div>
+                                    </button>
                                 </div>
-                                <div className="stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                        <path d="M7 17l9.2-9.2M17 17V7H7" />
-                                    </svg>
-                                    {distanceKm} km
-                                </div>
-                            </div>
-                        )}
-
-                        {!loading && error && <div className="qibla-error-msg">{error}</div>}
-
-                        {!loading && !error && (
-                            <div className="qibla-mode-select">
-                                <button className="mode-card" onClick={() => enterMode('camera')}>
-                                    <div className="icon">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                            <circle cx="12" cy="13" r="4"></circle>
-                                        </svg>
-                                    </div>
-                                    <div className="mode-info">
-                                        <span className="label">AR Mode</span>
-                                        <span className="desc">See Qibla in real world</span>
-                                    </div>
-                                </button>
-                                <button className="mode-card" onClick={() => enterMode('compass')}>
-                                    <div className="icon">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
-                                        </svg>
-                                    </div>
-                                    <div className="mode-info">
-                                        <span className="label">Compass</span>
-                                        <span className="desc">Classic 2D pointer</span>
-                                    </div>
-                                </button>
-                            </div>
+                            </>
                         )}
                     </div>
                 )}
