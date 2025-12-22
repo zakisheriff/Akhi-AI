@@ -87,6 +87,10 @@
   line-height: 1.4;
 }
 
+.app__action-btn {
+  font-size: 17px;
+}
+
 .app__title-arabic {
   font-size: 1.25rem;
   font-family: var(--font-arabic);
