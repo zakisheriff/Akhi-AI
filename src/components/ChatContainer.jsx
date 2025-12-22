@@ -89,6 +89,9 @@ const ChatContainer = ({ messages, isLoading, onSendMessage, error }) => {
                   </button>
                 ))}
               </div>
+              <p className="chat-container__disclaimer">
+                ⚠️ This is an educational AI tool, not a replacement for qualified scholars. Please verify important rulings with a local Mufti or Imam.
+              </p>
             </div>
           )}
 

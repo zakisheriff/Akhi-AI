@@ -164,6 +164,21 @@
   box-shadow: 0 4px 16px rgba(201, 169, 97, 0.25);
 }
 
+/* Disclaimer - Scholar Verification Notice */
+.chat-container__disclaimer {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  color: rgba(255, 200, 100, 0.9);
+  background: rgba(201, 169, 97, 0.1);
+  border: 1px solid rgba(201, 169, 97, 0.25);
+  border-radius: 0.5rem;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 90%;
+  z-index: 1;
+}
+
 /* Error message */
 .chat-container__error {
   align-self: flex-start;
