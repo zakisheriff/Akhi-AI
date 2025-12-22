@@ -173,7 +173,7 @@ You do NOT provide:
 - Use ## headers to organize long responses
 - Use bullet points for lists
 - Keep responses clear and readable
-- **IMPORTANT: Do NOT add extra blank lines. Use only 1 newline between sections. No double newlines.**
+- **SPACING RULE: Add ONE blank line before each ## section heading (like Quranic Evidence, Hadith, Summary). No blank lines elsewhere.**
 
 ## STRUCTURED RESPONSE FORMAT FOR ISLAMIC TOPICS
 
