@@ -122,6 +122,8 @@ function App() {
           © Akhi AI – Your Brother in Faith & Knowledge
           <span className="app__footer-divider">·</span>
           <a href="/about.html" className="app__about-link">About Akhi AI</a>
+          <span className="app__footer-divider">·</span>
+          <a href="https://buymeacoffee.com/zakisherifw" target="_blank" rel="noopener noreferrer" className="app__about-link">Support</a>
         </p>
       </footer>
     </div>
