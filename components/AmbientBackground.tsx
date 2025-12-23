@@ -17,10 +17,6 @@ const QNA_POOL_1 = [
         a: "Missing Jumu'ah without a valid excuse is considered sinful for adult men. Valid excuses include illness, travel, or other genuine incapacity."
     },
     {
-        q: "Can I pray in a car?",
-        a: "Obligatory prayers should be performed in a proper place if possible. If traveling or unable to stop, you may pray in the car while facing the Qibla."
-    },
-    {
         q: "What is the Nisaab for Zakat?",
         a: "Nisaab is the minimum amount of wealth a Muslim must possess before being liable for Zakat: 85g of gold or 595g of silver."
     },
@@ -58,6 +54,10 @@ const QNA_POOL_2 = [
     {
         q: "Is mortgage allowed?",
         a: "Most scholars consider conventional mortgages involving interest (riba) prohibited. Alternatives include Islamic home finance or delayed payment plans without interest."
+    },
+    {
+        q: "Is investing in stocks halal?",
+        a: "Investing is halal if the company's business is permissible in Islam and it avoids excessive interest (riba) and haram activities. Some scholars advise using Sharia-compliant stocks or Islamic index funds."
     },
     {
         q: "Benefit of Ayatul Kursi?",

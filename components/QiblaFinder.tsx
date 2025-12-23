@@ -456,6 +456,13 @@ const QiblaFinder = ({ isOpen, onClose, embedded = false }) => {
                             <div className="ar-arrow-3d">
                                 <div className="arrow-head"></div>
                                 <div className="arrow-shaft"></div>
+                                <div className="arrow-shaft"></div>
+                            </div>
+
+                            {/* Virtual Prayer Mat */}
+                            <div className="ar-prayer-mat">
+                                <div className="mat-pattern"></div>
+                                <div className="mat-fringe"></div>
                             </div>
                         </div>
                         <div className="ar-crosshair"></div>
