@@ -10,13 +10,14 @@
 
 <div align="center">
 
-![React](https://img.shields.io/badge/React-18.2-61dafb?style=for-the-badge&logo=react&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-14+-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Akhi AI](https://img.shields.io/badge/Akhi-AI-C9A961?style=for-the-badge&logo=book&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 <br />
 
-**[🚀 Launch Application](https://akhi.theoneatom.com)** | **[📖 Features](#-features)**
+**[🚀 Launch Application](https://akhi.theoneatom.com)** | **[📖 Features](#-core-features)**
 
 </div>
 
@@ -55,6 +56,11 @@ Tailor your learning experience by verifying rulings across the four major schoo
 -   **Hanbali**
 *Or select "General" for a comparative overview.*
 
+### 🕋 Qibla Finder & Prayer Times
+-   **AR Mode**: Point your camera and find Qibla in real-time
+-   **Compass Mode**: Classic 2D compass with True North correction
+-   **Prayer Times**: Accurate local prayer times with multiple calculation methods
+
 ### 🔗 Verified Citation System
 Unlike standard AI, Akhi AI enforces a strict citation policy. Every major claim is linked to its source, allowing you to verify verses and hadiths directly.
 
@@ -66,8 +72,6 @@ Unlike standard AI, Akhi AI enforces a strict citation policy. Every major claim
 ---
 
 ## 🚀 Getting Started
-
-Akhi AI is designed to be run locally or deployed to a verified environment.
 
 ### Prerequisites
 
@@ -87,20 +91,27 @@ Akhi AI is designed to be run locally or deployed to a verified environment.
     npm install
     ```
 
-3.  **Run the Application**
+3.  **Set Environment Variables**
+    Create `.env.local` with your API keys:
+    ```env
+    GROQ_API_KEY=your_groq_api_key
+    GEMINI_API_KEY=your_gemini_api_key
+    MISTRAL_API_KEY=your_mistral_api_key
+    OPENROUTER_API_KEY=your_openrouter_api_key
+    ```
+
+4.  **Run the Application**
     ```bash
     npm run dev
     ```
 
-    Visit `http://localhost:5173` to begin your journey.
-
-*(Note: Environment configuration is required for the knowledge engine to function. Please contact the administrator for access credentials.)*
+    Visit `http://localhost:3000` to begin your journey.
 
 ---
 
-## 🔒 Privacy & Sovereignty
+## 🔒 Privacy & Security
 
--   **Private**: All processing occurs secure and private.
+-   **Secure API**: All AI requests are proxied through server-side routes (API keys never exposed)
 -   **Ephemeral**: No conversation history is stored on any server. Your questions remain yours.
 -   **Transparent**: Open-source frontend code ensures full visibility into the application logic.
 
@@ -108,9 +119,30 @@ Akhi AI is designed to be run locally or deployed to a verified environment.
 
 ## 🛠 Tech Stack
 
--   **Core**: React 18, Vite
--   **Intelligence**: Akhi Neural Engine (Advanced LLM Integration)
--   **Styling**: Pure CSS3, Glassmorphism Design System
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js 14+ (App Router) |
+| **Language** | TypeScript |
+| **AI Backend** | Multi-provider fallback (Groq → Gemini → Mistral → OpenRouter) |
+| **Styling** | Pure CSS3, Glassmorphism Design System |
+| **Deployment** | Vercel |
+
+---
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── layout.tsx       # Root layout + SEO metadata
+│   ├── page.tsx         # Home page (chat interface)
+│   ├── api/chat/        # Secure AI proxy endpoint
+│   ├── about/           # About page
+│   └── sitemap.ts       # Dynamic sitemap
+├── components/          # React components
+├── services/            # Client-side services
+├── styles/              # CSS files
+└── public/              # Static assets
+```
 
 ---
 
