@@ -217,7 +217,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="app__footer">
         <p className="app__footer-copyright">
-          © 2025 Akhi AI. All rights reserved.
+          © {new Date().getFullYear()} Akhi AI by <a href="https://twitter.com/theoneatom" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
           <span className="app__footer-divider">·</span>
           <a href="/about" className="app__about-link">About Us</a>
           <span className="app__footer-divider">·</span>
