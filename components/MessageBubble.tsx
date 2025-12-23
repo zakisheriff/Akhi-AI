@@ -17,9 +17,16 @@ interface MessageBubbleProps {
 let currentAudio: HTMLAudioElement | null = null;
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping = false, onTypingComplete }) => {
+    // State for text selection
+    const [selection, setSelection] = useState<{ text: string; top: number; left: number } | null>(null);
+    const bubbleRef = useRef<HTMLDivElement>(null);
+
+    // Resotred States
     const [copied, setCopied] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isPaused, setIsPaused] = useState(false); // New state for Pause
     const [isAudioLoading, setIsAudioLoading] = useState(false);
+    const [selectionLoading, setSelectionLoading] = useState(false); // Specific loading for selection
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     // Stop audio when component unmounts or new audio starts
@@ -32,52 +39,155 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
         };
     }, []);
 
-    const handlePlayAudio = async () => {
-        if (isPlaying && audioRef.current) {
+    // Handle text selection to show floating button
+    useEffect(() => {
+        if (isUser) return; // Only for AI messages
+
+        const handleSelection = () => {
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0) {
+                setSelection(null);
+                return;
+            }
+
+            const text = sel.toString().trim();
+            if (text.length < 2) {
+                setSelection(null);
+                return;
+            }
+
+            // Verify selection is inside this specific bubble
+            if (bubbleRef.current && bubbleRef.current.contains(sel.anchorNode)) {
+                const range = sel.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+
+                // Calculate position relative to viewport, but we'll use fixed positioning for the tooltip
+                // Position above the selection
+                setSelection({
+                    text: text,
+                    top: rect.top - 40, // 40px above
+                    left: rect.left + (rect.width / 2) // Centered
+                });
+            } else {
+                setSelection(null); // Clear if clicked outside
+            }
+        };
+
+        // We use mouseup to finalize selection
+        document.addEventListener('mouseup', handleSelection);
+        // Also needs to clear on simple clicks
+        document.addEventListener('mousedown', (e) => {
+            // If clicking the tooltip itself, don't clear immediately
+            if ((e.target as Element).closest('.selection-voice-btn')) return;
+            setSelection(null);
+        });
+
+        return () => {
+            document.removeEventListener('mouseup', handleSelection);
+            document.removeEventListener('mousedown', handleSelection);
+        };
+    }, [isUser]);
+
+    const handleStopAudio = () => {
+        if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
             setIsPlaying(false);
+            setIsPaused(false);
+        }
+    };
+
+    const handlePlayAudio = async (textOverride?: string) => {
+        // Case 1: Resume from Pause (Main Button only)
+        if (!textOverride && isPaused && audioRef.current) {
+            try {
+                await audioRef.current.play();
+                setIsPlaying(true);
+                setIsPaused(false);
+            } catch (e) {
+                console.error("Resume failed", e);
+                // If resume fails, restart
+                handleStopAudio();
+            }
             return;
+        }
+
+        // Case 2: Pause (Main Button only)
+        if (!textOverride && isPlaying && audioRef.current) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+            setIsPaused(true);
+            return;
+        }
+
+        // Case 3: Start New Audio (Selection or Fresh Start)
+
+        // Stop any existing local audio
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0; // Reset completely
+            setIsPlaying(false);
+            setIsPaused(false);
         }
 
         // Stop any other global audio
         if (currentAudio) {
             currentAudio.pause();
             currentAudio = null;
-            // Force update other components? (State isn't shared, but audio stops)
         }
 
-        setIsAudioLoading(true);
+        const textToSpeak = textOverride || message;
+        const isSelection = !!textOverride;
+
+        if (isSelection) setSelectionLoading(true);
+        else setIsAudioLoading(true);
 
         try {
             const response = await fetch('/api/tts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: message }),
+                body: JSON.stringify({ text: textToSpeak }),
             });
 
-            if (!response.ok) throw new Error('TTS Failed');
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || 'TTS Failed');
+            }
 
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
 
             audioRef.current = audio;
-            currentAudio = audio; // Track globally
+            currentAudio = audio;
 
-            audio.onended = () => setIsPlaying(false);
-            audio.onpause = () => setIsPlaying(false);
+            audio.onended = () => {
+                setIsPlaying(false);
+                setIsPaused(false);
+            };
+            audio.onpause = () => {
+                // checking pause state logic managed by handlers
+            };
             audio.onerror = () => {
                 setIsPlaying(false);
+                setIsPaused(false);
                 setIsAudioLoading(false);
+                setSelectionLoading(false);
             };
 
             await audio.play();
             setIsPlaying(true);
+            setIsPaused(false);
+
+            if (isSelection) {
+                setSelection(null); // Hide tooltip after starting
+            }
         } catch (error) {
             console.error('Audio Error:', error);
+            setIsPlaying(false);
         } finally {
             setIsAudioLoading(false);
+            setSelectionLoading(false);
         }
     };
 
@@ -323,8 +433,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
 
     const processedMessage = cleanMarkdown(message);
 
+    const isArabicText = (text: string) => /[\u0600-\u06FF]/.test(text);
+    const hasActiveAudio = isPlaying || isPaused;
+
     return (
-        <div className={`message-bubble ${isUser ? 'message-bubble--user' : 'message-bubble--ai'}`}>
+        <div ref={bubbleRef} className={`message-bubble ${isUser ? 'message-bubble--user' : 'message-bubble--ai'}`}>
             <div className="message-bubble__content">
                 {isUser ? (
                     formatTextContent(processedMessage)
@@ -363,40 +476,135 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                             </>
                         )}
                     </button>
-                    {/* Voice Button - Always available for AI messages */}
+                    {/* Voice Controls - Always available for AI messages */}
                     {!isUser && (
-                        <button
-                            className={`message-bubble__copy-btn ${isPlaying ? 'message-bubble__voice-btn--active' : ''}`}
-                            onClick={handlePlayAudio}
-                            disabled={isAudioLoading}
-                            title={isPlaying ? "Stop Speaking" : "Read Aloud"}
-                            style={{ marginLeft: '8px' }}
-                        >
-                            {isAudioLoading ? (
-                                <>
-                                    <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                                    </svg>
-                                    <span className="voice-spinner">Loading...</span>
-                                </>
-                            ) : isPlaying ? (
-                                <>
+                        <>
+                            {/* Stop Button (Only when active) */}
+                            {hasActiveAudio && !isAudioLoading && (
+                                <button
+                                    className="message-bubble__copy-btn"
+                                    onClick={handleStopAudio}
+                                    title="Stop Completely"
+                                    style={{ marginLeft: '8px', color: '#ff6b6b', borderColor: 'rgba(255,107,107,0.3)', background: 'rgba(255,107,107,0.1)' }}
+                                >
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
                                         <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
                                     </svg>
                                     <span>Stop</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                                    </svg>
-                                    <span>Listen</span>
-                                </>
+                                </button>
                             )}
-                        </button>
+
+                            <button
+                                className={`message-bubble__copy-btn ${hasActiveAudio ? 'message-bubble__voice-btn--active' : ''}`}
+                                onClick={() => handlePlayAudio()}
+                                disabled={isAudioLoading}
+                                title={isPlaying ? "Pause" : isPaused ? "Resume" : "Read Aloud"}
+                                style={{ marginLeft: '8px' }}
+                            >
+                                {isAudioLoading ? (
+                                    <>
+                                        <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                        </svg>
+                                        <span className="voice-spinner">Loading...</span>
+                                    </>
+                                ) : isPlaying ? (
+                                    <>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <rect x="6" y="4" width="4" height="16"></rect>
+                                            <rect x="14" y="4" width="4" height="16"></rect>
+                                        </svg>
+                                        <span>Pause</span>
+                                    </>
+                                ) : isPaused ? (
+                                    <>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                        </svg>
+                                        <span>Resume</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                        </svg>
+                                        <span>Listen</span>
+                                    </>
+                                )}
+                            </button>
+                        </>
                     )}
+                </div>
+            )}
+
+            {/* Floating Selection Tooltip */}
+            {selection && (
+                <div
+                    className="selection-voice-btn"
+                    style={{
+                        position: 'fixed',
+                        top: selection.top,
+                        left: selection.left,
+                        transform: 'translateX(-50%)',
+                        zIndex: 1000,
+                        animation: 'popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    }}
+                >
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isArabicText(selection.text)) {
+                                handlePlayAudio(selection.text);
+                            }
+                        }}
+                        className="message-bubble__copy-btn"
+                        disabled={selectionLoading || isArabicText(selection.text)}
+                        style={{
+                            background: '#1a1a1a',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            color: isArabicText(selection.text) ? '#ff6b6b' : '#e6c98a',
+                            cursor: isArabicText(selection.text) ? 'not-allowed' : 'pointer',
+                            padding: '8px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                        }}
+                    >
+                        {selectionLoading ? (
+                            <>
+                                <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                </svg>
+                                <span>Loading...</span>
+                            </>
+                        ) : isArabicText(selection.text) ? (
+                            <>
+                                <span>⚠️ Cannot read Arabic</span>
+                            </>
+                        ) : (
+                            <>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                </svg>
+                                <span>Listen to Selection</span>
+                            </>
+                        )}
+                    </button>
+                    {/* Tiny arrow */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '-5px',
+                        left: '50%',
+                        transform: 'translateX(-50%) rotate(45deg)',
+                        width: '10px',
+                        height: '10px',
+                        background: '#1a1a1a',
+                        borderBottom: '1px solid rgba(255,255,255,0.2)',
+                        borderRight: '1px solid rgba(255,255,255,0.2)'
+                    }} />
                 </div>
             )}
         </div>
