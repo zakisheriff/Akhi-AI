@@ -279,12 +279,12 @@ const QiblaFinder = ({ isOpen, onClose, embedded = false }) => {
     // 1. Compass Mode: Rotate dial so 'N' points North (-heading)
     // 2. AR Mode: Rotate arrow so it points to Qibla (qibla - heading)
     const getCompassRotation = () => {
-        return -smoothedHeading;
+        return -smoothedHeading + 180;
     };
 
     const getARRotation = () => {
         if (qiblaDirection === null) return 0;
-        return qiblaDirection - smoothedHeading;
+        return qiblaDirection - smoothedHeading + 180;
     };
 
     if (!isOpen) return null;

@@ -164,15 +164,28 @@
 }
 
 .prayer-times-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
     background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: rgba(255, 255, 255, 0.7);
-    width: 32px;
-    height: 32px;
+    color: white;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 50;
+    padding: 0;
+}
+
+@media (max-width: 480px) {
+    .prayer-times-close {
+        top: calc(1.5rem + env(safe-area-inset-top));
+    }
 }
 
 .prayer-times-close:hover {
