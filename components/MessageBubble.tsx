@@ -13,8 +13,73 @@ interface MessageBubbleProps {
     onTypingComplete?: () => void;
 }
 
+// Global variable to ensure only one audio plays at a time
+let currentAudio: HTMLAudioElement | null = null;
+
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping = false, onTypingComplete }) => {
     const [copied, setCopied] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isAudioLoading, setIsAudioLoading] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Stop audio when component unmounts or new audio starts
+    useEffect(() => {
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
+    const handlePlayAudio = async () => {
+        if (isPlaying && audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setIsPlaying(false);
+            return;
+        }
+
+        // Stop any other global audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+            // Force update other components? (State isn't shared, but audio stops)
+        }
+
+        setIsAudioLoading(true);
+
+        try {
+            const response = await fetch('/api/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: message }),
+            });
+
+            if (!response.ok) throw new Error('TTS Failed');
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+
+            audioRef.current = audio;
+            currentAudio = audio; // Track globally
+
+            audio.onended = () => setIsPlaying(false);
+            audio.onpause = () => setIsPlaying(false);
+            audio.onerror = () => {
+                setIsPlaying(false);
+                setIsAudioLoading(false);
+            };
+
+            await audio.play();
+            setIsPlaying(true);
+        } catch (error) {
+            console.error('Audio Error:', error);
+        } finally {
+            setIsAudioLoading(false);
+        }
+    };
 
     const handleCopy = async () => {
         try {
@@ -298,6 +363,26 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                             </>
                         )}
                     </button>
+                    {/* Voice Button - Always available for AI messages */}
+                    {!isUser && (
+                        <button
+                            className={`message-bubble__copy-btn ${isPlaying ? 'message-bubble__voice-btn--active' : ''}`}
+                            onClick={handlePlayAudio}
+                            disabled={isAudioLoading}
+                            title={isPlaying ? "Stop Speaking" : "Read Aloud"}
+                            style={{ marginLeft: '8px' }}
+                        >
+                            {isAudioLoading ? (
+                                <span className="voice-spinner">⏳</span>
+                            ) : isPlaying ? (
+                                <span>⏹️ Stop</span>
+                            ) : (
+                                <>
+                                    <span>🔊 Listen</span>
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
             )}
         </div>

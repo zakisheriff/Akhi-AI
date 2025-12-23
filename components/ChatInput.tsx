@@ -62,9 +62,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false, 
                 >
                     <span className="chat-input__genz-icon">🔥</span>
                     <span className="chat-input__genz-label">Gen Z</span>
-                    <span className={`chat-input__genz-status ${genZMode ? 'chat-input__genz-status--on' : ''}`}>
-                        {genZMode ? 'ON' : 'OFF'}
-                    </span>
                 </button>
             </div>
 
