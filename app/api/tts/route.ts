@@ -31,9 +31,9 @@ export async function POST(request: Request) {
                     },
                     body: JSON.stringify({
                         text: speechText,
-                        model_id: "eleven_monolingual_v1",
+                        model_id: "eleven_turbo_v2_5", // Turbo model: ~400ms latency (vs ~2s)
                         voice_settings: {
-                            stability: 0.5,
+                            stability: 0.4, // Lower stability = more expressive & faster generation
                             similarity_boost: 0.75
                         }
                     })
