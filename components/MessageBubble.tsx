@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import TypewriterText from './TypewriterText';
 import QuranVerse from './QuranVerse';
 import HadithCard from './HadithCard';
+import { cleanTextForSpeech } from '@/utils/textProcessor';
 import '@/styles/MessageBubble.css';
 
 interface MessageBubbleProps {
@@ -39,52 +40,62 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
         };
     }, []);
 
-    // Handle text selection to show floating button
+    // Handle text selection to show floating button (Desktop & Mobile)
     useEffect(() => {
         if (isUser) return; // Only for AI messages
 
+        // We use a small timeout for mobile to ensure selection is populated
         const handleSelection = () => {
-            const sel = window.getSelection();
-            if (!sel || sel.rangeCount === 0) {
-                setSelection(null);
-                return;
-            }
+            setTimeout(() => {
+                const sel = window.getSelection();
+                if (!sel || sel.rangeCount === 0) {
+                    setSelection(null);
+                    return;
+                }
 
-            const text = sel.toString().trim();
-            if (text.length < 2) {
-                setSelection(null);
-                return;
-            }
+                const text = sel.toString().trim();
+                // Requirement: minimal length to trigger
+                if (text.length < 2) {
+                    setSelection(null);
+                    return;
+                }
 
-            // Verify selection is inside this specific bubble
-            if (bubbleRef.current && bubbleRef.current.contains(sel.anchorNode)) {
-                const range = sel.getRangeAt(0);
-                const rect = range.getBoundingClientRect();
+                // Verify selection is inside this specific bubble
+                if (bubbleRef.current && bubbleRef.current.contains(sel.anchorNode)) {
+                    const range = sel.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
 
-                // Calculate position relative to viewport, but we'll use fixed positioning for the tooltip
-                // Position above the selection
-                setSelection({
-                    text: text,
-                    top: rect.top - 40, // 40px above
-                    left: rect.left + (rect.width / 2) // Centered
-                });
-            } else {
-                setSelection(null); // Clear if clicked outside
-            }
+                    // Calculate position relative to viewport
+                    setSelection({
+                        text: text,
+                        top: rect.top - 45, // Slightly higher for mobile touch targets
+                        left: rect.left + (rect.width / 2) // Centered
+                    });
+                } else {
+                    setSelection(null);
+                }
+            }, 10);
         };
 
-        // We use mouseup to finalize selection
+        // Desktop
         document.addEventListener('mouseup', handleSelection);
-        // Also needs to clear on simple clicks
-        document.addEventListener('mousedown', (e) => {
-            // If clicking the tooltip itself, don't clear immediately
+        // Mobile - essential for selection menu to not override immediate deselect
+        document.addEventListener('touchend', handleSelection);
+
+        // Clear on click/touch outside
+        const handleClear = (e: Event) => {
             if ((e.target as Element).closest('.selection-voice-btn')) return;
-            setSelection(null);
-        });
+            // We rely on handleSelection logic to clear invalid states
+        };
+
+        document.addEventListener('mousedown', handleClear);
+        document.addEventListener('touchstart', handleClear);
 
         return () => {
             document.removeEventListener('mouseup', handleSelection);
-            document.removeEventListener('mousedown', handleSelection);
+            document.removeEventListener('touchend', handleSelection);
+            document.removeEventListener('mousedown', handleClear);
+            document.removeEventListener('touchstart', handleClear);
         };
     }, [isUser]);
 
@@ -136,7 +147,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
             currentAudio = null;
         }
 
-        const textToSpeak = textOverride || message;
+        const rawText = textOverride || message;
+        // Clean text before sending to API (removes headers, markdown, etc.)
+        const textToSpeak = cleanTextForSpeech(rawText);
+
         const isSelection = !!textOverride;
 
         if (isSelection) setSelectionLoading(true);
