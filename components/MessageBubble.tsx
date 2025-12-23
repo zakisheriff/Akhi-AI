@@ -373,12 +373,26 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                             style={{ marginLeft: '8px' }}
                         >
                             {isAudioLoading ? (
-                                <span className="voice-spinner">⏳</span>
+                                <>
+                                    <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                    </svg>
+                                    <span className="voice-spinner">Loading...</span>
+                                </>
                             ) : isPlaying ? (
-                                <span>⏹️ Stop</span>
+                                <>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
+                                        <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
+                                    </svg>
+                                    <span>Stop</span>
+                                </>
                             ) : (
                                 <>
-                                    <span>🔊 Listen</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                    </svg>
+                                    <span>Listen</span>
                                 </>
                             )}
                         </button>
