@@ -42,10 +42,7 @@ export const metadata: Metadata = {
     description: "Get authentic Islamic answers from Quran, Hadith & scholars",
     images: ["/akhi_logo.png"]
   },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png"
-  },
+
   manifest: "/site.webmanifest",
 };
 
