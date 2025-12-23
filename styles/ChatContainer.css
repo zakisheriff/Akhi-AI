@@ -7,6 +7,8 @@
   background: transparent;
   position: relative;
   padding-top: 70px;
+  z-index: 1;
+  /* Ensure chat content handles clicks */
 }
 
 .chat-container__messages {

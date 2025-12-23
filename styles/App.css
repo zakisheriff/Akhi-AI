@@ -49,6 +49,8 @@
   gap: 0.75rem;
   padding: 0.625rem 1.25rem;
   min-height: 48px;
+  max-width: 95vw;
+  /* Ensure pill never exceeds screen width */
 
   /* Glassmorphism shadow */
   box-shadow:
@@ -197,6 +199,11 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  overflow: hidden;
+  /* Ensure text truncates */
+  min-width: 0;
+  flex: 1;
+  /* Allow shrinking */
 }
 
 .app__title {
