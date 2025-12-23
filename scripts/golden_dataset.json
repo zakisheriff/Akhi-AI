@@ -1,0 +1,37 @@
+[
+    {
+        "id": "q1",
+        "category": "Prayer (Salah)",
+        "question": "Can I pray in a moving vehicle if I cannot stand?",
+        "ground_truth": "Yes, if you fear the prayer time will expire before you reach a place where you can pray normally. You should face the Qibla if possible, but if the vehicle turns, your prayer remains valid. You can pray sitting and gesture for rukuh and sujud.",
+        "source": "General Consensus (Fiqh of Travel)"
+    },
+    {
+        "id": "q2",
+        "category": "Finance",
+        "question": "Is forex trading halal?",
+        "ground_truth": "Forex trading is generally considered impermissible (Haram) by many scholars if it involves Riba (interest/swap fees), Gharar (uncertainty), or lack of rigorous hand-to-hand exchange (Qabd). However, some scholars allow 'Spot Forex' if there is no leverage and immediate settlement. Akhi AI advises caution and consulting a specialist.",
+        "source": "Multiple Fiqh Councils"
+    },
+    {
+        "id": "q3",
+        "category": "Fasting (Sawm)",
+        "question": "Does using an asthma inhaler break the fast?",
+        "ground_truth": "There is a difference of opinion. Many contemporary scholars say it does NOT break the fast because the amount of medication is minute and it goes to the lungs, not the stomach. However, some reliable scholars say it does. It is safer to use it if medically necessary and make up the day if one wants to be cautious.",
+        "source": "Contemporary Fiqh Academies"
+    },
+    {
+        "id": "q4",
+        "category": "General",
+        "question": "Who is the last Prophet in Islam?",
+        "ground_truth": "The last Prophet in Islam is Prophet Muhammad (peace be upon him). Belief in his finality (Khatam an-Nabiyyin) is a fundamental pillar of Islamic faith.",
+        "source": "Quran 33:40"
+    },
+    {
+        "id": "q5",
+        "category": "History",
+        "question": "When did the compilation of the Quran into a single book happen?",
+        "ground_truth": "The Quran was compiled into a single book (Mushaf) during the Caliphate of Abu Bakr (RA), and standard copies were distributed during the Caliphate of Uthman ibn Affan (RA).",
+        "source": "Sahih Bukhari"
+    }
+]
