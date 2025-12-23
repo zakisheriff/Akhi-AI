@@ -41,6 +41,17 @@
         0 25px 50px rgba(0, 0, 0, 0.5),
         0 0 100px rgba(201, 169, 97, 0.1);
     animation: slideUp 0.3s ease-out;
+
+    /* Hide scrollbar */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
+.prayer-times-modal::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 @keyframes slideUp {
