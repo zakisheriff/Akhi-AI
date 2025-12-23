@@ -126,9 +126,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="app__footer">
         <p className="app__footer-copyright">
-          © Akhi AI
+          © 2025 Akhi AI. All rights reserved.
           <span className="app__footer-divider">·</span>
-          <a href="/about" className="app__about-link">About</a>
+          <a href="/about" className="app__about-link">About Us</a>
           <span className="app__footer-divider">·</span>
           <a href="https://buymeacoffee.com/theoneatom" target="_blank" rel="noopener noreferrer" className="app__about-link">Support</a>
         </p>
