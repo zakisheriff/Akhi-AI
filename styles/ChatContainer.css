@@ -444,12 +444,51 @@
   }
 
   .chat-container__welcome {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+    width: 100%;
+  }
+
+  .chat-container__welcome-title {
+    font-size: 1.5rem;
+  }
+
+  .chat-container__welcome-text {
+    font-size: 0.8rem;
+  }
+
+  .chat-container__suggestion {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .chat-container__disclaimer {
+    font-size: 0.7rem;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+  .chat-container__welcome {
     padding: 3rem 2rem;
     max-width: 600px;
   }
 
   .chat-container__welcome-title {
     font-size: 2rem;
+  }
+
+  .chat-container__welcome-text {
+    font-size: 0.8125rem;
+  }
+
+  .chat-container__suggestion {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+  }
+
+  .chat-container__disclaimer {
+    font-size: 0.75rem;
   }
 }
 
