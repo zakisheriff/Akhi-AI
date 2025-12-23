@@ -5,7 +5,7 @@ import { buildSystemPrompt } from '@/utils/systemPrompt';
 
 /**
  * Multi-Provider AI Service for Akhi AI (Server-Side Secure)
- * Groq (fastest) → Gemini → Mistral → OpenRouter
+ * Gemini (Primary/Stable) → Groq (Fast/Rate-limited) → Mistral → OpenRouter
  */
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -48,14 +48,15 @@ async function callGroq(messages: any[], systemPrompt: string): Promise<string |
     return null;
 }
 
-// ============ GEMINI PROVIDER ============
+// ============ GEMINI PROVIDER (PRIMARY STABLE) ============
 async function callGemini(messages: any[], systemPrompt: string): Promise<string | null> {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return null;
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    const models = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+    // Prioritize 2.5-flash-lite (Proven working in logs) -> then exp -> then standard
+    const models = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-exp', 'gemini-2.5-flash'];
 
     for (const modelName of models) {
         try {
@@ -131,6 +132,63 @@ async function callMistral(messages: any[], systemPrompt: string): Promise<strin
             }
         } catch (err: any) {
             console.warn(`⚠️ Mistral (${model}) failed:`, err.message);
+            if (err.message?.includes('429') || err.message?.includes('404')) {
+                continue;
+            }
+            throw err;
+        }
+    }
+    return null;
+}
+
+// ============ COHERE PROVIDER (BACKUP) ============
+async function callCohere(messages: any[], systemPrompt: string): Promise<string | null> {
+    const apiKey = process.env.COHERE_API_KEY;
+    if (!apiKey) return null;
+
+    // Updated to late-2024/2025 stable versions
+    const models = ['command-r-08-2024', 'command-r-plus-08-2024'];
+
+    for (const model of models) {
+        try {
+            console.log(`🔄 Trying Cohere (${model})...`);
+
+            // Transform messages to Cohere format (chat_history + message)
+            const chatHistory = messages.slice(0, -1).map((msg: any) => ({
+                role: msg.role === 'assistant' ? 'CHATBOT' : 'USER',
+                message: msg.content
+            }));
+            const lastMessage = messages[messages.length - 1].content;
+
+            const response = await fetch('https://api.cohere.com/v1/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: model,
+                    message: lastMessage,
+                    chat_history: chatHistory,
+                    preamble: systemPrompt,
+                    temperature: 0.3,
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`${response.status} ${errorData.message || response.statusText}`);
+            }
+
+            const data = await response.json();
+            const text = data.text;
+
+            if (text) {
+                console.log(`✅ Success with Cohere (${model})`);
+                return text;
+            }
+        } catch (err: any) {
+            console.warn(`⚠️ Cohere (${model}) failed:`, err.message);
             if (err.message?.includes('429') || err.message?.includes('404')) {
                 continue;
             }
@@ -260,23 +318,7 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
         const maxRetries = 2;
         let lastError: Error | null = null;
 
-        // Try Groq first (FASTEST)
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                const result = await callGroq(messages, systemPrompt);
-                if (result) return NextResponse.json({ response: result });
-                break;
-            } catch (err: any) {
-                lastError = err;
-                if (err.status === 429 || err.message?.includes('429')) {
-                    console.log(`⏳ Groq rate limited, trying Gemini...`);
-                    break;
-                }
-                if (i < maxRetries - 1) await sleep(1000);
-            }
-        }
-
-        // Try Gemini second (RELIABLE & FAST)
+        // 1. Try Gemini FIRST (Most Reliable Free Tier)
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callGemini(messages, systemPrompt);
@@ -285,14 +327,30 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             } catch (err: any) {
                 lastError = err;
                 if (err.message?.includes('429')) {
-                    console.log(`⏳ Gemini rate limited, trying Mistral...`);
+                    console.log(`⏳ Gemini rate limited, trying Groq...`);
                     break;
                 }
                 if (i < maxRetries - 1) await sleep(1000);
             }
         }
 
-        // Try Mistral third
+        // 2. Try Groq (Fast but often rate limited)
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const result = await callGroq(messages, systemPrompt);
+                if (result) return NextResponse.json({ response: result });
+                break;
+            } catch (err: any) {
+                lastError = err;
+                if (err.status === 429 || err.message?.includes('429')) {
+                    console.log(`⏳ Groq rate limited, trying Mistral...`);
+                    break;
+                }
+                if (i < maxRetries - 1) await sleep(1000);
+            }
+        }
+
+        // 3. Try Mistral
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callMistral(messages, systemPrompt);
@@ -308,7 +366,23 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             }
         }
 
-        // Try OpenRouter as final fallback
+        // 4. Try Cohere (Robust Enterprise Backup)
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const result = await callCohere(messages, systemPrompt);
+                if (result) return NextResponse.json({ response: result });
+                break;
+            } catch (err: any) {
+                lastError = err;
+                if (err.message?.includes('429')) {
+                    console.log(`⏳ Cohere rate limited, trying OpenRouter...`);
+                    break;
+                }
+                if (i < maxRetries - 1) await sleep(1000);
+            }
+        }
+
+        // 5. Try OpenRouter (Final Fallback)
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callOpenRouter(messages, systemPrompt);

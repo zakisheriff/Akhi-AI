@@ -91,16 +91,7 @@ Unlike standard AI, Akhi AI enforces a strict citation policy. Every major claim
     npm install
     ```
 
-3.  **Set Environment Variables**
-    Create `.env.local` with your API keys:
-    ```env
-    GROQ_API_KEY=your_groq_api_key
-    GEMINI_API_KEY=your_gemini_api_key
-    MISTRAL_API_KEY=your_mistral_api_key
-    OPENROUTER_API_KEY=your_openrouter_api_key
-    ```
-
-4.  **Run the Application**
+3.  **Run the Application**
     ```bash
     npm run dev
     ```
