@@ -40,6 +40,8 @@
     box-shadow:
         0 25px 50px rgba(0, 0, 0, 0.5),
         0 0 100px rgba(201, 169, 97, 0.1);
+    position: relative;
+    /* Ensure layout stability */
     animation: slideUp 0.3s ease-out;
 
     /* Hide scrollbar */
@@ -47,6 +49,62 @@
     /* Firefox */
     -ms-overflow-style: none;
     /* IE/Edge */
+}
+
+.prayer-times-modal--embedded {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    width: 100% !important;
+    /* Match QiblaFinder */
+    height: 100% !important;
+    /* Match QiblaFinder */
+    max-width: 100% !important;
+    max-height: 100% !important;
+    animation: none !important;
+    animation: none !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    /* Remove wrapper padding if any */
+    margin: 0 !important;
+    transform: none !important;
+    /* Ensure no conflicting transforms */
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+}
+
+/* Specific overrides for embedded content to prevent layout shifts */
+.prayer-times-modal--embedded .prayer-times-header {
+    border-bottom: none !important;
+    padding-bottom: 0.5rem !important;
+    /* Reduce padding during simple view */
+    margin-bottom: 0 !important;
+}
+
+.prayer-times-modal--embedded .prayer-times-list {
+    padding-bottom: 0 !important;
+    flex: 1 !important;
+    /* Take remaining height */
+    overflow-y: auto !important;
+    /* Scroll internal content */
+    min-height: 0 !important;
+    /* Allow shrinking past content size */
+}
+
+/* Force all children to respect width shrinking */
+.prayer-times-modal--embedded * {
+    min-width: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* Protect header/footer from collapsing */
+.prayer-times-modal--embedded .prayer-times-header,
+.prayer-times-modal--embedded .prayer-times-footer,
+.prayer-times-modal--embedded .prayer-times-settings,
+.prayer-times-modal--embedded .prayer-times-date {
+    flex-shrink: 0 !important;
 }
 
 .prayer-times-modal::-webkit-scrollbar {
@@ -432,7 +490,7 @@
 
 /* Mobile Responsive */
 @media (max-width: 480px) {
-    .prayer-times-modal {
+    .prayer-times-modal:not(.prayer-times-modal--embedded) {
         max-height: 85vh;
         border-radius: 1.25rem 1.25rem 0 0;
         position: fixed;

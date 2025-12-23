@@ -13,7 +13,7 @@ import {
 } from '@/services/prayerTimesService';
 import '@/components/PrayerTimes.css';
 
-const PrayerTimes = ({ isOpen, onClose }) => {
+const PrayerTimes = ({ isOpen, onClose, embedded = false }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [location, setLocation] = useState(null);
@@ -71,7 +71,7 @@ const PrayerTimes = ({ isOpen, onClose }) => {
         return () => clearInterval(interval);
     }, [prayerData]);
 
-    if (!isOpen) return null;
+    // if (!isOpen) return null; // Removed to allow AnimatePresence to handle exit animation
 
     const prayerList = [
         { key: 'Fajr', name: 'Fajr', icon: '🌙', arabicName: 'الفجر' },
@@ -82,148 +82,156 @@ const PrayerTimes = ({ isOpen, onClose }) => {
         { key: 'Isha', name: 'Isha', icon: '🌙', arabicName: 'العشاء' }
     ];
 
-    return (
-        <div className="prayer-times-overlay" onClick={onClose}>
-            <div className="prayer-times-modal" onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
-                <div className="prayer-times-header">
-                    <div className="prayer-times-header-content">
-                        <h2 className="prayer-times-title">
-                            <span className="prayer-times-icon">🕌</span>
-                            Prayer Times
-                        </h2>
-                        {location && (
-                            <p className="prayer-times-location">
-                                📍 {location.city}, {location.country}
-                                <span className="prayer-times-source">({location.source})</span>
-                            </p>
-                        )}
-                    </div>
-                    <button className="prayer-times-close" onClick={onClose}>✕</button>
+    const content = (
+        <div className={`prayer-times-modal ${embedded ? 'prayer-times-modal--embedded' : ''}`} onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="prayer-times-header">
+                <div className="prayer-times-header-content">
+                    <h2 className="prayer-times-title">
+                        <span className="prayer-times-icon">🕌</span>
+                        Prayer Times
+                    </h2>
+                    {location && (
+                        <p className="prayer-times-location">
+                            📍 {location.city}, {location.country}
+                            <span className="prayer-times-source">({location.source})</span>
+                        </p>
+                    )}
                 </div>
+                <button className="prayer-times-close" onClick={onClose}>✕</button>
+            </div>
 
-                {/* Date Display */}
-                {prayerData && (
-                    <div className="prayer-times-date">
-                        <div className="prayer-times-date-hijri">
-                            <span className="prayer-times-date-day">{prayerData.date.hijri.day}</span>
-                            <span className="prayer-times-date-month">{prayerData.date.hijri.month}</span>
-                            <span className="prayer-times-date-year">{prayerData.date.hijri.year} {prayerData.date.hijri.designation}</span>
-                        </div>
-                        <div className="prayer-times-date-gregorian">
-                            {prayerData.date.gregorian.weekday}, {prayerData.date.gregorian.date}
-                        </div>
+            {/* Date Display */}
+            {prayerData && (
+                <div className="prayer-times-date">
+                    <div className="prayer-times-date-hijri">
+                        <span className="prayer-times-date-day">{prayerData.date.hijri.day}</span>
+                        <span className="prayer-times-date-month">{prayerData.date.hijri.month}</span>
+                        <span className="prayer-times-date-year">{prayerData.date.hijri.year} {prayerData.date.hijri.designation}</span>
                     </div>
-                )}
-
-                {/* Loading State */}
-                {loading && (
-                    <div className="prayer-times-loading">
-                        <div className="prayer-times-spinner"></div>
-                        <p>Loading prayer times...</p>
+                    <div className="prayer-times-date-gregorian">
+                        {prayerData.date.gregorian.weekday}, {prayerData.date.gregorian.date}
                     </div>
-                )}
+                </div>
+            )}
 
-                {/* Error State */}
-                {error && (
-                    <div className="prayer-times-error">
-                        <span className="prayer-times-error-icon">⚠️</span>
-                        <p>{error}</p>
-                        <button onClick={fetchPrayerTimes}>Retry</button>
-                    </div>
-                )}
+            {/* Loading State */}
+            {loading && (
+                <div className="prayer-times-loading">
+                    <div className="prayer-times-spinner"></div>
+                    <p>Loading prayer times...</p>
+                </div>
+            )}
 
-                {/* Prayer Times List */}
-                {!loading && !error && prayerData && (
-                    <>
-                        {/* Next Prayer Highlight */}
-                        {nextPrayer && (
-                            <div className="prayer-times-next">
-                                <div className="prayer-times-next-label">Next Prayer</div>
-                                <div className="prayer-times-next-name">{nextPrayer.name}</div>
-                                <div className="prayer-times-next-time">
-                                    {formatPrayerTime(nextPrayer.time, use24Hour)}
-                                </div>
-                                <div className="prayer-times-next-remaining">
-                                    {nextPrayer.isTomorrow && 'Tomorrow • '}
-                                    {nextPrayer.remaining.hours}h {nextPrayer.remaining.minutes}m remaining
-                                </div>
+            {/* Error State */}
+            {error && (
+                <div className="prayer-times-error">
+                    <span className="prayer-times-error-icon">⚠️</span>
+                    <p>{error}</p>
+                    <button onClick={fetchPrayerTimes}>Retry</button>
+                </div>
+            )}
+
+            {/* Prayer Times List */}
+            {!loading && !error && prayerData && (
+                <>
+                    {/* Next Prayer Highlight */}
+                    {nextPrayer && (
+                        <div className="prayer-times-next">
+                            <div className="prayer-times-next-label">Next Prayer</div>
+                            <div className="prayer-times-next-name">{nextPrayer.name}</div>
+                            <div className="prayer-times-next-time">
+                                {formatPrayerTime(nextPrayer.time, use24Hour)}
                             </div>
-                        )}
+                            <div className="prayer-times-next-remaining">
+                                {nextPrayer.isTomorrow && 'Tomorrow • '}
+                                {nextPrayer.remaining.hours}h {nextPrayer.remaining.minutes}m remaining
+                            </div>
+                        </div>
+                    )}
 
-                        {/* All Prayer Times */}
-                        <div className="prayer-times-list">
-                            {prayerList.map(prayer => {
-                                const isActive = currentPrayer === prayer.key;
-                                const isNext = nextPrayer?.name === prayer.key;
+                    {/* All Prayer Times */}
+                    <div className="prayer-times-list">
+                        {prayerList.map(prayer => {
+                            const isActive = currentPrayer === prayer.key;
+                            const isNext = nextPrayer?.name === prayer.key;
 
-                                return (
-                                    <div
-                                        key={prayer.key}
-                                        className={`prayer-times-item ${isActive ? 'prayer-times-item--active' : ''} ${isNext ? 'prayer-times-item--next' : ''}`}
-                                    >
-                                        <div className="prayer-times-item-left">
-                                            <span className="prayer-times-item-icon">{prayer.icon}</span>
-                                            <div className="prayer-times-item-names">
-                                                <span className="prayer-times-item-name">{prayer.name}</span>
-                                                <span className="prayer-times-item-arabic">{prayer.arabicName}</span>
-                                            </div>
-                                        </div>
-                                        <div className="prayer-times-item-time">
-                                            {formatPrayerTime(prayerData.timings[prayer.key], use24Hour)}
+                            return (
+                                <div
+                                    key={prayer.key}
+                                    className={`prayer-times-item ${isActive ? 'prayer-times-item--active' : ''} ${isNext ? 'prayer-times-item--next' : ''}`}
+                                >
+                                    <div className="prayer-times-item-left">
+                                        <span className="prayer-times-item-icon">{prayer.icon}</span>
+                                        <div className="prayer-times-item-names">
+                                            <span className="prayer-times-item-name">{prayer.name}</span>
+                                            <span className="prayer-times-item-arabic">{prayer.arabicName}</span>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <div className="prayer-times-item-time">
+                                        {formatPrayerTime(prayerData.timings[prayer.key], use24Hour)}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
 
-                        {/* Settings */}
-                        <div className="prayer-times-settings">
-                            <div className="prayer-times-setting">
-                                <label>Calculation Method:</label>
-                                <select
-                                    value={selectedMethod}
-                                    onChange={(e) => setSelectedMethod(e.target.value)}
-                                >
-                                    {Object.values(CALCULATION_METHODS).map(method => (
-                                        <option key={method.id} value={method.id}>
-                                            {method.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="prayer-times-setting">
-                                <label>Time Format:</label>
-                                <button
-                                    className={`prayer-times-format-btn ${!use24Hour ? 'active' : ''}`}
-                                    onClick={() => setUse24Hour(false)}
-                                >
-                                    12h
-                                </button>
-                                <button
-                                    className={`prayer-times-format-btn ${use24Hour ? 'active' : ''}`}
-                                    onClick={() => setUse24Hour(true)}
-                                >
-                                    24h
-                                </button>
-                            </div>
+                    {/* Settings */}
+                    <div className="prayer-times-settings">
+                        <div className="prayer-times-setting">
+                            <label>Calculation Method:</label>
+                            <select
+                                value={selectedMethod}
+                                onChange={(e) => setSelectedMethod(e.target.value)}
+                            >
+                                {Object.values(CALCULATION_METHODS).map(method => (
+                                    <option key={method.id} value={method.id}>
+                                        {method.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-
-                        {/* Footer */}
-                        <div className="prayer-times-footer">
-                            <p>Method: {prayerData.meta.method}</p>
-                            <button className="prayer-times-refresh" onClick={fetchPrayerTimes}>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M23 4v6h-6"></path>
-                                    <path d="M1 20v-6h6"></path>
-                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                                </svg>
-                                Refresh
+                        <div className="prayer-times-setting">
+                            <label>Time Format:</label>
+                            <button
+                                className={`prayer-times-format-btn ${!use24Hour ? 'active' : ''}`}
+                                onClick={() => setUse24Hour(false)}
+                            >
+                                12h
+                            </button>
+                            <button
+                                className={`prayer-times-format-btn ${use24Hour ? 'active' : ''}`}
+                                onClick={() => setUse24Hour(true)}
+                            >
+                                24h
                             </button>
                         </div>
-                    </>
-                )}
-            </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="prayer-times-footer">
+                        <p>Method: {prayerData.meta.method}</p>
+                        <button className="prayer-times-refresh" onClick={fetchPrayerTimes}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M23 4v6h-6"></path>
+                                <path d="M1 20v-6h6"></path>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+
+    if (embedded) {
+        return content;
+    }
+
+    return (
+        <div className="prayer-times-overlay" onClick={onClose}>
+            {content}
         </div>
     );
 };

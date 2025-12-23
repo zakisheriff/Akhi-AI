@@ -36,6 +36,18 @@
     }
 }
 
+.qibla-modal--embedded {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    animation: none;
+    /* Explicitly disable base animation */
+}
+
 .qibla-close-btn {
     position: absolute;
     top: calc(1.5rem + env(safe-area-inset-top));
@@ -52,7 +64,8 @@
     justify-content: center;
     padding: 0;
     cursor: pointer;
-    z-index: 20;
+    z-index: 50;
+    /* Ensure strictly above everything */
     transition: background 0.2s;
 }
 
@@ -78,7 +91,7 @@
     padding-top: calc(4rem + env(safe-area-inset-top));
     /* Extra padding to avoid close button overlap */
     text-align: center;
-    background: linear-gradient(180deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    background: transparent;
     color: white;
 }
 
@@ -265,8 +278,12 @@
 .qibla-visuals {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Start from top + padding */
+    padding-top: calc(6rem + env(safe-area-inset-top));
+    /* Clearance for Top Bar */
     position: relative;
     z-index: 5;
     perspective: 1200px;
@@ -277,6 +294,10 @@
 .qibla-pointer-container {
     /* REMOVED CSS TRANSITION to let JS handle smoothing */
     will-change: transform;
+    /* Ensures container doesn't collapse */
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 /* 3D AR ARROW - Premium Style */
@@ -288,6 +309,7 @@
     filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
     /* Floating shadow */
     animation: floatArrow 2s ease-in-out infinite;
+    margin: auto;
 }
 
 @keyframes floatArrow {
@@ -336,13 +358,68 @@
     background: linear-gradient(90deg, #22c55e, #4ade80, #22c55e);
 }
 
-/* COMPASS VISUALS - Premium Glassmorphism */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* AR PORTAL STYLES */
+.qibla-ar-portal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.qibla-ar-portal .qibla-camera-bg {
+    object-fit: cover;
+    z-index: 1;
+}
+
+.qibla-ar-portal .qibla-active-view {
+    z-index: 2;
+    background: transparent;
+    border: none;
+}
+
+.fixed-top-right {
+    position: absolute;
+    top: max(1.5rem, env(safe-area-inset-top));
+    right: 1.5rem;
+    z-index: 1000;
+}
+
+.qibla-exit-mode-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Responsive Compass */
+/* Fixed Compass Size */
 .compass-dial-face {
-    width: 300px;
-    height: 300px;
+    width: 240px;
+    height: 240px;
+    max-width: 65vw;
+    max-height: 65vw;
     border-radius: 50%;
     position: relative;
-
     /* Premium Glass Effect */
     background: rgba(0, 0, 0, 0.4);
     box-shadow:
@@ -351,10 +428,11 @@
         0 10px 30px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Removed margin: auto to respect padding-top of container */
+    margin: 0 auto;
 }
 
 /* Clean Degree Markings */
@@ -412,10 +490,12 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 16px;
-    height: 220px;
+    width: 6px;
+    height: 180px;
     transform: translate(-50%, -50%);
     pointer-events: none;
+    z-index: 2;
+    /* Ensure it sits above markings but below Qibla pointer */
 }
 
 /* North Tip (Red) */
@@ -426,10 +506,9 @@
     left: 0;
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 110px solid #ef4444;
-    /* Red tip */
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 90px solid #ef4444;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
@@ -441,11 +520,42 @@
     left: 0;
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 110px solid #e5e5e5;
-    /* Silver tail */
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 90px solid #e5e5e5;
     filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* QIBLA POINTER ON DIAL */
+.compass-qibla-pointer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    /* Icon at Top Center initially (0 deg) */
+}
+
+.qibla-indicator-icon {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    filter: drop-shadow(0 0 10px #FFD700);
+    z-index: 4;
+}
+
+.qibla-direction-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 90px;
+    background: linear-gradient(to top, transparent, #FFD700);
+    transform: translate(-50%, -100%);
+    transform-origin: bottom center;
 }
 
 /* STATUS PANEL */
@@ -453,6 +563,8 @@
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     padding: 1.5rem;
+    /* Large padding to clear mobile browser address bars */
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     z-index: 10;

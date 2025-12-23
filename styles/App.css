@@ -6,41 +6,165 @@
   background: transparent;
 }
 
-/* Glassmorphism Header */
+/* Header Positioning Container */
+.app__header-wrapper {
+  position: fixed;
+  top: 12px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 100;
+  pointer-events: none;
+  /* Let clicks pass through outside the header */
+}
+
+/* Dynamic Island Header */
 .app__header {
-  background: rgba(10, 40, 28, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(201, 169, 97, 0.2);
-  z-index: 10;
-  position: sticky;
-  top: 0;
-  height: auto;
-  min-height: 60px;
+  pointer-events: auto;
+  /* Re-enable clicks on the header */
+  position: relative;
+  /* Changed from fixed */
+  /* Remove fixed positioning props */
+  /* top: 12px; */
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
+
+  /* Use margin auto to assist flex if needed, but flex justify-center handles it */
+  transform-origin: top center;
+
+
+  /* Glassmorphism pill shape */
+  background: rgba(1, 40, 25, 0.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: 2.5rem;
+  border: 1px solid rgba(201, 169, 97, 0.2);
+
+  /* Layout */
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  min-height: 48px;
+
+  /* Glassmorphism shadow */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Smooth transitions - REMOVED for Framer Motion */
+  /* transition: width 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    height 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    background 0.3s ease; */
+  /* will-change: width, height, border-radius; */
+
+  /* Force hardware acceleration for smoother mobile animation */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.app__header:hover:not(.app__header--expanded) {
+  background: rgba(1, 40, 25, 0.85);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(201, 169, 97, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Dynamic Island Expanded State */
+.app__header--expanded {
+  width: min(420px, 92vw);
+  /* Use auto height with max limit for natural expansion */
+  height: auto;
+  max-height: 85vh;
+  min-height: 200px;
+  /* Reduced min-height to fit content naturally */
+  border-radius: 1.75rem;
+  /* Slightly larger radius for expanded state */
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(5, 20, 15, 0.95);
+  /* Darker, more solid background */
+
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 100px rgba(201, 169, 97, 0.1);
+}
+
+/* Hide header content when expanded */
+.app__header--expanded .app__header-content,
+.app__header--expanded .app__header-actions {
+  display: none;
+}
+
+/* Modal content inside Dynamic Island */
+.app__header-modal {
+  /* display: none; -- Handled by React/Framer Motion */
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* opacity: 0; -- Handled by Framer Motion */
+  /* transition: opacity 0.3s ease; -- Handled by Framer Motion */
+}
+
+.app__header-modal::-webkit-scrollbar {
+  display: none;
+}
+
+.app__header--expanded .app__header-modal {
+  /* display: block; -- Handled by React */
+  /* opacity: 1; */
+  /* transition-delay: 0.2s; */
+}
+
+/* Overlay behind expanded modal */
+.app__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.app__modal-overlay--visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Header Action Buttons */
 .app__header-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 .app__action-btn {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(201, 169, 97, 0.4);
-  background: linear-gradient(135deg, rgba(201, 169, 97, 0.15) 0%, rgba(201, 169, 97, 0.08) 100%);
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
   color: var(--color-gold, #c9a961);
-  font-size: 1.25rem;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,19 +172,17 @@
 }
 
 .app__action-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
 
 .app__action-btn:hover {
-  transform: scale(1.1);
-  background: linear-gradient(135deg, rgba(201, 169, 97, 0.25) 0%, rgba(201, 169, 97, 0.15) 100%);
-  border-color: var(--color-gold, #c9a961);
-  box-shadow: 0 4px 15px rgba(201, 169, 97, 0.25);
+  transform: scale(1.15);
+  background: rgba(201, 169, 97, 0.3);
 }
 
 .app__action-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 .app__header::before {
@@ -68,14 +190,13 @@
 }
 
 .app__header-content {
-  padding: 1rem 1.5rem;
+  padding: 0 0.5rem;
   text-align: center;
-  position: relative;
-  z-index: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .app__title {
@@ -83,26 +204,26 @@
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  line-height: 1.4;
+  gap: 0.375rem;
+  line-height: 1.2;
 }
 
 .app__action-btn {
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .app__title-arabic {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-family: var(--font-arabic);
   background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .app__title-english {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-family: var(--font-arabic);
   font-weight: 600;
   background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
@@ -113,58 +234,52 @@
 }
 
 .app__subtitle {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--color-gold-light);
-  opacity: 0.9;
-  letter-spacing: 0.1em;
-  margin-top: 0.25rem;
-  font-family: var(--font-arabic);
+  display: none;
+  /* Hidden in Dynamic Island mode */
 }
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
+  .app__header-wrapper {
+    top: 10px;
+  }
+
   .app__header {
-    flex-direction: row;
-    padding: 0.5rem 0.75rem;
-    justify-content: flex-end;
-    position: relative;
+    /* top: 10px; -- driven by wrapper now */
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+    gap: 0.625rem;
   }
 
   .app__header-content {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: max-content;
-    padding: 0;
-    margin: 0;
-    flex: unset;
+    padding: 0 0.375rem;
   }
 
   .app__title {
+    gap: 0.375rem;
+  }
+
+  .app__title-arabic {
     font-size: 1rem;
+  }
+
+  .app__title-english {
+    font-size: 0.7rem;
   }
 
   .app__header-actions {
     gap: 0.375rem;
-    margin-left: auto;
   }
 
   .app__action-btn {
     width: 32px;
     height: 32px;
-    font-size: 12px;
-    /* Explicit smaller size for emoji */
-    padding: 0;
-    line-height: 1;
-    /* Ensure emoji doesnt push layout */
+    font-size: 14px;
   }
 
   .app__action-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 }
 

@@ -3,6 +3,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Qibla, Coordinates } from 'adhan';
 import geomagnetism from 'geomagnetism';
 import { getUserLocation } from '@/services/prayerTimesService';
@@ -10,7 +11,7 @@ import '@/components/QiblaFinder.css';
 
 const KAABA_COORDS = { lat: 21.422487, lng: 39.826206 };
 
-const QiblaFinder = ({ isOpen, onClose }) => {
+const QiblaFinder = ({ isOpen, onClose, embedded = false }) => {
     // Modes: 'landing', 'compass', 'camera'
     const [mode, setMode] = useState('landing');
     const [loading, setLoading] = useState(false);
@@ -274,155 +275,218 @@ const QiblaFinder = ({ isOpen, onClose }) => {
     }, [mode, isOpen]);
 
 
+    // Rotation Logic
+    // 1. Compass Mode: Rotate dial so 'N' points North (-heading)
+    // 2. AR Mode: Rotate arrow so it points to Qibla (qibla - heading)
     const getCompassRotation = () => {
+        return -smoothedHeading;
+    };
+
+    const getARRotation = () => {
         if (qiblaDirection === null) return 0;
-        // Flip 180 degrees to fix inverted visual
-        return qiblaDirection - smoothedHeading + 180;
+        return qiblaDirection - smoothedHeading;
     };
 
     if (!isOpen) return null;
 
-    return (
-        <div className="qibla-overlay" onClick={onClose}>
-            <div className={`qibla-modal ${mode}`} onClick={(e) => e.stopPropagation()}>
+    // Content for Landing and Compass (Embedded in Header)
+    const embeddedContent = (
+        <div className={`qibla-modal ${mode} ${embedded ? 'qibla-modal--embedded' : ''}`} onClick={(e) => e.stopPropagation()}>
 
-                <button className="qibla-close-btn" onClick={onClose}>
+            <button className="qibla-close-btn" onClick={onClose}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            {/* LANDING SCREEN */}
+            {mode === 'landing' && (
+                <div className="qibla-landing">
+                    <div className="qibla-landing-icon">🕋</div>
+                    <h2>Qibla Finder</h2>
+                    <p>Locate the Qibla with high precision using Augmented Reality or Compass.</p>
+
+                    {/* Loading / Error / Stats */}
+                    {loading && !location ? (
+                        <div className="qibla-spinner"></div>
+                    ) : (
+                        <>
+                            {location && (
+                                <div className="qibla-landing-stats">
+                                    <div className="stat">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        {location.city}
+                                    </div>
+                                    <div className="stat">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
+                                            <path d="M7 17l9.2-9.2M17 17V7H7" />
+                                        </svg>
+                                        {distanceKm} km
+                                    </div>
+                                </div>
+                            )}
+
+                            {error && <div className="qibla-error-msg">{error}</div>}
+
+                            <div className="qibla-mode-select">
+                                <button className="mode-card" onClick={() => enterMode('camera')} disabled={loading}>
+                                    <div className="icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <div className="mode-info">
+                                        <span className="label">AR Mode</span>
+                                        <span className="desc">See Qibla in real world</span>
+                                    </div>
+                                </button>
+                                <button className="mode-card" onClick={() => enterMode('compass')} disabled={loading}>
+                                    <div className="icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
+                                        </svg>
+                                    </div>
+                                    <div className="mode-info">
+                                        <span className="label">Compass</span>
+                                        <span className="desc">Classic 2D pointer</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
+
+            {/* COMPASS MODE (Embedded) */}
+            {mode === 'compass' && (
+                <div className={`qibla-active-view ${isAligned ? 'aligned' : ''}`}>
+                    <div className="qibla-top-bar">
+                        <div className="mode-pill">
+                            <button className={mode === 'camera' ? 'active' : ''} onClick={() => setMode('camera')}>AR</button>
+                            <button className={mode === 'compass' ? 'active' : ''} onClick={() => setMode('compass')}>Compass</button>
+                        </div>
+                    </div>
+
+                    <div className="qibla-visuals">
+                        {/* Dial rotates to North */}
+                        <div className="qibla-pointer-container" style={{ transform: `rotate(${getCompassRotation()}deg)` }}>
+                            <div className="compass-dial-face">
+                                <div className="compass-markings"></div>
+                                {/* North Needle (Fixed to N on Dial) */}
+                                <div className="compass-needle"></div>
+                                <div className="compass-n">N</div>
+                                <div className="compass-e">E</div>
+                                <div className="compass-s">S</div>
+                                <div className="compass-w">W</div>
+
+                                {/* Qibla Pointer (Rotates relative to Dial which is North) */}
+                                {/* e.g. if Qibla is 90 deg, we rotate pointer 90 deg relative to N */}
+                                {qiblaDirection !== null && (
+                                    <div className="compass-qibla-pointer" style={{ transform: `rotate(${qiblaDirection}deg)` }}>
+                                        <div className="qibla-indicator-icon">🕋</div>
+                                        <div className="qibla-direction-line"></div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="qibla-status-panel">
+                        <div className="status-main">
+                            {isAligned ? (
+                                <div className="lock-indicator">
+                                    <span className="lock-icon">✓</span>
+                                    <span>Aligned with Qibla</span>
+                                </div>
+                            ) : (
+                                <span>Rotate to find Qibla</span>
+                            )}
+                        </div>
+                        <div className="status-grid">
+                            <div className="stat-item">
+                                <label>Distance</label>
+                                <span>{distanceKm} km</span>
+                            </div>
+                            <div className="stat-item">
+                                <label>Qibla Angle</label>
+                                <span>{Math.round(qiblaDirection)}°</span>
+                            </div>
+                            <div className="stat-item">
+                                <label>Location</label>
+                                <span>{location?.city}</span>
+                            </div>
+                        </div>
+                        <button className="qibla-exit-mode-btn" onClick={() => setMode('landing')}>Exit</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
+    // FULL SCREEN AR MODE (Portal)
+    if (mode === 'camera') {
+        return createPortal(
+            <div className="qibla-ar-portal">
+                <button className="qibla-close-btn fixed-top-right" onClick={() => { setMode('landing'); }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
 
-                {/* LANDING SCREEN */}
-                {mode === 'landing' && (
-                    <div className="qibla-landing">
-                        <div className="qibla-landing-icon">🕋</div>
-                        <h2>Qibla Finder</h2>
-                        <p>Locate the Qibla with high precision using Augmented Reality or Compass.</p>
+                <video ref={videoRef} autoPlay playsInline className="qibla-camera-bg" />
 
-                        {/* Loading / Error / Stats */}
-                        {loading && !location ? (
-                            <div className="qibla-spinner"></div>
-                        ) : (
-                            <>
-                                {location && (
-                                    <div className="qibla-landing-stats">
-                                        <div className="stat">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                                <circle cx="12" cy="10" r="3"></circle>
-                                            </svg>
-                                            {location.city}
-                                        </div>
-                                        <div className="stat">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                                <path d="M7 17l9.2-9.2M17 17V7H7" />
-                                            </svg>
-                                            {distanceKm} km
-                                        </div>
-                                    </div>
-                                )}
-
-                                {error && <div className="qibla-error-msg">{error}</div>}
-
-                                <div className="qibla-mode-select">
-                                    <button className="mode-card" onClick={() => enterMode('camera')} disabled={loading}>
-                                        <div className="icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                                <circle cx="12" cy="13" r="4"></circle>
-                                            </svg>
-                                        </div>
-                                        <div className="mode-info">
-                                            <span className="label">AR Mode</span>
-                                            <span className="desc">See Qibla in real world</span>
-                                        </div>
-                                    </button>
-                                    <button className="mode-card" onClick={() => enterMode('compass')} disabled={loading}>
-                                        <div className="icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
-                                            </svg>
-                                        </div>
-                                        <div className="mode-info">
-                                            <span className="label">Compass</span>
-                                            <span className="desc">Classic 2D pointer</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* COMPASS / CAMERA MODES */}
-                {mode !== 'landing' && (
-                    <div className={`qibla-active-view ${isAligned ? 'aligned' : ''}`}>
-                        {/* Mode Switcher */}
-                        <div className="qibla-top-bar">
-                            <div className="mode-pill">
-                                <button className={mode === 'camera' ? 'active' : ''} onClick={() => setMode('camera')}>AR</button>
-                                <button className={mode === 'compass' ? 'active' : ''} onClick={() => setMode('compass')}>Compass</button>
-                            </div>
-                        </div>
-
-                        {/* AR Video Layer */}
-                        {mode === 'camera' && (
-                            <video ref={videoRef} autoPlay playsInline className="qibla-camera-bg" />
-                        )}
-
-                        {/* Main Direction Indicator */}
-                        <div className="qibla-visuals">
-                            {/* The Arrow/Dial */}
-                            <div className="qibla-pointer-container" style={{ transform: `rotate(${getCompassRotation()}deg)` }}>
-                                {mode === 'compass' ? (
-                                    <div className="compass-dial-face">
-                                        <div className="compass-markings"></div>
-                                        <div className="compass-needle"></div>
-                                    </div>
-                                ) : (
-                                    <div className="ar-arrow-3d">
-                                        <div className="arrow-head"></div>
-                                        <div className="arrow-shaft"></div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Static Crosshair for AR */}
-                            {mode === 'camera' && <div className="ar-crosshair"></div>}
-                        </div>
-
-                        {/* Bottom Info Status */}
-                        <div className="qibla-status-panel">
-                            <div className="status-main">
-                                {isAligned ? (
-                                    <div className="lock-indicator">
-                                        <span className="lock-icon">✓</span>
-                                        <span>Aligned with Qibla</span>
-                                    </div>
-                                ) : (
-                                    <span>Rotate to find Qibla</span>
-                                )}
-                            </div>
-                            <div className="status-grid">
-                                <div className="stat-item">
-                                    <label>Distance</label>
-                                    <span>{distanceKm} km</span>
-                                </div>
-                                <div className="stat-item">
-                                    <label>Qibla Angle</label>
-                                    <span>{Math.round(qiblaDirection)}°</span>
-                                </div>
-                                <div className="stat-item">
-                                    <label>Accuracy</label>
-                                    <span>{declination ? 'True N' : 'Mag N'}</span>
-                                </div>
-                            </div>
+                <div className={`qibla-active-view ${isAligned ? 'aligned' : ''}`}>
+                    <div className="qibla-top-bar">
+                        <div className="mode-pill">
+                            <button className="active">AR</button>
+                            <button onClick={() => setMode('compass')}>Compass</button>
                         </div>
                     </div>
-                )}
-            </div>
+
+                    <div className="qibla-visuals">
+                        {/* AR Arrow rotates to point to Qibla relative to screen */}
+                        <div className="qibla-pointer-container" style={{ transform: `rotate(${getARRotation()}deg)` }}>
+                            <div className="ar-arrow-3d">
+                                <div className="arrow-head"></div>
+                                <div className="arrow-shaft"></div>
+                            </div>
+                        </div>
+                        <div className="ar-crosshair"></div>
+                    </div>
+
+                    <div className="qibla-status-panel">
+                        <div className="status-main">
+                            {isAligned ? (
+                                <div className="lock-indicator">
+                                    <span className="lock-icon">✓</span>
+                                    <span>Aligned with Qibla</span>
+                                </div>
+                            ) : (
+                                <span>Rotate to find Qibla</span>
+                            )}
+                        </div>
+                        <button className="qibla-exit-mode-btn" onClick={() => setMode('landing')}>Exit AR</button>
+                    </div>
+                </div>
+            </div>,
+            document.body
+        );
+    }
+
+    if (embedded) {
+        return embeddedContent;
+    }
+
+    return (
+        <div className="qibla-overlay" onClick={onClose}>
+            {embeddedContent}
         </div>
     );
 };
