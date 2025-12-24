@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://akhi.theoneatom.com/",
   },
-  title: "Akhi AI – Your Brother in Faith & Knowledge",
+  title: "Akhi AI",
   description: "Your trusted Islamic AI companion. Get authentic answers from the Quran, Hadith, and Islamic scholarship on prayer, fiqh, halal/haram, and more.",
   keywords: "Akhi AI, Islamic AI, Muslim AI, Quran AI, Hadith, halal, prayer times, fiqh, Islamic questions, Islamic chatbot",
   authors: [{ name: "The One Atom" }],
