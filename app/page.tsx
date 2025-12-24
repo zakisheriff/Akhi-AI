@@ -6,6 +6,7 @@ import ChatContainer from '@/components/ChatContainer';
 import AmbientBackground from '@/components/AmbientBackground';
 import PrayerTimes from '@/components/PrayerTimes';
 import QiblaFinder from '@/components/QiblaFinder';
+import SEOContent from '@/components/SEOContent';
 import { sendMessage } from '@/services/openaiService';
 import { SCHOOLS } from '@/utils/systemPrompt';
 
@@ -82,6 +83,7 @@ export default function Home() {
   return (
     <div className="app">
       {isHero && <AmbientBackground />}
+      <SEOContent />
 
       {/* Overlay behind expanded Dynamic Island */}
       <div
@@ -217,7 +219,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="app__footer">
         <p className="app__footer-copyright">
-          © {new Date().getFullYear()} Akhi AI by <a href="https://twitter.com/theoneatom" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
+          © {new Date().getFullYear()} Akhi AI by <a href="https://theoneatom.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
           <span className="app__footer-divider">·</span>
           <a href="/about" className="app__about-link">About Us</a>
           <span className="app__footer-divider">·</span>

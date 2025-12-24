@@ -82,7 +82,7 @@ const Card = ({ item }: { item: { q: string; a: string } }) => (
 
 const AmbientBackground = () => {
     return (
-        <div className="ambient-background">
+        <div className="ambient-background" aria-hidden="true">
             <div className="ambient-column ambient-column--left">
                 <div className="ambient-track ambient-track--up">
                     {QNA_POOL_1.map((item, i) => <Card key={i} item={item} />)}

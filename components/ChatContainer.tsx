@@ -115,7 +115,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
                             </div>
                             <h2 className="chat-container__welcome-title">Assalamu Alaikum</h2>
                             <p className="chat-container__welcome-text">
-                                Welcome to <span className="chat-container__welcome-highlight">Akhi AI</span> – your Islamic AI assistant, providing authentic answers based on the Quran, Hadith, and trusted Islamic scholarship.
+                                Welcome to <span className="chat-container__welcome-highlight">Akhi AI</span> – Your Brother, providing authentic answers based on the Quran, Hadith, and trusted Islamic scholarship.
                             </p>
                             <div className="chat-container__welcome-suggestions">
                                 {[
@@ -138,7 +138,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
                                 ⚠️ This is an educational AI tool, not a replacement for qualified scholars. Please verify important rulings with a local Mufti or Imam.
                             </p>
 
-                            <div className="chat-container__mobile-ambient">
+                            <div className="chat-container__mobile-ambient" aria-hidden="true">
                                 <div className="chat-container__mobile-ambient-track">
                                     {MOBILE_QNA.map((item, i) => (
                                         <div key={i} className="chat-container__mobile-qna-card">
