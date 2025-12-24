@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: '/sitemap.xml',
         permanent: true, // 301 redirect
       },
+      {
+        source: '/robots',
+        destination: '/robots.txt',
+        permanent: true, // 301 redirect
+      },
     ];
   },
 };
