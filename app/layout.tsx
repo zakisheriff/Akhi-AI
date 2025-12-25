@@ -17,12 +17,19 @@ const inter = Inter({
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5",
+    "ratingCount": "1"
+  },
+  "image": "https://akhi.theoneatom.com/akhi_logo.png",
   "name": "Akhi AI",
   "url": "https://akhi.theoneatom.com/",
   "author": {
     "@type": "Organization",
     "name": "The One Atom",
-    "url": "https://theoneatom.com/"
+    "url": "https://theoneatom.com/",
+    "logo": "https://akhi.theoneatom.com/akhi_logo.png"
   },
   "description": "Your Brother in Faith & Knowledge. Get authentic answers from the Quran, Hadith, and Islamic scholarship.",
   "offers": {
