@@ -36,9 +36,7 @@ const jsonLd = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akhi.theoneatom.com'),
-  alternates: {
-    canonical: "https://akhi.theoneatom.com/",
-  },
+
   title: "Akhi AI",
   description: "Your Brother in Faith & Knowledge. Get authentic answers from the Quran, Hadith, and Islamic scholarship on prayer, fiqh, halal/haram, and more.",
   keywords: "Akhi AI, Islamic AI, Muslim AI, Quran AI, Hadith, halal, prayer times, Ask Akhi, Akhi, Islamic chatbot",
