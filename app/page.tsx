@@ -219,9 +219,15 @@ export default function Home() {
       {/* Footer */}
       <footer className="app__footer">
         <p className="app__footer-copyright">
-          © {new Date().getFullYear()} Akhi AI by <a href="https://theoneatom.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
+          © {new Date().getFullYear()} Akhi AI by <a href="https://theoneatom.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
           <span className="app__footer-divider">·</span>
-          <a href="/about" className="app__about-link">About Us</a>
+          <a href="/features/" className="app__about-link">Features</a>
+          <span className="app__footer-divider">·</span>
+          <a href="/about/" className="app__about-link">About</a>
+          <span className="app__footer-divider">·</span>
+          <a href="/privacy/" className="app__about-link">Privacy</a>
+          <span className="app__footer-divider">·</span>
+          <a href="/terms/" className="app__about-link">Terms</a>
           <span className="app__footer-divider">·</span>
           <a href="https://buymeacoffee.com/theoneatom" target="_blank" rel="noopener noreferrer" className="app__about-link">Support</a>
         </p>

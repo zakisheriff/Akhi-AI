@@ -18,20 +18,20 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Akhi AI",
-  "operatingSystem": "Web",
-  "applicationCategory": "EducationalApplication",
+  "url": "https://akhi.theoneatom.com/",
+  "author": {
+    "@type": "Organization",
+    "name": "The One Atom",
+    "url": "https://theoneatom.com/"
+  },
+  "description": "Your Brother in Faith & Knowledge. Get authentic answers from the Quran, Hadith, and Islamic scholarship.",
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD"
   },
-  "author": {
-    "@type": "Organization",
-    "name": "The One Atom",
-    "url": "https://theoneatom.com"
-  },
-  "description": "Your trusted Islamic AI companion. Get authentic answers from the Quran, Hadith, and Islamic scholarship.",
-  "url": "https://akhi.theoneatom.com"
+  "operatingSystem": "Web",
+  "applicationCategory": "EducationalApplication"
 };
 
 export const metadata: Metadata = {
@@ -40,11 +40,11 @@ export const metadata: Metadata = {
     canonical: "https://akhi.theoneatom.com/",
   },
   title: "Akhi AI",
-  description: "Your trusted Islamic AI companion. Get authentic answers from the Quran, Hadith, and Islamic scholarship on prayer, fiqh, halal/haram, and more.",
-  keywords: "Akhi AI, Islamic AI, Muslim AI, Quran AI, Hadith, halal, prayer times, fiqh, Islamic questions, Islamic chatbot",
+  description: "Your Brother in Faith & Knowledge. Get authentic answers from the Quran, Hadith, and Islamic scholarship on prayer, fiqh, halal/haram, and more.",
+  keywords: "Akhi AI, Islamic AI, Muslim AI, Quran AI, Hadith, halal, prayer times, Ask Akhi, Akhi, Islamic chatbot",
   authors: [{ name: "The One Atom" }],
   openGraph: {
-    title: "Akhi AI – Your Brother in Faith & Knowledge",
+    title: "Akhi AI",
     description: "Get authentic Islamic answers from Quran, Hadith & scholars",
     url: "https://akhi.theoneatom.com",
     siteName: "Akhi AI",
@@ -70,13 +70,10 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
   },
-  other: {
-    "script:ld+json": JSON.stringify(jsonLd),
-  },
 };
 
 export const viewport = {
-  themeColor: '#0d0d0d',
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
