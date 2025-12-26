@@ -4,4 +4,3 @@ Disallow: /api/
 Disallow: /_next/
 
 Sitemap: https://akhi.theoneatom.com/sitemap.xml
-Host: https://akhi.theoneatom.com
