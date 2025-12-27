@@ -1,11 +1,16 @@
 {
     "name": "Akhi AI",
-    "short_name": "Akhi AI",
-    "description": "Akhi AI – Your Brother in Faith & Knowledge",
+    "short_name": "Akhi",
+    "description": "Intelligent AI Assistant",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0A281C",
     "theme_color": "#0A281C",
+    "categories": [
+        "technology",
+        "productivity",
+        "utilities"
+    ],
     "icons": [
         {
             "src": "/akhi_logo.png",
