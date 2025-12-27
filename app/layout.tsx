@@ -55,7 +55,7 @@ const softwareApplicationSchema = {
   "applicationCategory": "ChatApplication",
   "operatingSystem": "Web",
   "url": "https://akhi.theoneatom.com/",
-  "description": "Akhi AI is an Intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
+  "description": "Akhi AI is an Intelligent AI Assistant Powered by Cutting-Edge Technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
   "image": "https://akhi.theoneatom.com/akhi_logo.png",
   "offers": {
     "@type": "Offer",
