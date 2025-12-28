@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import HomeContent from '@/components/HomeContent';
 
 export const metadata: Metadata = {
-  title: 'Akhi AI – Intelligent AI Assistant for Your Daily Needs',
+  title: 'Akhi AI',
   description: 'Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks. Chat with AI that understands you.',
   alternates: {
     canonical: 'https://akhi.theoneatom.com/',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const webPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Akhi AI – Intelligent AI Assistant",
+  "name": "Akhi AI",
   "description": "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
   "url": "https://akhi.theoneatom.com/",
   "isPartOf": {

@@ -32,6 +32,7 @@ export default function HomeContent() {
     const [genZMode, setGenZMode] = useState(false);
     const [showPrayerTimes, setShowPrayerTimes] = useState(false);
     const [showQibla, setShowQibla] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
 
     // Reset scroll to top on initial load
     useScrollReset();
@@ -72,12 +73,35 @@ export default function HomeContent() {
         setGenZMode(prev => !prev);
     }, []);
 
-    // Determine if Dynamic Island is expanded
-    const isExpanded = showPrayerTimes || showQibla;
+    // Determine if Dynamic Island is expanded (keep expanded during close animation)
+    const isModalOpen = showPrayerTimes || showQibla;
+    const isExpanded = isModalOpen || isClosing;
+    const [justClosed, setJustClosed] = useState(false);
+    const [isOpening, setIsOpening] = useState(false);
+
+    const handleOpenPrayerTimes = () => {
+        setIsOpening(true);
+        setShowPrayerTimes(true);
+        setTimeout(() => setIsOpening(false), 300);
+    };
+
+    const handleOpenQibla = () => {
+        setIsOpening(true);
+        setShowQibla(true);
+        setTimeout(() => setIsOpening(false), 300);
+    };
 
     const handleCloseModal = () => {
+        setIsClosing(true);
         setShowPrayerTimes(false);
         setShowQibla(false);
+    };
+
+    const handleExitComplete = () => {
+        setIsClosing(false);
+        setJustClosed(true);
+        // Reset justClosed after animation completes
+        setTimeout(() => setJustClosed(false), 600);
     };
 
     return (
@@ -95,21 +119,30 @@ export default function HomeContent() {
             <div className="app__header-wrapper">
                 <motion.header
                     className={`app__header ${isExpanded ? 'app__header--expanded' : ''}`}
-                    layout
+                    initial={false}
+                    animate={
+                        isClosing
+                            ? { scale: 0.3, opacity: 0, y: -50 }
+                            : isOpening
+                                ? { scale: [0.3, 1], opacity: [0, 1], y: [-50, 0] }
+                                : justClosed
+                                    ? { scale: 1, opacity: 1, y: 0, x: [0, -6, 6, -5, 5, -3, 3, -1, 1, 0], scaleX: [1, 1.08, 1.06, 1.04, 1.02, 1] }
+                                    : { scale: 1, opacity: 1, y: 0 }
+                    }
                     transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 25
-                    }}
-                    animate={{
-                        // borderRadius handled by layout + CSS classes
+                        scale: { duration: 0.25, ease: [0.4, 0, 0.2, 1] },
+                        opacity: { duration: 0.25 },
+                        y: { duration: 0.25 },
+                        x: { duration: 0.5, ease: "easeOut", delay: 0.05 },
+                        scaleX: { duration: 0.4, ease: "easeOut" }
                     }}
                     style={{
-                        overflow: "hidden" // Ensure content is clipped during shrink
+                        overflow: "hidden",
+                        transformOrigin: "top center"
                     }}
                 >
-                    {/* AnimatePresence without mode='wait' allows crossfade and prevents the 'blink' gap */}
-                    <AnimatePresence>
+                    {/* onExitComplete triggers after modal fully exits */}
+                    <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
                         {!isExpanded && (
                             <motion.div
                                 key="collapsed"
@@ -117,7 +150,7 @@ export default function HomeContent() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0, position: 'absolute' }}
-                                transition={{ duration: 0.2 }}
+                                transition={{ duration: 0.15 }}
                                 style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', whiteSpace: 'nowrap' }}
                             >
                                 {/* Header content - hidden when expanded */}
@@ -132,7 +165,7 @@ export default function HomeContent() {
                                     <button
                                         type="button"
                                         className="app__action-btn"
-                                        onClick={() => setShowQibla(true)}
+                                        onClick={handleOpenQibla}
                                         title="Qibla Finder"
                                     >
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -143,7 +176,7 @@ export default function HomeContent() {
                                     <button
                                         type="button"
                                         className="app__action-btn"
-                                        onClick={() => setShowPrayerTimes(true)}
+                                        onClick={handleOpenPrayerTimes}
                                         title="Prayer Times"
                                     >
                                         🕌
@@ -156,19 +189,24 @@ export default function HomeContent() {
                             <motion.div
                                 key="prayer-modal"
                                 className="app__header-modal"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
+                                layout={false}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
                                 exit={{
                                     opacity: 0,
-                                    scale: 0.9,
-                                    filter: "blur(10px)",
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: "50%",
-                                    x: "-50%"
+                                    scale: 0.3,
+                                    y: -100,
+                                    filter: "blur(8px)"
                                 }}
-                                transition={{ duration: 0.2 }}
-                                style={{ width: '100%', height: '100%' }}
+                                transition={{
+                                    duration: 0.25,
+                                    ease: [0.4, 0, 0.2, 1]
+                                }}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    transformOrigin: 'top center'
+                                }}
                             >
                                 <PrayerTimes
                                     isOpen={true}
@@ -182,19 +220,24 @@ export default function HomeContent() {
                             <motion.div
                                 key="qibla-modal"
                                 className="app__header-modal"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
+                                layout={false}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
                                 exit={{
                                     opacity: 0,
-                                    scale: 0.9,
-                                    filter: "blur(10px)",
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: "50%",
-                                    x: "-50%"
+                                    scale: 0.3,
+                                    y: -100,
+                                    filter: "blur(8px)"
                                 }}
-                                transition={{ duration: 0.2 }}
-                                style={{ width: '100%', height: '100%' }}
+                                transition={{
+                                    duration: 0.25,
+                                    ease: [0.4, 0, 0.2, 1]
+                                }}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    transformOrigin: 'top center'
+                                }}
                             >
                                 <QiblaFinder
                                     isOpen={true}
