@@ -162,6 +162,12 @@ const PrayerTimes = ({ isOpen, onClose, embedded = false }) => {
                             </div>
                         )}
 
+                        {/* Caution Notice */}
+                        <div className="prayer-times-caution">
+                            <span className="prayer-times-caution-icon">⚠️</span>
+                            <p>Prayer times may vary by 1-2 minutes. Don't wait until the last moment — pray as early as possible.</p>
+                        </div>
+
                         {/* All Prayer Times */}
                         <div className="prayer-times-list">
                             {prayerList.map(prayer => {
