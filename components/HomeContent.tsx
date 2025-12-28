@@ -123,18 +123,12 @@ export default function HomeContent() {
                     animate={
                         isClosing
                             ? { scale: 0.3, opacity: 0, y: -50 }
-                            : isOpening
-                                ? { scale: [0.3, 1], opacity: [0, 1], y: [-50, 0] }
-                                : justClosed
-                                    ? { scale: 1, opacity: 1, y: 0, x: [0, -6, 6, -5, 5, -3, 3, -1, 1, 0], scaleX: [1, 1.08, 1.06, 1.04, 1.02, 1] }
-                                    : { scale: 1, opacity: 1, y: 0 }
+                            : { scale: 1, opacity: 1, y: 0 }
                     }
                     transition={{
                         scale: { duration: 0.25, ease: [0.4, 0, 0.2, 1] },
                         opacity: { duration: 0.25 },
-                        y: { duration: 0.25 },
-                        x: { duration: 0.5, ease: "easeOut", delay: 0.05 },
-                        scaleX: { duration: 0.4, ease: "easeOut" }
+                        y: { duration: 0.25 }
                     }}
                     style={{
                         overflow: "hidden",
