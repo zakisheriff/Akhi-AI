@@ -89,19 +89,23 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false, 
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                     >
-                        {/* Sleek Rocket Body */}
+                        {/* Clean Send Arrow */}
                         <path
-                            d="M12 3C10 6 7 10 7 15C7 17 8.5 18.5 10 18.5L12 17L14 18.5C15.5 18.5 17 17 17 15C17 10 14 6 12 3Z"
+                            d="M22 2L11 13"
                             stroke="currentColor"
-                            strokeWidth="1.8"
+                            strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
-                        {/* Fins */}
-                        <path d="M7 15L4 18V20L7 18.5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                        <path d="M17 15L20 18V20L17 18.5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                        {/* Flame */}
-                        <path d="M11 20L12 22L13 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <path
+                            d="M22 2L15 22L11 13L2 9L22 2Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            fill="currentColor"
+                            fillOpacity="0.15"
+                        />
                     </svg>
                 </button>
             </div>

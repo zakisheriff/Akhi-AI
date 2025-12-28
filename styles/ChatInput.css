@@ -103,17 +103,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Spherical 3D Gradient */
-  background: radial-gradient(circle at 35% 30%, #E6C98A 0%, #C9A961 40%, #B8943F 100%);
-  color: var(--color-deep-green);
+  /* Clean flat gold background */
+  background: var(--color-gold, #c9a961);
+  color: var(--color-deep-green, #0a1f14);
   border-radius: 50%;
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  border: none;
+  box-shadow: 0 2px 8px rgba(201, 169, 97, 0.3);
 }
 
 .chat-input__button:hover:not(:disabled) {
@@ -122,10 +119,8 @@
 }
 
 .chat-input__button:active:not(:disabled) {
-  transform: translateY(1px) scale(0.96);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(201, 169, 97, 0.2);
 }
 
 .chat-input__button:disabled {
