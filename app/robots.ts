@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
                 crawlDelay: 1,
             },
         ],
-        sitemap: 'https://akhi.theoneatom.com/sitemap.xml',
+        sitemap: 'https://akhiai.theoneatom.com/sitemap.xml',
     };
 }

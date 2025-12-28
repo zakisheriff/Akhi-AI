@@ -222,7 +222,7 @@ async function callOpenRouter(messages: any[], systemPrompt: string): Promise<st
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${apiKey}`,
-                    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://akhi.theoneatom.com',
+                    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'https://akhiai.theoneatom.com',
                     'X-Title': 'Akhi AI'
                 },
                 body: JSON.stringify({

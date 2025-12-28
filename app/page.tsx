@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Akhi AI',
   description: 'Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks. Chat with AI that understands you.',
   alternates: {
-    canonical: 'https://akhi.theoneatom.com/',
+    canonical: 'https://akhiai.theoneatom.com/',
   },
 };
 
@@ -15,11 +15,11 @@ const webPageSchema = {
   "@type": "WebPage",
   "name": "Akhi AI",
   "description": "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-  "url": "https://akhi.theoneatom.com/",
+  "url": "https://akhiai.theoneatom.com/",
   "isPartOf": {
     "@type": "WebSite",
     "name": "Akhi AI",
-    "url": "https://akhi.theoneatom.com"
+    "url": "https://akhiai.theoneatom.com"
   }
 };
 

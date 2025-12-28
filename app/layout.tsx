@@ -19,15 +19,15 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Akhi AI",
-  "url": "https://akhi.theoneatom.com",
-  "logo": "https://akhi.theoneatom.com/akhi_logo.png",
+  "url": "https://akhiai.theoneatom.com",
+  "logo": "https://akhiai.theoneatom.com/akhi_logo.png",
   "sameAs": [
     "https://twitter.com/akhiai"
   ],
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "Customer Support",
-    "url": "https://akhi.theoneatom.com"
+    "url": "https://akhiai.theoneatom.com"
   }
 };
 
@@ -36,12 +36,12 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Akhi AI",
-  "url": "https://akhi.theoneatom.com",
+  "url": "https://akhiai.theoneatom.com",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": "https://akhi.theoneatom.com/?q={search_term_string}"
+      "urlTemplate": "https://akhiai.theoneatom.com/?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   }
@@ -54,9 +54,9 @@ const softwareApplicationSchema = {
   "name": "Akhi AI",
   "applicationCategory": "ChatApplication",
   "operatingSystem": "Web",
-  "url": "https://akhi.theoneatom.com/",
+  "url": "https://akhiai.theoneatom.com/",
   "description": "Akhi AI is an Intelligent AI Assistant Powered by Cutting-Edge Technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-  "image": "https://akhi.theoneatom.com/akhi_logo.png",
+  "image": "https://akhiai.theoneatom.com/akhi_logo.png",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -80,12 +80,12 @@ const brandSchema = {
   "@type": "Brand",
   "name": "Akhi AI",
   "slogan": "Your Brother in Faith and Knowledge",
-  "logo": "https://akhi.theoneatom.com/akhi_logo.png",
-  "url": "https://akhi.theoneatom.com"
+  "logo": "https://akhiai.theoneatom.com/akhi_logo.png",
+  "url": "https://akhiai.theoneatom.com"
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akhi.theoneatom.com'),
+  metadataBase: new URL('https://akhiai.theoneatom.com'),
 
   title: "Akhi AI",
   description: "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
@@ -94,7 +94,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Akhi AI",
     description: "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-    url: "https://akhi.theoneatom.com",
+    url: "https://akhiai.theoneatom.com",
     siteName: "Akhi AI",
     locale: "en_US",
     type: "website",
