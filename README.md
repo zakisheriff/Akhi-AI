@@ -17,7 +17,7 @@
 
 <br />
 
-**[🚀 Launch Application](https://akhiai.theoneatom.com)** | **[📖 Features](#-core-features)**
+**[🚀 Launch Application](https://akhi.theoneatom.com)** | **[📖 Features](#-core-features)**
 
 </div>
 

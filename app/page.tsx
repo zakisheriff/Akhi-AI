@@ -3,9 +3,9 @@ import HomeContent from '@/components/HomeContent';
 
 export const metadata: Metadata = {
   title: 'Akhi AI',
-  description: 'Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks. Chat with AI that understands you.',
+  description: 'Akhi AI is an Intelligent AI Assistant Powered by Cutting-Edge Technology. Get instant answers, creative help, and smart solutions for your everyday tasks. Chat with AI that understands you.',
   alternates: {
-    canonical: 'https://akhiai.theoneatom.com/',
+    canonical: 'https://akhi.theoneatom.com/',
   },
 };
 
@@ -14,12 +14,12 @@ const webPageSchema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Akhi AI",
-  "description": "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-  "url": "https://akhiai.theoneatom.com/",
+  "description": "Akhi AI is an Intelligent AI Assistant Powered by Cutting-Edge Technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
+  "url": "https://akhi.theoneatom.com/",
   "isPartOf": {
     "@type": "WebSite",
     "name": "Akhi AI",
-    "url": "https://akhiai.theoneatom.com"
+    "url": "https://akhi.theoneatom.com"
   }
 };
 

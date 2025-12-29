@@ -19,15 +19,15 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Akhi AI",
-  "url": "https://akhiai.theoneatom.com",
-  "logo": "https://akhiai.theoneatom.com/akhi_logo.png",
+  "url": "https://akhi.theoneatom.com",
+  "logo": "https://akhi.theoneatom.com/akhi_logo.png",
   "sameAs": [
     "https://twitter.com/akhiai"
   ],
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "Customer Support",
-    "url": "https://akhiai.theoneatom.com"
+    "url": "https://akhi.theoneatom.com"
   }
 };
 
@@ -36,12 +36,12 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Akhi AI",
-  "url": "https://akhiai.theoneatom.com",
+  "url": "https://akhi.theoneatom.com",
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": "https://akhiai.theoneatom.com/?q={search_term_string}"
+      "urlTemplate": "https://akhi.theoneatom.com/?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   }
@@ -54,9 +54,9 @@ const softwareApplicationSchema = {
   "name": "Akhi AI",
   "applicationCategory": "ChatApplication",
   "operatingSystem": "Web",
-  "url": "https://akhiai.theoneatom.com/",
+  "url": "https://akhi.theoneatom.com/",
   "description": "Akhi AI is an Intelligent AI Assistant Powered by Cutting-Edge Technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-  "image": "https://akhiai.theoneatom.com/akhi_logo.png",
+  "image": "https://akhi.theoneatom.com/akhi_logo.png",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -80,39 +80,57 @@ const brandSchema = {
   "@type": "Brand",
   "name": "Akhi AI",
   "slogan": "Your Brother in Faith and Knowledge",
-  "logo": "https://akhiai.theoneatom.com/akhi_logo.png",
-  "url": "https://akhiai.theoneatom.com"
+  "logo": "https://akhi.theoneatom.com/akhi_logo.png",
+  "url": "https://akhi.theoneatom.com"
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akhiai.theoneatom.com'),
-
-  title: "Akhi AI",
-  description: "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-  keywords: "Akhi AI, Ask Akhi, Islam Chatbot, Muslim AI, Akhi AI, Akhi, AI helper, conversational AI",
-  authors: [{ name: "The One Atom" }],
+  metadataBase: new URL('https://akhi.theoneatom.com'),
+  title: {
+    default: 'Akhi AI - Islamic Guidance Assistant',
+    template: '%s | Akhi AI'
+  },
+  description: 'Your trusted digital companion for Islamic knowledge, prayer times, and guidance.',
+  keywords: ['Akhi AI', 'Akhi', 'AI Akhi', 'Ask Akhi', 'Akhi AI by The One Atom', 'Akhi AI Atom', 'Islamic AI', 'Muslim Assistant', 'Prayer Times', 'Quran', 'Hadith', 'Islamic Knowledge'],
+  authors: [{ name: 'The One Atom', url: 'https://theoneatom.com' }],
+  creator: 'The One Atom',
+  publisher: 'The One Atom',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
-    title: "Akhi AI",
-    description: "Akhi AI is an intelligent AI assistant powered by cutting-edge technology. Get instant answers, creative help, and smart solutions for your everyday tasks.",
-    url: "https://akhiai.theoneatom.com",
-    siteName: "Akhi AI",
-    locale: "en_US",
-    type: "website",
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://akhi.theoneatom.com',
+    siteName: 'Akhi AI',
+    title: 'Akhi AI - Islamic Guidance Assistant',
+    description: 'Your trusted digital companion for Islamic knowledge, prayer times, and guidance.',
     images: [
       {
-        url: "/akhi_logo.png",
+        url: 'https://akhi.theoneatom.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: "Akhi AI - Your Intelligent AI Companion"
-      }
-    ]
+        alt: 'Akhi AI Preview',
+      },
+    ],
   },
   twitter: {
-    card: "summary_large_image",
-    site: "@akhiai",
-    title: "Akhi AI – Intelligent AI Assistant for Your Daily Needs",
-    description: "Get instant answers, creative help, and smart solutions for your everyday tasks.",
-    images: ["/akhi_logo.png"]
+    card: 'summary_large_image',
+    title: 'Akhi AI - Islamic Guidance Assistant',
+    description: 'Your trusted digital companion for Islamic knowledge, prayer times, and guidance.',
+    images: ['https://akhi.theoneatom.com/og-image.jpg'],
+    creator: '@theoneatom',
+  },
+  alternates: {
+    canonical: 'https://akhi.theoneatom.com',
   },
   manifest: "/site.webmanifest",
   appleWebApp: {
