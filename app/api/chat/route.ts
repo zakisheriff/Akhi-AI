@@ -20,7 +20,7 @@ async function callGroq(messages: any[], systemPrompt: string): Promise<string |
         baseURL: 'https://api.groq.com/openai/v1',
     });
 
-    const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+    const models = ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile'];
 
     for (const model of models) {
         try {
@@ -82,7 +82,11 @@ async function callGemini(messages: any[], systemPrompt: string): Promise<string
             }
         } catch (err: any) {
             console.warn(`⚠️ Gemini (${modelName}) failed:`, err.message);
-            if (err.message?.includes('429') || err.message?.includes('404')) {
+            // If rate limited (429), assume account quota is hit and fail fast to backup provider
+            if (err.message?.includes('429')) {
+                throw err;
+            }
+            if (err.message?.includes('404')) {
                 continue;
             }
             throw err;
