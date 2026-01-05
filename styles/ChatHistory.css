@@ -1,0 +1,208 @@
+/* Chat History Modal (Inside Dynamic Island) */
+.chat-history-modal {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    /* No padding here, handled by internal structure */
+}
+
+/* Header inside modal */
+.chat-history__header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.05); removed to look cleaner */
+}
+
+.chat-history__header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.chat-history__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    font-family: var(--font-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.chat-history__title-icon {
+    opacity: 0.8;
+}
+
+/* Close button - similar to Prayer Times */
+.chat-history__close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.chat-history__close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    color: white;
+}
+
+/* New Chat Button */
+.chat-history__new-chat-btn {
+    margin: 0.5rem 1.5rem 1rem 1.5rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #D4AF37 0%, #C9A961 100%);
+    color: #05140F;
+    border: none;
+    border-radius: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.2);
+}
+
+.chat-history__new-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(201, 169, 97, 0.3);
+    filter: brightness(1.1);
+}
+
+.chat-history__new-chat-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* List Container */
+.chat-history__list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1.5rem 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Custom Scrollbar for list */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201, 169, 97, 0.3) transparent;
+}
+
+.chat-history__list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-history__list::-webkit-scrollbar-thumb {
+    background-color: rgba(201, 169, 97, 0.3);
+    border-radius: 3px;
+}
+
+/* History Items */
+.chat-history__item {
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.chat-history__item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.chat-history__item--active {
+    background: rgba(201, 169, 97, 0.15) !important;
+    border-color: rgba(201, 169, 97, 0.4) !important;
+}
+
+.chat-history__item-content {
+    flex: 1;
+    min-width: 0;
+    /* Enable truncation */
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.chat-history__item-title {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.chat-history__item-date {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+}
+
+/* Delete Button */
+.chat-history__delete-btn {
+    opacity: 0;
+    background: rgba(255, 100, 100, 0.1);
+    border: none;
+    color: rgba(255, 100, 100, 0.9);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Show delete button on hover or if active on mobile (handle tap vs hover) */
+.chat-history__item:hover .chat-history__delete-btn {
+    opacity: 1;
+}
+
+.chat-history__delete-btn:hover {
+    background: rgba(255, 100, 100, 0.2);
+    color: #ff4444;
+    transform: scale(1.1);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .chat-history__list {
+        padding: 0 1rem 6rem 1rem;
+        /* Extra padding for bottom */
+    }
+
+    .chat-history__item {
+        padding: 0.875rem 1rem;
+    }
+
+    .chat-history__delete-btn {
+        opacity: 1;
+        /* Always show on mobile since no hover */
+        background: transparent;
+        color: rgba(255, 255, 255, 0.3);
+    }
+}

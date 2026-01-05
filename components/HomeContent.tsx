@@ -7,8 +7,10 @@ import AmbientBackground from '@/components/AmbientBackground';
 import PrayerTimes from '@/components/PrayerTimes';
 import QiblaFinder from '@/components/QiblaFinder';
 import SEOContent from '@/components/SEOContent';
+import HistoryModal, { StoredChat } from '@/components/HistoryModal';
 import { sendMessage } from '@/services/openaiService';
 import { SCHOOLS } from '@/utils/systemPrompt';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -26,12 +28,15 @@ const useScrollReset = () => {
 };
 
 export default function HomeContent() {
+    const [conversations, setConversations] = useState<StoredChat[]>([]);
+    const [currentChatId, setCurrentChatId] = useState<string | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [genZMode, setGenZMode] = useState(false);
     const [showPrayerTimes, setShowPrayerTimes] = useState(false);
     const [showQibla, setShowQibla] = useState(false);
+    const [showHistory, setShowHistory] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -40,12 +45,12 @@ export default function HomeContent() {
 
     // Load chat history from local storage
     useEffect(() => {
-        const saved = localStorage.getItem('chat_history');
-        if (saved) {
+        const savedHistory = localStorage.getItem('akhi_chat_history');
+        if (savedHistory) {
             try {
-                const parsed = JSON.parse(saved);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    setMessages(parsed);
+                const parsed = JSON.parse(savedHistory);
+                if (Array.isArray(parsed)) {
+                    setConversations(parsed);
                 }
             } catch (e) {
                 console.error('Failed to load chat history', e);
@@ -54,16 +59,59 @@ export default function HomeContent() {
         setIsLoaded(true);
     }, []);
 
-    // Save chat history to local storage
+    // Save conversations to local storage whenever they change
     useEffect(() => {
         if (isLoaded) {
-            localStorage.setItem('chat_history', JSON.stringify(messages));
+            localStorage.setItem('akhi_chat_history', JSON.stringify(conversations));
         }
-    }, [messages, isLoaded]);
+    }, [conversations, isLoaded]);
 
-    const isHero = messages.length === 0 && !isLoading;
+    // Update current conversation in the list when messages change
+    useEffect(() => {
+        if (!currentChatId || messages.length === 0) return;
+
+        setConversations(prev => {
+            const index = prev.findIndex(c => c.id === currentChatId);
+            if (index === -1) {
+                // Create new chat entry if not exists
+                const newChat: StoredChat = {
+                    id: currentChatId,
+                    title: messages[0].text.substring(0, 30) + (messages[0].text.length > 30 ? '...' : ''),
+                    messages: messages,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                return [newChat, ...prev];
+            } else {
+                // Update existing
+                const updated = [...prev];
+                updated[index] = {
+                    ...updated[index],
+                    messages: messages,
+                    updatedAt: Date.now(),
+                    // Update title if it's the first message
+                    title: messages.length === 1 ? messages[0].text.substring(0, 30) + (messages[0].text.length > 30 ? '...' : '') : updated[index].title
+                };
+                return updated;
+            }
+        });
+    }, [messages, currentChatId]);
+
+    // Initialize a new chat if no current chat ID
+    useEffect(() => {
+        if (!currentChatId && messages.length === 0 && !isLoading) {
+            // Don't auto-create here to avoid empty chats filling up history
+            // Just let the user type or select from history
+        }
+    }, [currentChatId, messages, isLoading]);
 
     const handleSendMessage = useCallback(async (userMessage: string) => {
+        // Ensure we have a chat ID
+        if (!currentChatId) {
+            const newId = uuidv4();
+            setCurrentChatId(newId);
+        }
+
         // Add user message to chat
         const userMessageObj: Message = { role: 'user', text: userMessage };
         setMessages((prevMessages) => [...prevMessages, userMessageObj]);
@@ -91,20 +139,21 @@ export default function HomeContent() {
         } finally {
             setIsLoading(false);
         }
-    }, [messages, genZMode]);
+    }, [messages, genZMode, currentChatId]);
 
     const handleToggleGenZMode = useCallback(() => {
         setGenZMode(prev => !prev);
     }, []);
 
-    const handleClearChat = useCallback(() => {
+    // "Back" button functionality - Closes current chat
+    const handleCloseChat = useCallback(() => {
         setMessages([]);
+        setCurrentChatId(null);
         setError(null);
-        localStorage.removeItem('chat_history');
     }, []);
 
     // Determine if Dynamic Island is expanded (keep expanded during close animation)
-    const isModalOpen = showPrayerTimes || showQibla;
+    const isModalOpen = showPrayerTimes || showQibla || showHistory;
     const isExpanded = isModalOpen || isClosing;
     const [justClosed, setJustClosed] = useState(false);
     const [isOpening, setIsOpening] = useState(false);
@@ -121,11 +170,47 @@ export default function HomeContent() {
         setTimeout(() => setIsOpening(false), 300);
     };
 
+    const handleOpenHistory = () => {
+        setIsOpening(true);
+        setShowHistory(true);
+        setTimeout(() => setIsOpening(false), 300);
+    };
+
     const handleCloseModal = () => {
         setIsClosing(true);
         setShowPrayerTimes(false);
         setShowQibla(false);
+        setShowHistory(false);
     };
+
+    const startNewChat = useCallback(() => {
+        const newId = uuidv4();
+        setCurrentChatId(newId);
+        setMessages([]);
+        setError(null);
+        handleCloseModal();
+    }, []);
+
+    const handleSelectChat = useCallback((chatId: string) => {
+        const chat = conversations.find(c => c.id === chatId);
+        if (chat) {
+            setCurrentChatId(chat.id);
+            setMessages(chat.messages);
+            setError(null);
+            handleCloseModal();
+        }
+    }, [conversations]);
+
+    const handleDeleteChat = useCallback((chatId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setConversations(prev => prev.filter(c => c.id !== chatId));
+        if (currentChatId === chatId) {
+            setCurrentChatId(null);
+            setMessages([]);
+        }
+    }, [currentChatId]);
+
+    const isHero = messages.length === 0 && !isLoading;
 
     const handleExitComplete = () => {
         setIsClosing(false);
@@ -210,6 +295,17 @@ export default function HomeContent() {
                                             <line x1="3" y1="10" x2="21" y2="10" />
                                         </svg>
                                     </button>
+                                    <button
+                                        className="app__action-btn"
+                                        onClick={handleOpenHistory}
+                                        title="History"
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                            <path d="M3 3v5h5" />
+                                            <path d="M12 7v5l4 2" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </motion.div>
                         )}
@@ -275,6 +371,41 @@ export default function HomeContent() {
                                 />
                             </motion.div>
                         )}
+
+                        {showHistory && (
+                            <motion.div
+                                key="history-modal"
+                                className="app__header-modal"
+                                layout={false}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{
+                                    opacity: 0,
+                                    scale: 0.3,
+                                    y: -100,
+                                    filter: "blur(8px)"
+                                }}
+                                transition={{
+                                    duration: 0.25,
+                                    ease: [0.4, 0, 0.2, 1]
+                                }}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    transformOrigin: 'top center'
+                                }}
+                            >
+                                <HistoryModal
+                                    isOpen={true}
+                                    onClose={handleCloseModal}
+                                    chats={conversations}
+                                    currentChatId={currentChatId}
+                                    onSelectChat={handleSelectChat}
+                                    onDeleteChat={handleDeleteChat}
+                                    onNewChat={startNewChat}
+                                />
+                            </motion.div>
+                        )}
                     </AnimatePresence>
                 </motion.header>
             </div>
@@ -286,7 +417,7 @@ export default function HomeContent() {
                 error={error}
                 genZMode={genZMode}
                 onToggleGenZMode={handleToggleGenZMode}
-                onClearChat={handleClearChat}
+                onClearChat={handleCloseChat}
             />
 
             {/* Footer - only show on welcome screen, hide during chat */}
