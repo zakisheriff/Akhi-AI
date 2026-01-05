@@ -149,10 +149,94 @@
 .chat-history__item-title {
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-history__rename-btn {
+    opacity: 0;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.chat-history__item:hover .chat-history__rename-btn {
+    opacity: 1;
+}
+
+.chat-history__rename-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-gold);
+}
+
+.chat-history__edit-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.chat-history__edit-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-gold);
+    border-radius: 4px;
+    color: white;
+    padding: 4px 8px;
+    font-size: 16px;
+    /* Prevent iOS zoom */
+    outline: none;
+    width: 100%;
+}
+
+.chat-history__edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.chat-history__edit-save,
+.chat-history__edit-cancel {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.chat-history__edit-save {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.chat-history__edit-save:hover {
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.chat-history__edit-cancel {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.chat-history__edit-cancel:hover {
+    background: rgba(255, 68, 68, 0.2);
 }
 
 .chat-history__item-date {
@@ -199,7 +283,8 @@
         padding: 0.875rem 1rem;
     }
 
-    .chat-history__delete-btn {
+    .chat-history__delete-btn,
+    .chat-history__rename-btn {
         opacity: 1;
         /* Always show on mobile since no hover */
         background: transparent;

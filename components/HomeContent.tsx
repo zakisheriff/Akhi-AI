@@ -201,6 +201,12 @@ export default function HomeContent() {
         }
     }, [conversations]);
 
+    const handleRenameChat = useCallback((chatId: string, newTitle: string) => {
+        setConversations(prev => prev.map(c =>
+            c.id === chatId ? { ...c, title: newTitle, updatedAt: Date.now() } : c
+        ));
+    }, []);
+
     const handleDeleteChat = useCallback((chatId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         setConversations(prev => prev.filter(c => c.id !== chatId));
@@ -402,6 +408,7 @@ export default function HomeContent() {
                                     currentChatId={currentChatId}
                                     onSelectChat={handleSelectChat}
                                     onDeleteChat={handleDeleteChat}
+                                    onRenameChat={handleRenameChat}
                                     onNewChat={startNewChat}
                                 />
                             </motion.div>
