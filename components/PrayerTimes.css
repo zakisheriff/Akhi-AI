@@ -56,23 +56,15 @@
     box-shadow: none !important;
     background: transparent !important;
     width: 100% !important;
-    /* Match QiblaFinder */
-    height: 100% !important;
-    /* Match QiblaFinder */
+    height: auto !important;
     max-width: 100% !important;
-    max-height: 100% !important;
+    max-height: none !important;
     animation: none !important;
-    animation: none !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     padding: 0 !important;
-    /* Remove wrapper padding if any */
     margin: 0 !important;
     transform: none !important;
-    /* Ensure no conflicting transforms */
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-    min-width: 0 !important;
+    display: block !important;
 }
 
 /* Specific overrides for embedded content to prevent layout shifts */
@@ -85,18 +77,10 @@
 
 .prayer-times-modal--embedded .prayer-times-list {
     padding-bottom: 0 !important;
-    flex: 1 !important;
-    /* Take remaining height */
+    flex: 1 1 auto !important;
     overflow-y: auto !important;
-    /* Scroll internal content */
-    min-height: 0 !important;
-    /* Allow shrinking past content size */
-}
-
-/* Force all children to respect width shrinking */
-.prayer-times-modal--embedded * {
-    min-width: 0 !important;
-    white-space: nowrap !important;
+    min-height: 100px !important;
+    display: block !important;
 }
 
 /* Protect header/footer from collapsing */

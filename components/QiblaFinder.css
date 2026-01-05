@@ -45,7 +45,7 @@
     border: none;
     background: transparent;
     animation: none;
-    /* Explicitly disable base animation */
+    overflow-y: auto;
 }
 
 /* Close button positioning override for embedded mode */
