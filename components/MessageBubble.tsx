@@ -91,11 +91,15 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
         document.addEventListener('mousedown', handleClear);
         document.addEventListener('touchstart', handleClear);
 
+        // Android compatibility - selectionchange fires more reliably on Android
+        document.addEventListener('selectionchange', handleSelection);
+
         return () => {
             document.removeEventListener('mouseup', handleSelection);
             document.removeEventListener('touchend', handleSelection);
             document.removeEventListener('mousedown', handleClear);
             document.removeEventListener('touchstart', handleClear);
+            document.removeEventListener('selectionchange', handleSelection);
         };
     }, [isUser]);
 
