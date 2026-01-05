@@ -33,9 +33,33 @@ export default function HomeContent() {
     const [showPrayerTimes, setShowPrayerTimes] = useState(false);
     const [showQibla, setShowQibla] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     // Reset scroll to top on initial load
     useScrollReset();
+
+    // Load chat history from local storage
+    useEffect(() => {
+        const saved = localStorage.getItem('chat_history');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setMessages(parsed);
+                }
+            } catch (e) {
+                console.error('Failed to load chat history', e);
+            }
+        }
+        setIsLoaded(true);
+    }, []);
+
+    // Save chat history to local storage
+    useEffect(() => {
+        if (isLoaded) {
+            localStorage.setItem('chat_history', JSON.stringify(messages));
+        }
+    }, [messages, isLoaded]);
 
     const isHero = messages.length === 0 && !isLoading;
 
@@ -76,6 +100,7 @@ export default function HomeContent() {
     const handleClearChat = useCallback(() => {
         setMessages([]);
         setError(null);
+        localStorage.removeItem('chat_history');
     }, []);
 
     // Determine if Dynamic Island is expanded (keep expanded during close animation)
