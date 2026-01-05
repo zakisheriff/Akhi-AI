@@ -7,19 +7,7 @@ export default function robots(): MetadataRoute.Robots {
                 userAgent: '*',
                 allow: '/',
                 disallow: ['/api/', '/_next/', '/admin/', '/*.json$', '/*.xml$'],
-            },
-            {
-                userAgent: 'Googlebot',
-                allow: '/',
-                disallow: ['/api/', '/_next/', '/admin/'],
-                crawlDelay: 1,
-            },
-            {
-                userAgent: 'Bingbot',
-                allow: '/',
-                disallow: ['/api/', '/_next/', '/admin/'],
-                crawlDelay: 1,
-            },
+            }
         ],
         sitemap: 'https://akhi.theoneatom.com/sitemap.xml'
     };

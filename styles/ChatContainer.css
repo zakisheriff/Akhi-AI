@@ -84,6 +84,20 @@
   }
 }
 
+.chat-container__brand-title {
+  font-size: 2rem;
+  font-family: var(--font-arabic);
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #D4AF37 0%, #E6C98A 50%, #C9A961 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 1;
+}
+
 .chat-container__welcome-title {
   font-size: 1.75rem;
   font-family: var(--font-arabic);
@@ -302,6 +316,11 @@
     height: 40px;
   }
 
+  .chat-container__brand-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.15rem;
+  }
+
   .chat-container__welcome-title {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
@@ -420,7 +439,7 @@
   }
 
   .chat-container__messages-inner {
-    max-width: 700px;
+    max-width: 900px;
     /* Target unified width */
     margin: 0 auto;
     width: 100%;
@@ -433,6 +452,10 @@
   .chat-container__welcome {
     padding: 3rem 2rem;
     max-width: 600px;
+  }
+
+  .chat-container__brand-title {
+    font-size: 2.5rem;
   }
 
   .chat-container__welcome-title {

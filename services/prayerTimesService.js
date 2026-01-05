@@ -26,7 +26,7 @@ const getSriLankaMethod = () => {
 
 // Calculation methods matching common apps
 export const CALCULATION_METHODS = {
-    SRI_LANKA: { id: 'SriLanka', name: 'Sri Lanka (Muslim Pro)', method: getSriLankaMethod },
+    SRI_LANKA: { id: 'SriLanka', name: 'Sri Lanka', method: getSriLankaMethod },
     MUSLIM_WORLD_LEAGUE: { id: 'MuslimWorldLeague', name: 'Muslim World League', method: CalculationMethod.MuslimWorldLeague },
     ISNA: { id: 'NorthAmerica', name: 'Islamic Society of North America (ISNA)', method: CalculationMethod.NorthAmerica },
     EGYPT: { id: 'Egyptian', name: 'Egyptian General Authority of Survey', method: CalculationMethod.Egyptian },

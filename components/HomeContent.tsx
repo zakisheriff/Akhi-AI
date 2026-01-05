@@ -253,16 +253,18 @@ export default function HomeContent() {
                 onToggleGenZMode={handleToggleGenZMode}
             />
 
-            {/* Footer */}
-            <footer className="app__footer">
-                <p className="app__footer-copyright">
-                    © {new Date().getFullYear()} Akhi AI by <a href="https://theoneatom.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
-                    <span className="app__footer-divider">·</span>
-                    <a href="/about/" className="app__about-link">About</a>
-                    <span className="app__footer-divider">·</span>
-                    <a href="https://buymeacoffee.com/theoneatom" target="_blank" rel="noopener noreferrer" className="app__about-link">Support</a>
-                </p>
-            </footer>
+            {/* Footer - only show on welcome screen, hide during chat */}
+            {isHero && (
+                <footer className="app__footer">
+                    <p className="app__footer-copyright">
+                        © {new Date().getFullYear()} Akhi AI by <a href="https://theoneatom.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>The One Atom</a>
+                        <span className="app__footer-divider">·</span>
+                        <a href="/about/" className="app__about-link">About</a>
+                        <span className="app__footer-divider">·</span>
+                        <a href="https://buymeacoffee.com/theoneatom" target="_blank" rel="noopener noreferrer" className="app__about-link">Support</a>
+                    </p>
+                </footer>
+            )}
         </div>
     );
 }
