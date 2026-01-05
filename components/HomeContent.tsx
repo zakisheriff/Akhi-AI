@@ -151,7 +151,7 @@ export default function HomeContent() {
                                 <div className="app__header-content">
                                     <h1 className="app__title">
                                         <span className="app__title-arabic">أخي</span>
-                                        <span className="app__title-english">Akhi AI</span>
+                                        {/* <span className="app__title-english">Akhi AI</span> */}
                                         <span className="app__title-seo">– Your Brother in Faith &amp; Knowledge</span>
                                     </h1>
                                 </div>
