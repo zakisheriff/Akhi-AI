@@ -7,26 +7,28 @@
 
 import { Coordinates, CalculationMethod, CalculationParameters, PrayerTimes as AdhanPrayerTimes, SunnahTimes, Qibla } from 'adhan';
 
-// Custom Sri Lanka method (matches Muslim Pro settings exactly)
+// ACJU (All Ceylon Jamiyyathul Ulama) method - Official Sri Lanka prayer times
+// Calibrated to match ACJU published timetables for Sri Lanka
 const getSriLankaMethod = () => {
-    const params = CalculationMethod.Singapore();
-    params.fajrAngle = 19.5; // Adjusted to match Muslim Pro Fajr time
-    params.ishaAngle = 17.5;
-    // Minute adjustments to match Muslim Pro exactly
+    const params = CalculationMethod.Karachi();
+    // ACJU Fajr is approximately 19.5° (between standard 18° and 20°)
+    params.fajrAngle = 19.5;
+    params.ishaAngle = 18;
+    // Fine-tuned adjustments to match ACJU timetable exactly
     params.adjustments = {
-        fajr: 0,      // base is 4:56 (correct)
+        fajr: -2,      // Match ACJU Fajr exactly
         sunrise: 0,
         dhuhr: 0,
-        asr: 0,       // 3:32 (correct)
-        maghrib: 0,   // 6:02 (correct)
-        isha: 2       // 7:16 -> 7:17
+        asr: 0,
+        maghrib: 1,    // +1 min to match ACJU
+        isha: 0
     };
     return params;
 };
 
 // Calculation methods matching common apps
 export const CALCULATION_METHODS = {
-    SRI_LANKA: { id: 'SriLanka', name: 'Sri Lanka', method: getSriLankaMethod },
+    SRI_LANKA: { id: 'SriLanka', name: 'Sri Lanka (ACJU)', method: getSriLankaMethod },
     MUSLIM_WORLD_LEAGUE: { id: 'MuslimWorldLeague', name: 'Muslim World League', method: CalculationMethod.MuslimWorldLeague },
     ISNA: { id: 'NorthAmerica', name: 'Islamic Society of North America (ISNA)', method: CalculationMethod.NorthAmerica },
     EGYPT: { id: 'Egyptian', name: 'Egyptian General Authority of Survey', method: CalculationMethod.Egyptian },

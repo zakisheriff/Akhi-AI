@@ -17,7 +17,7 @@
 
 <br />
 
-**[🚀 Launch Application](https://akhi.theoneatom.com)** | **[📖 Features](#-core-features)**
+**[🚀 Launch Application](https://akhi.theoneatom.com)**
 
 </div>
 
@@ -68,35 +68,6 @@ Unlike standard AI, Akhi AI enforces a strict citation policy. Every major claim
 -   **Distraction-Free UI**: Engaging typewriter effects and smooth animations.
 -   **Typography**: Legible, beautiful Arabic and English typefaces (Amiri, Cairo).
 -   **Theme**: A color palette inspired by classical Islamic art (Gold, Deep Green, Parchment).
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
--   **Node.js** (v18+)
--   **npm** or **yarn**
-
-### Installation
-
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/zakisheriff/Al-Ilm.git
-    cd Al-Ilm
-    ```
-
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Run the Application**
-    ```bash
-    npm run dev
-    ```
-
-    Visit `http://localhost:3000` to begin your journey.
 
 ---
 
