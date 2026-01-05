@@ -93,15 +93,15 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
 
     return (
         <div className={`chat-container ${isHero ? 'chat-container--hero' : ''}`} ref={containerRef}>
+            {/* Back button - only show when there are messages */}
+            {messages.length > 0 && (
+                <button className="chat-container__back-btn" onClick={onClearChat} title="New Chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </button>
+            )}
             <div className="chat-container__messages" ref={messagesContainerRef}>
-                {/* Back button - only show when there are messages */}
-                {messages.length > 0 && (
-                    <button className="chat-container__back-btn" onClick={onClearChat} title="New Chat">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 12H5M12 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                )}
                 <div className="chat-container__messages-inner">
                     {messages.length === 0 && !isLoading && (
                         <div className="chat-container__welcome">
