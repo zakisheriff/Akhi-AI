@@ -113,7 +113,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
                                     />
                                 </svg>
                             </div>
-                            <h2 className="chat-container__welcome-title">Akhi AI</h2>
+                            <h1 className="chat-container__welcome-title">Akhi AI</h1>
                             <p className="chat-container__welcome-text">
                                <span className='chat-container__welcome-highlight'>Akhi AI</span> is an Islamic AI assistant that provides authentic answers from the Quran and Hadith. Your trusted digital companion for Islamic knowledge and guidance.
                             </p>
