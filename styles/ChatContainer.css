@@ -27,7 +27,7 @@
   overscroll-behavior-y: contain;
 }
 
-/* Welcome message - Premium Glassmorphism Card */
+/* Welcome message - Clean layout without container */
 .chat-container__welcome {
   display: flex;
   flex-direction: column;
@@ -38,22 +38,13 @@
   max-width: 500px;
   margin: 80px auto 0 auto;
 
-  /* Premium Glassmorphism */
-  background: rgba(1, 50, 32, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 169, 97, 0.25);
-  border-radius: 1.5rem;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  /* No container styling - clean like mobile */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   position: relative;
-  overflow: hidden;
-
-  /* Prevent flickering on mobile */
-  will-change: transform;
-  transform: translateZ(0);
+  overflow: visible;
 }
 
 /* Removed glow overlay for minimalism */
