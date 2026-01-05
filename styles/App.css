@@ -86,15 +86,15 @@
 /* Dynamic Island Expanded State */
 .app__header--expanded {
   width: min(420px, 92vw);
-  /* Use auto height so content determines size - scroll if too tall */
-  height: auto;
+  /* Explicit height required for CSS animation (auto cannot be animated) */
+  height: min(700px, 85vh);
   max-height: 90vh;
   min-height: 200px;
   border-radius: 1.75rem;
   flex-direction: column;
   align-items: stretch;
   padding: 0;
-  /* Allow scrolling if content is taller than viewport */
+  /* Allow scrolling if content is taller than container */
   overflow-y: auto;
   background: rgba(5, 20, 15, 0.95);
 

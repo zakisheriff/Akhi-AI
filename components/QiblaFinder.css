@@ -46,18 +46,54 @@
     background: transparent;
     animation: none;
     overflow-y: auto;
+    /* Hide scrollbar like Prayer Times */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-/* Close button positioning override for embedded mode */
-.qibla-modal--embedded .qibla-close-btn {
-    top: 1rem;
-    right: 1rem;
+.qibla-modal--embedded::-webkit-scrollbar {
+    display: none;
 }
 
+/* Header matching Prayer Times */
+.qibla-header {
+    padding: 0 1.5rem 1rem;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+    width: 100%;
+}
+
+.qibla-header-content {
+    flex: 1;
+}
+
+.qibla-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #c9a961;
+    margin: 0 0 0.25rem;
+}
+
+.qibla-title-icon {
+    width: 28px;
+    height: 28px;
+    stroke: #c9a961;
+    flex-shrink: 0;
+}
+
+.qibla-location {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+/* Close button - positioned absolutely on top right */
 .qibla-close-btn {
     position: absolute;
-    top: calc(1.5rem + env(safe-area-inset-top));
-    right: 1.5rem;
+    top: 1rem;
+    right: 2rem;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: white;
@@ -65,13 +101,11 @@
     height: 40px;
     border-radius: 50%;
     display: flex;
-    /* Flex alignment for X */
     align-items: center;
     justify-content: center;
     padding: 0;
     cursor: pointer;
-    z-index: 50;
-    /* Ensure strictly above everything */
+    z-index: 100;
     transition: background 0.2s;
 }
 
@@ -84,50 +118,57 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
+/* Distance text - compact */
+.qibla-distance {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+}
+
+/* Kaaba icon - centered and bigger */
+.qibla-kaaba-icon {
+    font-size: 4rem;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
 /* =========================================
    LANDING SCREEN
    ========================================= */
 .qibla-landing {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    padding-top: calc(4rem + env(safe-area-inset-top));
-    /* Extra padding to avoid close button overlap */
+    justify-content: flex-start;
+    padding: 0 1.5rem 1rem;
+    padding-top: 3rem;
     text-align: center;
     background: transparent;
     color: white;
 }
 
 .qibla-landing-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+    font-size: 5rem;
+    margin: 1rem 0;
     color: white;
 }
 
-.qibla-landing h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #FFD700, #FDB931);
-    -webkit-background-clip: text;
-    background-clip: text;
-    /* Standard property */
-    -webkit-text-fill-color: transparent;
-}
+/* h2 styling inherited from .qibla-title */
 
 .qibla-landing p {
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 2rem;
+    margin-bottom: 0.75rem;
     max-width: 320px;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 .qibla-landing-stats {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.75rem;
 }
 
 .qibla-landing-stats .stat {

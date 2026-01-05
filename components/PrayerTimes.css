@@ -91,10 +91,15 @@
     flex-shrink: 0 !important;
 }
 
-/* Close button positioning override for embedded mode */
+/* Close button positioning override for embedded mode - sticky on scroll */
 .prayer-times-modal--embedded .prayer-times-close {
+    position: sticky;
     top: 1rem;
-    right: 0rem;
+    right: 0;
+    float: right;
+    margin-top: 1rem;
+    margin-right: 1rem;
+    z-index: 100;
 }
 
 .prayer-times-modal::-webkit-scrollbar {
@@ -154,9 +159,11 @@
 }
 
 .prayer-times-close {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
+    position: sticky;
+    top: 1rem;
+    float: right;
+    margin-top: -0.5rem;
+    margin-right: 1rem;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: white;
@@ -168,7 +175,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    z-index: 50;
+    z-index: 100;
     padding: 0;
 }
 

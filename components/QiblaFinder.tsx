@@ -293,44 +293,49 @@ const QiblaFinder = ({ isOpen, onClose, embedded = false }) => {
     const embeddedContent = (
         <div className={`qibla-modal ${mode} ${embedded ? 'qibla-modal--embedded' : ''}`} onClick={(e) => e.stopPropagation()}>
 
-            <button className="qibla-close-btn" onClick={onClose}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-
             {/* LANDING SCREEN */}
             {mode === 'landing' && (
                 <div className="qibla-landing">
-                    <div className="qibla-landing-icon">🕋</div>
-                    <h2>Qibla Finder</h2>
-                    <p>Locate the Qibla with high precision using Augmented Reality or Compass.</p>
+                    {/* Close button - outside header like Prayer Times */}
+                    <button className="qibla-close-btn" onClick={onClose}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
 
-                    {/* Loading / Error / Stats */}
+                    {/* Header */}
+                    <div className="qibla-header">
+                        <div className="qibla-header-content">
+                            <h2 className="qibla-title">
+                                <svg className="qibla-title-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88"></polygon>
+                                </svg>
+                                Qibla Finder
+                            </h2>
+                            {location && (
+                                <p className="qibla-location">
+                                    📍 {location.city}, {location.country}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Loading or Mode Selection */}
                     {loading && !location ? (
                         <div className="qibla-spinner"></div>
                     ) : (
                         <>
-                            {location && (
-                                <div className="qibla-landing-stats">
-                                    <div className="stat">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                            <circle cx="12" cy="10" r="3"></circle>
-                                        </svg>
-                                        {location.city}
-                                    </div>
-                                    <div className="stat">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="stat-icon">
-                                            <path d="M7 17l9.2-9.2M17 17V7H7" />
-                                        </svg>
-                                        {distanceKm} km
-                                    </div>
-                                </div>
-                            )}
-
                             {error && <div className="qibla-error-msg">{error}</div>}
+
+                            {/* Kaaba Icon */}
+                            <div className="qibla-kaaba-icon">🕋</div>
+
+                            {/* Distance to Makkah */}
+                            {distanceKm && (
+                                <p className="qibla-distance">{distanceKm} km to Makkah</p>
+                            )}
 
                             <div className="qibla-mode-select">
                                 <button className="mode-card" onClick={() => enterMode('camera')} disabled={loading}>
