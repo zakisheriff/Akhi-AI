@@ -107,6 +107,12 @@
     flex-shrink: 0 !important;
 }
 
+/* Close button positioning override for embedded mode */
+.prayer-times-modal--embedded .prayer-times-close {
+    top: 1rem;
+    right: 0rem;
+}
+
 .prayer-times-modal::-webkit-scrollbar {
     display: none;
     /* Chrome, Safari, Opera */

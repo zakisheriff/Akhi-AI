@@ -48,6 +48,12 @@
     /* Explicitly disable base animation */
 }
 
+/* Close button positioning override for embedded mode */
+.qibla-modal--embedded .qibla-close-btn {
+    top: 1rem;
+    right: 1rem;
+}
+
 .qibla-close-btn {
     position: absolute;
     top: calc(1.5rem + env(safe-area-inset-top));
