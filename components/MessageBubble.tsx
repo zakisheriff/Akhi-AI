@@ -65,10 +65,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                     const range = sel.getRangeAt(0);
                     const rect = range.getBoundingClientRect();
 
-                    // Calculate position relative to viewport - below selection for Android
+                    // Calculate position relative to viewport
                     setSelection({
                         text: text,
-                        top: rect.bottom + 10, // Below the selection to avoid Android's native menu
+                        top: rect.top - 45, // Slightly higher for mobile touch targets
                         left: rect.left + (rect.width / 2) // Centered
                     });
                 } else {
@@ -91,15 +91,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
         document.addEventListener('mousedown', handleClear);
         document.addEventListener('touchstart', handleClear);
 
-        // Android compatibility - selectionchange fires more reliably on Android
-        document.addEventListener('selectionchange', handleSelection);
-
         return () => {
             document.removeEventListener('mouseup', handleSelection);
             document.removeEventListener('touchend', handleSelection);
             document.removeEventListener('mousedown', handleClear);
             document.removeEventListener('touchstart', handleClear);
-            document.removeEventListener('selectionchange', handleSelection);
         };
     }, [isUser]);
 

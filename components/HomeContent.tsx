@@ -73,6 +73,11 @@ export default function HomeContent() {
         setGenZMode(prev => !prev);
     }, []);
 
+    const handleClearChat = useCallback(() => {
+        setMessages([]);
+        setError(null);
+    }, []);
+
     // Determine if Dynamic Island is expanded (keep expanded during close animation)
     const isModalOpen = showPrayerTimes || showQibla;
     const isExpanded = isModalOpen || isClosing;
@@ -256,6 +261,7 @@ export default function HomeContent() {
                 error={error}
                 genZMode={genZMode}
                 onToggleGenZMode={handleToggleGenZMode}
+                onClearChat={handleClearChat}
             />
 
             {/* Footer - only show on welcome screen, hide during chat */}

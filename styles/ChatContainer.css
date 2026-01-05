@@ -24,7 +24,37 @@
 
   /* iOS: Enable momentum scrolling and status bar tap-to-scroll */
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
+  /* overscroll-behavior-y: contain; removed to allow pull-to-refresh */
+}
+
+/* Back button - sticky at top left */
+.chat-container__back-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  /* align-self removed */
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s, transform 0.2s;
+  /* margin-bottom removed */
+}
+
+.chat-container__back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.chat-container__back-btn:active {
+  transform: scale(0.95);
 }
 
 /* Welcome message - Clean layout without container */

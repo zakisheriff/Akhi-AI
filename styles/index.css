@@ -98,8 +98,7 @@ body {
   width: 100%;
   overflow: hidden;
   /* Ensure no scroll on body */
-  overscroll-behavior: none;
-  /* Prevent pull-to-refresh if not needed, improving app feel */
+  /* overscroll-behavior: none; removed to allow pull-to-refresh */
 }
 
 #root {

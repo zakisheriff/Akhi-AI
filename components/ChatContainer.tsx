@@ -19,6 +19,7 @@ interface ChatContainerProps {
     error: string | null;
     genZMode: boolean;
     onToggleGenZMode: () => void;
+    onClearChat: () => void;
 }
 
 const MOBILE_QNA = [
@@ -30,7 +31,7 @@ const MOBILE_QNA = [
     { q: "Tahajjud timing?", a: "After sleep, before Fajr" },
 ];
 
-const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSendMessage, error, genZMode, onToggleGenZMode }) => {
+const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSendMessage, error, genZMode, onToggleGenZMode, onClearChat }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -93,6 +94,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
     return (
         <div className={`chat-container ${isHero ? 'chat-container--hero' : ''}`} ref={containerRef}>
             <div className="chat-container__messages" ref={messagesContainerRef}>
+                {/* Back button - only show when there are messages */}
+                {messages.length > 0 && (
+                    <button className="chat-container__back-btn" onClick={onClearChat} title="New Chat">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                )}
                 <div className="chat-container__messages-inner">
                     {messages.length === 0 && !isLoading && (
                         <div className="chat-container__welcome">
@@ -115,7 +124,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
                             </div>
                             <h1 className="chat-container__welcome-title">Akhi AI</h1>
                             <p className="chat-container__welcome-text">
-                               <span className='chat-container__welcome-highlight'>Akhi AI</span> is an Islamic AI assistant that provides authentic answers from the Quran and Hadith. Your trusted digital companion for Islamic knowledge and guidance.
+                                <span className='chat-container__welcome-highlight'>Akhi AI</span> is an Islamic AI assistant that provides authentic answers from the Quran and Hadith. Your trusted digital companion for Islamic knowledge and guidance.
                             </p>
                             <div className="chat-container__welcome-suggestions">
                                 {[
