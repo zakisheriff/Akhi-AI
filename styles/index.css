@@ -70,7 +70,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;
   height: 100dvh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   /* Prevent body scroll / address bar resizing */
   /* Lock viewport */
   width: 100%;
@@ -96,7 +97,8 @@ body {
   height: 100vh;
   height: 100dvh;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   /* Ensure no scroll on body */
   /* overscroll-behavior: none; removed to allow pull-to-refresh */
 }
