@@ -471,16 +471,27 @@
   }
 
   .chat-container__welcome {
-    padding: 3rem 2rem;
-    max-width: 600px;
+    padding: 2rem 1.5rem;
+    max-width: 480px;
   }
 
   .chat-container__brand-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
   .chat-container__welcome-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .chat-container__welcome-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .chat-container__suggestion {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 }
 
