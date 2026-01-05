@@ -71,6 +71,12 @@ const ChatContainer: React.FC<ChatContainerProps> = ({ messages, isLoading, onSe
 
     useEffect(() => {
         const handleTouchStart = (e: globalThis.TouchEvent) => {
+            // Ignore if touching a button or interactive element
+            const target = e.target as HTMLElement;
+            if (target.closest('button') || target.closest('a') || target.closest('.app__header')) {
+                return;
+            }
+
             if (e.touches && e.touches[0] && e.touches[0].clientY < 50) {
                 if (messagesContainerRef.current && messagesContainerRef.current.scrollTop > 0) {
                     e.preventDefault();
