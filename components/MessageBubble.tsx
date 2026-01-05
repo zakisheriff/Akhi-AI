@@ -65,10 +65,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                     const range = sel.getRangeAt(0);
                     const rect = range.getBoundingClientRect();
 
-                    // Calculate position relative to viewport
+                    // Calculate position relative to viewport - below selection for Android
                     setSelection({
                         text: text,
-                        top: rect.top - 45, // Slightly higher for mobile touch targets
+                        top: rect.bottom + 10, // Below the selection to avoid Android's native menu
                         left: rect.left + (rect.width / 2) // Centered
                     });
                 } else {
