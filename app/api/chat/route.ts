@@ -20,7 +20,7 @@ async function callGroq(messages: any[], systemPrompt: string): Promise<string |
         baseURL: 'https://api.groq.com/openai/v1',
     });
 
-    const models = ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile'];
+    const models = ['llama-3.1-8b-instant'];
 
     for (const model of models) {
         try {
@@ -208,11 +208,14 @@ async function callOpenRouter(messages: any[], systemPrompt: string): Promise<st
     if (!apiKey) return null;
 
     const models = [
+        // Verified working free models
+        'mistralai/mistral-small-3.1-24b-instruct:free',  // ✅ Tested working
         'meta-llama/llama-3.3-70b-instruct:free',
-        'google/gemma-2-9b-it:free',
+        'google/gemma-3-27b-it:free',
+        'google/gemini-2.0-flash-exp:free',
         'qwen/qwen-2.5-72b-instruct:free',
+        'deepseek/deepseek-r1-0528:free',
         'microsoft/phi-3-mini-128k-instruct:free',
-        'openchat/openchat-7b:free',
         'huggingfaceh4/zephyr-7b-beta:free',
         'mistralai/mistral-7b-instruct:free'
     ];
@@ -322,7 +325,24 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
         const maxRetries = 2;
         let lastError: Error | null = null;
 
-        // 1. Try Gemini FIRST (Most Reliable Free Tier)
+
+        // 1. Try OpenRouter FIRST (Testing new models)
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const result = await callOpenRouter(messages, systemPrompt);
+                if (result) return NextResponse.json({ response: result });
+                break;
+            } catch (err: any) {
+                lastError = err;
+                if (err.status === 429 || err.message?.includes('429')) {
+                    console.log(`⏳ OpenRouter rate limited, trying Gemini...`);
+                    break;
+                }
+                if (i < maxRetries - 1) await sleep(1000);
+            }
+        }
+
+        // 2. Try Gemini (Reliable Free Tier)
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callGemini(messages, systemPrompt);
@@ -338,7 +358,7 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             }
         }
 
-        // 2. Try Groq (Fast but often rate limited)
+        // 3. Try Groq (Fast but often rate limited)
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callGroq(messages, systemPrompt);
@@ -354,7 +374,7 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             }
         }
 
-        // 3. Try Mistral
+        // 4. Try Mistral
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callMistral(messages, systemPrompt);
@@ -363,14 +383,14 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             } catch (err: any) {
                 lastError = err;
                 if (err.message?.includes('429')) {
-                    console.log(`⏳ Mistral rate limited, trying OpenRouter...`);
+                    console.log(`⏳ Mistral rate limited, trying Cohere...`);
                     break;
                 }
                 if (i < maxRetries - 1) await sleep(1000);
             }
         }
 
-        // 4. Try Cohere (Robust Enterprise Backup)
+        // 5. Try Cohere (Final Fallback)
         for (let i = 0; i < maxRetries; i++) {
             try {
                 const result = await callCohere(messages, systemPrompt);
@@ -379,23 +399,7 @@ You MUST write the ENTIRE response in Gen Z tone - every section, every paragrap
             } catch (err: any) {
                 lastError = err;
                 if (err.message?.includes('429')) {
-                    console.log(`⏳ Cohere rate limited, trying OpenRouter...`);
-                    break;
-                }
-                if (i < maxRetries - 1) await sleep(1000);
-            }
-        }
-
-        // 5. Try OpenRouter (Final Fallback)
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                const result = await callOpenRouter(messages, systemPrompt);
-                if (result) return NextResponse.json({ response: result });
-                break;
-            } catch (err: any) {
-                lastError = err;
-                if (err.status === 429 || err.message?.includes('429')) {
-                    console.log(`⏳ OpenRouter rate limited...`);
+                    console.log(`⏳ Cohere rate limited...`);
                     break;
                 }
                 if (i < maxRetries - 1) await sleep(1000);
