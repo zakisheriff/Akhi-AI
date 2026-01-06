@@ -379,13 +379,16 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, isTyping
                 return <h5 key={index} className="message-heading-h5">{renderWithFormatting(trimmedLine.slice(4))}</h5>;
             }
 
+            // Check for disclaimer content - includes both Note and personal ruling advisory
             const isDisclaimerNote = /^(\*)?Note:\s*This is educational information/i.test(trimmedLine) ||
                 /This is educational information, not a formal Fatwa/i.test(trimmedLine);
-            if (isDisclaimerNote) {
+            const isPersonalRulingLine = /For personal rulings?,?\s*please consult/i.test(trimmedLine);
+
+            if (isDisclaimerNote || isPersonalRulingLine) {
                 const cleanedText = trimmedLine.replace(/^\*|\*$/g, '').trim();
                 return (
                     <p key={index} className="message-fatwa-disclaimer">
-                        {cleanedText}
+                        {renderWithFormatting(cleanedText)}
                     </p>
                 );
             }
