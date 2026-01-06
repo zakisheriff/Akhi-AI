@@ -57,6 +57,14 @@
   transform: scale(0.95);
 }
 
+/* Desktop: Position back button near the navbar */
+@media (min-width: 769px) {
+  .chat-container__back-btn {
+    left: calc(50% - 300px);
+    top: 1rem;
+  }
+}
+
 /* Welcome message - Clean layout without container */
 .chat-container__welcome {
   display: flex;
