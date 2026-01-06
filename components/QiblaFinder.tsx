@@ -383,8 +383,6 @@ const QiblaFinder = ({ isOpen, onClose, embedded = false }) => {
                         <div className="qibla-pointer-container" style={{ transform: `rotate(${getCompassRotation()}deg)` }}>
                             <div className="compass-dial-face">
                                 <div className="compass-markings"></div>
-                                {/* North Needle (Fixed to N on Dial) */}
-                                <div className="compass-needle"></div>
                                 <div className="compass-n">N</div>
                                 <div className="compass-e">E</div>
                                 <div className="compass-s">S</div>
